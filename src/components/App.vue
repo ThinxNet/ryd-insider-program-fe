@@ -1,5 +1,12 @@
 <template>
-  <div id="app">draft</div>
+  <div id="app">
+    <transition name="fade">
+      <router-view></router-view>
+    </transition>
+    <slot name="header"></slot>
+    <slot name="content"></slot>
+    <slot name="footer"></slot>
+  </div>
 </template>
 
 <script>
@@ -10,6 +17,7 @@
     },
     components: {},
     methods: {},
-    mounted() {}
+    mounted() {},
+    computed: {}
   };
 </script>
