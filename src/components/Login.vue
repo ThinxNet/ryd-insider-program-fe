@@ -1,40 +1,29 @@
 <template>
-  <section class="hero is-fullheight">
-    <div class="hero-body">
-      <div class="container has-text-centered">
-        <div class="column is-4 is-offset-4">
-          <figure style="max-width: 200px">
-            <img
-              src="https://storage.googleapis.com/instapage-user-media/8c07daac/5426852-0-TankTaler-Logo-wei.png">
-          </figure>
-          <div class="box">
-            <form>
-              <div class="field">
-                <div class="control">
-                  <input v-model="email"
-                    class="input is-large" type="email" placeholder="Your Email" autofocus="true">
-                </div>
-              </div>
-              <div class="field">
-                <div class="control">
-                  <input v-model="password"
-                    class="input is-large" type="password" placeholder="Your Password">
-                </div>
-              </div>
-              <a :class="['button', 'is-block', 'is-large', isFormValid ? 'is-success' : 'is-info']"
-                @click.prevent="login">Login</a>
-            </form>
+  <div class="column is-4 is-offset-4">
+    <div class="box">
+      <form>
+        <div class="field">
+          <div class="control">
+            <input v-model="email"
+              class="input is-large" type="email" placeholder="Your Email" autofocus="true">
           </div>
-          <p class="has-text-white has-text-weight-bold">
-            <a href="https://www.tanktaler.de/blog/insider-program" target="_blank"
-              class="has-text-white">What is it?</a>
-          </p>
         </div>
-      </div>
+        <div class="field">
+          <div class="control">
+            <input v-model="password"
+              class="input is-large" type="password" placeholder="Your Password">
+          </div>
+        </div>
+        <a :class="['button', 'is-block', 'is-large', isFormValid ? 'is-success' : 'is-info']"
+          @click.prevent="login">Login</a>
+      </form>
     </div>
-  </section>
+    <p class="has-text-white has-text-weight-bold">
+      <a href="https://www.tanktaler.de/blog/insider-program" target="_blank"
+        class="has-text-white">What is it?</a>
+    </p>
+  </div>
 </template>
-
 
 <script>
   import Store from '../store';
@@ -62,8 +51,6 @@
     data() {
       return {email: '', password: ''};
     },
-    components: {},
-    mounted() {},
     computed: {
       isFormValid() {
         return ~this.email.indexOf('@') && this.password.length > 4;
@@ -91,7 +78,7 @@
         if (identity) {
           Store.commit('authentication/identityUpdate', identity);
         }
-        this.$router.push(this.$route.query.redirect);
+        this.$router.push(this.$route.query.redirect || {name: 'dashboard'});
       }
     }
   };

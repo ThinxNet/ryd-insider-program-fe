@@ -1,3 +1,5 @@
+import './assets/styles.css';
+
 import Vue from 'vue';
 
 import Store from './store';
@@ -23,6 +25,6 @@ import ComponentsApp from './components/App.vue';
 new Vue({
   el: '#app',
   render: h => h(ComponentsApp),
-  store: Store,
-  router: Router
+  router: Router,
+  store: Store
 });

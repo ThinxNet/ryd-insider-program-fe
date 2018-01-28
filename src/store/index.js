@@ -35,7 +35,11 @@ export default new Vuex.Store(
         mutations: {
           tokenUpdate: (state, token) => {
             try {
-              localStorage.setItem('authToken', token);
+              if (token === null) {
+                localStorage.removeItem("authToken");
+              } else {
+                localStorage.setItem('authToken', token);
+              }
               state.authToken = token;
             } catch (e) { console.error(e); }
           },
@@ -45,7 +49,8 @@ export default new Vuex.Store(
         },
         actions: {
           logout: ctx => {
-            // tbd...
+            ctx.commit("tokenUpdate", null);
+            ctx.commit("identityUpdate", null);
           }
         }
       }
