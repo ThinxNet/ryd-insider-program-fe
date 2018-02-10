@@ -1,11 +1,12 @@
 <template>
-  <div class="column is-4 is-offset-4">
+  <div class="column">
     <div class="box">
       <span v-if="loading" class="icon is-large">
         <i class="ion-clock"></i>
       </span>
+
       <div v-else class="control has-icons-left">
-        <div class="select is-medium">
+        <div class="select is-medium is-fullwidth">
           <select v-model="selected">
             <option disabled value="">Select one&hellip;</option>
             <option :value="entry._id" v-for="entry in entries">

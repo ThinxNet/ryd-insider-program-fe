@@ -1,11 +1,13 @@
 <template>
   <div>
     <widget-things @onEntrySelected="thingChange"></widget-things>
+    <widget-thing-charts v-if="thing" :entity="thing"></widget-thing-charts>
   </div>
 </template>
 
 <script>
   import WidgetThings from './widgets/Things';
+  import WidgetThingCharts from './widgets/ThingCharts';
 
   export default {
     name: 'dashboard',
@@ -13,7 +15,7 @@
       return {thing: null};
     },
     components: {
-      WidgetThings
+      WidgetThings, WidgetThingCharts
     },
     computed: {
       identity() {
@@ -22,7 +24,7 @@
     },
     methods: {
       thingChange(thing) {
-        console.log(thing);
+        this.thing = thing;
       }
     }
   }

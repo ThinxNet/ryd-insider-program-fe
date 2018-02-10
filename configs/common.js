@@ -4,7 +4,10 @@ export default {
   },
   api: {
     tankTaler: {
-      url: 'https://tt4.thinxcloud-dev.de'
+      baseURL: 'https://tt4.thinxcloud-dev.de'
+    },
+    insiderProgram: {
+      baseURL: 'http://localhost:8080'
     }
   }
 };
