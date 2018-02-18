@@ -9,7 +9,7 @@
         <div class="select is-medium is-fullwidth">
           <select v-model="selected">
             <option disabled value="">Select one&hellip;</option>
-            <option :value="entry._id" v-for="entry in entries">
+            <option :value="entry.id" v-for="entry in entries">
               {{entry.nickName}} ({{entry.ymme.year}} {{entry.ymme.make}} {{entry.ymme.model}})
             </option>
           </select>
@@ -29,8 +29,13 @@
       return {entries: [], loading: true, selected: ''};
     },
     async mounted() {
+      // @todo! remove it
+      this.$store.getters['common/apiInsiderProgram'].headers['X-Txn-Auth-Token'] =
+        this.$store.getters['authentication/authToken'];
+
       try {
-        this.entries = await this.$store.getters['common/apiTankTaler'].things();
+        const reply = await this.$store.getters['common/apiInsiderProgram'].get('thing')
+        this.entries = reply.data;
       } catch (e) {
         console.error(e);
       } finally {
@@ -40,7 +45,7 @@
     watch: {
       selected: function (current, previous) {
         if (current !== '') {
-          this.$emit('onEntrySelected', this.entries.find(e => e._id === current));
+          this.$emit('onEntrySelected', this.entries.find(e => e.id === current));
         }
       }
     },
