@@ -25,7 +25,7 @@
     </div>
 
     <div class="hero-body">
-      <div class="container has-text-centered">
+      <div class="container">
         <transition name="fade" mode="out-in">
           <router-view></router-view>
         </transition>
