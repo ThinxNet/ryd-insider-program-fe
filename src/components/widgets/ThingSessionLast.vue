@@ -6,7 +6,8 @@
 
         <div v-if="response" class="card tile is-child">
           <div class="card-image">
-            <leaflet @init="leafletInit" @ready="leafletReady"></leaflet>
+            <leaflet
+              @init="leafletInit" @tileLoaded="leafletReady" :tileConfig="leafletTileConfig"></leaflet>
           </div>
           <div class="card-content">
             <div class="content">
@@ -72,6 +73,12 @@
       }
     },
     computed: {
+      leafletTileConfig() {
+        return {
+          id: (this.response.statistics.nightDurationS > this.response.statistics.dayDurationS)
+            ? 'mapbox.dark' : 'mapbox.streets'
+        };
+      }
     }
   }
 </script>
