@@ -38,6 +38,12 @@ Router.beforeEach((to, from, next) => {
 
 import ComponentsApp from './components/App.vue';
 
+import lodash from 'lodash';
+import moment from 'moment';
+
+Vue.prototype.$_ = lodash;
+Vue.prototype.$moment = moment;
+
 new Vue({
   el: '#app',
   render: h => h(ComponentsApp),

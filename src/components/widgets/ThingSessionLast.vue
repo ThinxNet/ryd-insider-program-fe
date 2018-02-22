@@ -11,13 +11,17 @@
           <div class="card-content">
             <div class="content">
               <p>
-                <time :datetime="datetimeStart">{{ timestampStart }}</time>
+                <time :datetime="$moment($moment.unix(this.response.start)).format()">
+                  {{ $moment($moment.unix(response.start)).format('LT') }}
+                </time>
                 &mdash;
-                <time :datetime="datetimeEnd">{{ timestampEnd }}</time>
+                <time :datetime="$moment($moment.unix(this.response.end)).format()">
+                  {{ $moment($moment.unix(response.end)).format('LT') }}
+                </time>
               </p>
               <p>
-                {{ Number(response.statistics.geoDistanceM / 1000).toPrecision(1) }} km.
-                for ~{{ duration }}
+                {{ $_.ceil(response.statistics.geoDistanceM / 1000, 1) }} km.
+                for ~{{ $moment.duration(response.statistics.durationS, 's').humanize() }}
               </p>
             </div>
           </div>
@@ -59,7 +63,7 @@
         map._handlers.forEach(h => h.disable());
       },
       leafletReady(map) {
-        const polyline = L.polyline([], {color: 'red'}),
+        const polyline = L.polyline([], {color: '#039be5', interactive: false}),
           coords = this.response.segments.filter(s => s.props.latitude !== null)
             .map(s => [s.props.latitude, s.props.longitude]);
         polyline.setLatLngs(coords);
@@ -68,21 +72,6 @@
       }
     },
     computed: {
-      duration() {
-        return moment.duration(this.response.statistics.durationS, 's').humanize();
-      },
-      timestampStart() {
-        return moment(moment.unix(this.response.start)).format('LT');
-      },
-      timestampEnd() {
-        return moment(moment.unix(this.response.end)).format('LT');
-      },
-      datetimeStart() {
-        return moment(moment.unix(this.response.start)).format()
-      },
-      datetimeEnd() {
-        return moment(moment.unix(this.response.end)).format();
-      }
     }
   }
 </script>
