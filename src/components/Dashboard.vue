@@ -1,23 +1,11 @@
 <template>
   <div class="column">
     <widget-things @onEntrySelected="thingChange"></widget-things>
-    <widget-thing-charts v-if="thing" :entity="thing"></widget-thing-charts>
-
     <div class="tile is-ancestor" v-if="thing">
-
       <widget-thing-session-last :entity="thing"></widget-thing-session-last>
-
-        <!--<div class="tile is-vertical is-7">
+        <div class="tile is-vertical is-7">
           <div class="tile">
-            <div class="tile is-parent">
-              <article class="tile is-child">
-                <p class="title">Middle box</p>
-                <p class="subtitle">With an image</p>
-                <figure class="image is-4by3">
-                  <img src="https://bulma.io/images/placeholders/640x480.png">
-                </figure>
-              </article>
-            </div>
+            <widget-thing-charts v-if="thing" :entity="thing"></widget-thing-charts>
 
             <div class="tile is-parent">
               <article class="tile is-child">
@@ -45,11 +33,8 @@
               </div>
             </article>
           </div>
-
-      </div>-->
-
+      </div>
     </div>
-
   </div>
 </template>
 

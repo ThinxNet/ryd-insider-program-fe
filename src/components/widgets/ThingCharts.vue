@@ -1,10 +1,13 @@
 <template>
-  <div class="column">
-    <div class="box">
-      <span v-if="loading" class="icon is-large">
-        <i class="ion-clock"></i>
-      </span>
-    </div>
+  <div class="tile is-parent">
+    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <article v-else class="tile is-child">
+      <p class="title">Middle box</p>
+      <p class="subtitle">With an image</p>
+      <figure class="image is-4by3">
+        <img src="https://bulma.io/images/placeholders/640x480.png">
+      </figure>
+    </article>
   </div>
 </template>
 

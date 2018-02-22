@@ -34,7 +34,8 @@
         this.$store.getters['authentication/authToken'];
 
       try {
-        const reply = await this.$store.getters['common/apiInsiderProgram'].get('thing')
+        const reply = await this.$store.getters['common/apiInsiderProgram']
+          .get('things', {include: 'device'});
         this.entries = reply.data;
       } catch (e) {
         console.error(e);

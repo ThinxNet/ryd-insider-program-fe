@@ -4,14 +4,20 @@
       <div class="tile is-parent">
         <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
 
-        <div v-if="entry" class="card tile is-child">
+        <div v-if="response" class="card tile is-child">
           <div class="card-image">
-            <leaflet></leaflet>
+            <leaflet @init="leafletInit" @ready="leafletReady"></leaflet>
           </div>
           <div class="card-content">
             <div class="content">
               <p>
-                <time :datetime="datetime">{{ duration }}</time>
+                <time :datetime="datetimeStart">{{ timestampStart }}</time>
+                &mdash;
+                <time :datetime="datetimeEnd">{{ timestampEnd }}</time>
+              </p>
+              <p>
+                {{ Number(response.statistics.geoDistanceM / 1000).toPrecision(1) }} km.
+                for ~{{ duration }}
               </p>
             </div>
           </div>
@@ -29,13 +35,18 @@
     props: {entity: Object},
     components: {Leaflet},
     data() {
-      return {loading: true, entry: null};
+      return {loading: true, response: null};
     },
     async mounted() {
       try {
-        const response = await this.$store.getters['common/apiInsiderProgram']
-          .get(`sessions`, {page: {limit: 1}});
-        this.entry = response.data[0];
+        const api = this.$store.getters['common/apiInsiderProgram'],
+          params = {
+            filter: {device: this.entity.device.id},
+            include: 'segments',
+            page: {limit: 1}
+          };
+        const response = await api.get('sessions', params);
+        this.response = response.data[0];
       } catch (e) {
         console.error(e);
       } finally {
@@ -43,13 +54,34 @@
       }
     },
     methods: {
+      leafletInit(map) {
+        map.zoomControl.remove();
+        map._handlers.forEach(h => h.disable());
+      },
+      leafletReady(map) {
+        const polyline = L.polyline([], {color: 'red'}),
+          coords = this.response.segments.filter(s => s.props.latitude !== null)
+            .map(s => [s.props.latitude, s.props.longitude]);
+        polyline.setLatLngs(coords);
+        map.addLayer(polyline);
+        map.fitBounds(polyline.getBounds());
+      }
     },
     computed: {
       duration() {
-        return moment.duration(this.entry.end - this.entry.start, 's').humanize();
+        return moment.duration(this.response.statistics.durationS, 's').humanize();
       },
-      datetime() {
-        return moment(moment.unix(this.entry.end)).format()
+      timestampStart() {
+        return moment(moment.unix(this.response.start)).format('LT');
+      },
+      timestampEnd() {
+        return moment(moment.unix(this.response.end)).format('LT');
+      },
+      datetimeStart() {
+        return moment(moment.unix(this.response.start)).format()
+      },
+      datetimeEnd() {
+        return moment(moment.unix(this.response.end)).format();
       }
     }
   }
