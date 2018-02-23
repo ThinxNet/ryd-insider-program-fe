@@ -19,10 +19,11 @@
                 <time :datetime="$moment($moment.unix(this.response.end)).format()">
                   {{ $moment($moment.unix(response.end)).format('LT') }}
                 </time>
-              </p>
-              <p>
-                {{ $_.ceil(response.statistics.geoDistanceM / 1000, 1) }} km.
-                for ~{{ $moment.duration(response.statistics.durationS, 's').humanize() }}
+                <br>
+                <span class="tag">{{ $_.ceil(response.statistics.geoDistanceM / 1000, 1) }} km</span>
+                for <span class="tag">~{{ $moment.duration(response.statistics.durationS, 's').humanize() }}</span>
+                <br>
+                Avg. speed was <span class="tag">{{ response.statistics.geoSpeedKmHAvg }} km/h</span>
               </p>
             </div>
           </div>
@@ -65,7 +66,7 @@
       },
       leafletReady(map) {
         const polyline = L.polyline([], {color: '#039be5', interactive: false}),
-          coords = this.response.segments.filter(s => s.props.latitude !== null)
+          coords = this.response.segments.filter(s => s.props.latitude && s.props.latitude !== null)
             .map(s => [s.props.latitude, s.props.longitude]);
         polyline.setLatLngs(coords);
         map.addLayer(polyline);
