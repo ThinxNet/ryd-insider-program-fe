@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-import Kitsu from 'kitsu';
+import ApiAbstract from './ApiAbstract';
 
-export default function (config) {
-  return new Kitsu(config);
+export default class InsiderProgramApi extends ApiAbstract {
+  thingsFetchAll(params) {
+    return this._request('things', {params});
+  }
+
+  thingsFetchOne(id, params) {
+    return this._request(`things/${id}`, {params});
+  }
+
+  sessionsFetchAll(params) {
+    return this._request('sessions', {params});
+  }
+
+  sessionsFetchOne(id, params) {
+    return this._request(`sessions/${id}`, {params});
+  }
 };

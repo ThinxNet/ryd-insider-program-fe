@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-import ApiAbstract from './ApiAbstract';
-
-export default class TankTalerApi extends ApiAbstract {
-  authLogin(email, password, clientId = 'ip_tt') {
-    return this._request('auth/login/local', {email, password, clientId}, 'POST');
+export default class ApiAbstract {
+  constructor(client, url) {
+    this.client = client;
+    this.url = url;
   }
 
-  authLogout() {
-    return this._request('auth/logout', null, 'POST');
+  /** @access protected */
+  _request(path, payload, method = 'GET') {
+    return this.client[method.toLowerCase()]([this.url, path].join('/'), payload)
+      .then(r => r.body);
   }
-
-  authStatus() {
-    return this._request('auth/status');
-  }
-};
+}

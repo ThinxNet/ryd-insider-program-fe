@@ -36,7 +36,7 @@
         L.tileLayer(
           'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
           tileConfig
-        ).on('load', this.$emit('tileLoaded', this.instance))
+        ).on('load', () => this.$emit('tileLoaded', this.instance))
       );
 
       this.instance.whenReady(() => this.$emit('ready', this.instance));

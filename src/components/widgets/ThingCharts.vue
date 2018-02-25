@@ -20,7 +20,7 @@
     },
     async mounted() {
       try {
-        await this.$store.getters['common/apiInsiderProgram'].get(`thing/${this.entity.id}`);
+        await this.$store.getters['common/apiInsiderProgram'].thingsFetchOne(this.entity._id);
       } catch (e) {
         console.error(e);
       } finally {

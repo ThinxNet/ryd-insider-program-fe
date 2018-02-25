@@ -31,7 +31,7 @@ export default new Vuex.Store(
       common: {
         namespaced: true,
         state: {
-          apiInsiderProgram: new InsiderProgramApi(Config.api.insiderProgram),
+          apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
           apiTankTaler: new TankTalerApi(Vue.http, Config.api.tankTaler.baseURL),
           locale: null
         },

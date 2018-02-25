@@ -35,6 +35,7 @@
 
 <script>
   import Leaflet from '../Leaflet';
+  import _ from 'lodash';
 
   export default {
     name: 'widget-thing-session-last',
@@ -46,13 +47,15 @@
     async mounted() {
       try {
         const api = this.$store.getters['common/apiInsiderProgram'],
-          params = {
-            filter: {device: this.entity.device.id},
-            include: 'segments',
-            page: {limit: 1}
-          };
-        const response = await api.get('sessions', params);
-        this.response = response.data[0];
+          payload = {filter: {device: this.entity.device}, page: {size: 1}};
+        const response = await api.sessionsFetchAll(payload);
+
+        // @todo! pagination and the request format are incorrect
+        const response2 = await api.sessionsFetchOne(
+          response.data[0]._id,
+          {fields: {segments: 'attributes.latitude,attributes.longitude,timestamp'}}
+        );
+        this.response = response2.data;
       } catch (e) {
         console.error(e);
       } finally {
@@ -66,8 +69,9 @@
       },
       leafletReady(map) {
         const polyline = L.polyline([], {color: '#039be5', interactive: false}),
-          coords = this.response.segments.filter(s => s.props.latitude && s.props.latitude !== null)
-            .map(s => [s.props.latitude, s.props.longitude]);
+          coords = this.response.segments
+            .filter(s => _.has(s, 'attributes.latitude'))
+            .map(s => [s.attributes.latitude, s.attributes.longitude]);
         polyline.setLatLngs(coords);
         map.addLayer(polyline);
         map.fitBounds(polyline.getBounds());
