@@ -12,12 +12,12 @@
           <div class="card-content">
             <div class="content">
               <p>
-                <time :datetime="$moment($moment.unix(this.response.start)).format()">
-                  {{ $moment($moment.unix(response.start)).format('LT') }}
+                <time :datetime="$moment(response.start).format()">
+                  {{ $moment(response.start).format('LT') }}
                 </time>
                 &mdash;
-                <time :datetime="$moment($moment.unix(this.response.end)).format()">
-                  {{ $moment($moment.unix(response.end)).format('LT') }}
+                <time :datetime="$moment(response.end).format()">
+                  {{ $moment(response.end).format('LT') }}
                 </time>
                 <br>
                 <span class="tag">{{ $_.ceil(response.statistics.geoDistanceM / 1000, 1) }} km</span>
@@ -68,12 +68,23 @@
         map._handlers.forEach(h => h.disable());
       },
       leafletReady(map) {
+        // @todo! move the icon
+        L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
+
         const polyline = L.polyline([], {color: '#039be5', interactive: false}),
           coords = this.response.segments
             .filter(s => _.has(s, 'attributes.latitude'))
             .map(s => [s.attributes.latitude, s.attributes.longitude]);
         polyline.setLatLngs(coords);
         map.addLayer(polyline);
+        map.addLayer(
+          L.marker(
+            _.last(coords), {
+              icon: L.AwesomeMarkers.icon({icon: 'model-s', markerColor: 'green'}),
+              interactive: false
+            }
+          )
+        );
         map.fitBounds(polyline.getBounds());
       }
     },
