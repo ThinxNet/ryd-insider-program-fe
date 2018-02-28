@@ -5,7 +5,7 @@
       <widget-thing-session-last :entity="thing"></widget-thing-session-last>
         <div class="tile is-vertical is-7">
           <div class="tile">
-            <widget-thing-charts v-if="thing" :entity="thing"></widget-thing-charts>
+            <widget-thing-charts :entity="thing"></widget-thing-charts>
 
             <div class="tile is-parent">
               <article class="tile is-child">
