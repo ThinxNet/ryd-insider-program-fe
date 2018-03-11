@@ -25,8 +25,8 @@ export default class InsiderProgramApi extends ApiAbstract {
     return this._request(`things/${id}`, {params});
   }
 
-  statisticsStandstill(thingId, params) {
-    return this._request(`statistics/${thingId}/standstill`, {params});
+  statisticsActivity(thingId, params) {
+    return this._request(`statistics/${thingId}/activity`, {params});
   }
 
   sessionsFetchAll(params) {

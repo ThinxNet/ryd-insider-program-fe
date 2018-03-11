@@ -24,7 +24,7 @@
     async mounted() {
       try {
         const response = await this.$store.getters['common/apiInsiderProgram']
-          .statisticsStandstill(this.entity._id);
+          .statisticsActivity(this.entity._id);
         this.payload = response.data;
       } catch (e) {
         console.error(e);
