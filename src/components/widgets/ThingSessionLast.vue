@@ -20,8 +20,8 @@
                   @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
                 <span class="button"
                   @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-                <span class="button"
-                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">MAP</span>
+                <span class="button" v-if="session.statistics.mapConfidenceAvg > 60"
+                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">MAP {{ session.statistics.mapConfidenceAvg }}%</span>
               </div>
               <p>
                 <time :datetime="$moment(session.start).format()">
