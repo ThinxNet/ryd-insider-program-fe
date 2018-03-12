@@ -2,7 +2,7 @@
   <div class="tile is-parent">
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
 
-    <article v-show="!loading" class="tile is-child box">
+    <article v-show="!loading" class="tile is-child">
       <p class="title">Activity</p>
       <figure ref="chart"></figure>
     </article>

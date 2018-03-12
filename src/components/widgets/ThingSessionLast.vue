@@ -3,8 +3,7 @@
     <div class="tile is-parent is-4">
       <div class="tile is-parent">
         <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
-
-        <div v-if="session" class="card tile is-child">
+        <div v-else-if="session" class="card tile is-child">
           <div class="card-image">
             <leaflet v-if="(locations.length > 0)"
               @init.once="leafletInit"
@@ -40,6 +39,10 @@
                 <br>
                 Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
               </p>
+              <p class="has-text-right">
+                <button class="button is-small" @click="sessionPrev">&larr;</button>
+                <button class="button is-small" @click="sessionNext">&rarr;</button>
+              </p>
             </div>
           </div>
         </div>
@@ -57,16 +60,24 @@
     props: {entity: Object},
     components: {Leaflet},
     data() {
-      return {loading: true, locations: [], polyline: null, session: null, source: null};
+      return {
+        loading: true,
+        locations: [],
+        polyline: null,
+        sessionIdx: null,
+        sessions: [],
+        source: null
+      };
     },
     async mounted() {
       this.polyline = L.polyline([], {color: '#039be5', interactive: false});
 
       try {
         const api = this.$store.getters['common/apiInsiderProgram'],
-          payload = {filter: {device: this.entity.device}, page: {size: 1}},
+          payload = {filter: {device: this.entity.device}, page: {size: 10}},
           response = await api.sessionsFetchAll(payload);
-        this.session = response.data[0];
+        this.sessions = response.data;
+        this.sessionIdx = 0;
       } catch (e) {
         return console.error(e);
       } finally {
@@ -76,20 +87,10 @@
       this.sourceSwitchTo('gps');
     },
     watch: {
-      async source(current, previous) {
-        if (['obd', 'geo'].includes(current)) {
-          return;
+      source(current, previous) {
+        if (!['obd', 'geo'].includes(current)) {
+          this.updateLocations();
         }
-
-        let locations = [];
-        try {
-          locations = (await this.$store.getters['common/apiInsiderProgram']
-            .sessionLocationsFetchAll(this.session._id, {source: this.source})).data;
-        } catch (e) {
-          return console.error(e);
-        }
-        this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
-        this.locations = locations;
       }
     },
     methods: {
@@ -114,9 +115,36 @@
       },
       sourceBtnClass(source) {
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
+      },
+      async updateLocations() {
+        let locations = [];
+        try {
+          locations = (await this.$store.getters['common/apiInsiderProgram']
+            .sessionLocationsFetchAll(this.session._id, {source: this.source})).data;
+        } catch (e) {
+          return console.error(e);
+        }
+
+        this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
+        this.locations = locations;
+      },
+      sessionNext() {
+        if (this.sessionIdx >= this.sessions.length - 1) { return; }
+        this.locations = [];
+        this.sessionIdx++;
+        this.updateLocations();
+      },
+      sessionPrev() {
+        if (this.sessionIdx < 1) { return; }
+        this.locations = [];
+        this.sessionIdx--;
+        this.updateLocations();
       }
     },
     computed: {
+      session() {
+        return this.sessions[this.sessionIdx];
+      },
       leafletTileConfig() {
         return {
           id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
