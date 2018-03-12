@@ -4,26 +4,41 @@
       <div class="tile is-parent">
         <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
 
-        <div v-if="response" class="card tile is-child">
+        <div v-if="session" class="card tile is-child">
           <div class="card-image">
-            <leaflet
-              @init="leafletInit" @tileLoaded="leafletReady" :tileConfig="leafletTileConfig"></leaflet>
+            <leaflet v-if="(locations.length > 0)"
+              @init.once="leafletInit"
+              @tileLoaded.once="leafletReady"
+              :tileConfig="leafletTileConfig"></leaflet>
           </div>
           <div class="card-content">
             <div class="content">
+              <div class="buttons has-addons">
+                <span class="button"
+                  @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
+                <span class="button"
+                  @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
+                <span class="button"
+                  @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
+                <span class="button"
+                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">MAP</span>
+              </div>
               <p>
-                <time :datetime="$moment(response.start).format()">
-                  {{ $moment(response.start).format('LT') }}
+                <time :datetime="$moment(session.start).format()">
+                  {{ $moment(session.start).format('LT') }}
                 </time>
                 &mdash;
-                <time :datetime="$moment(response.end).format()">
-                  {{ $moment(response.end).format('LT') }}
+                <time :datetime="$moment(session.end).format()">
+                  {{ $moment(session.end).format('LT') }}
                 </time>
                 <br>
-                <span class="tag">{{ $_.ceil(response.statistics.geoDistanceM / 1000, 1) }} km</span>
-                for <span class="tag">~{{ $moment.duration(response.statistics.durationS, 's').humanize() }}</span>
+                <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
+                for
+                <span class="tag">
+                  ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
+                </span>
                 <br>
-                Avg. speed was <span class="tag">{{ response.statistics.geoSpeedKmHAvg }} km/h</span>
+                Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
               </p>
             </div>
           </div>
@@ -42,24 +57,39 @@
     props: {entity: Object},
     components: {Leaflet},
     data() {
-      return {loading: true, response: null};
+      return {loading: true, locations: [], polyline: null, session: null, source: null};
     },
     async mounted() {
+      this.polyline = L.polyline([], {color: '#039be5', interactive: false});
+
       try {
         const api = this.$store.getters['common/apiInsiderProgram'],
-          payload = {filter: {device: this.entity.device}, page: {size: 1}};
-        const response = await api.sessionsFetchAll(payload);
-
-        // @todo! pagination and the request format are incorrect
-        const response2 = await api.sessionsFetchOne(
-          response.data[0]._id,
-          {fields: {segments: 'attributes.latitude,attributes.longitude,timestamp'}}
-        );
-        this.response = response2.data;
+          payload = {filter: {device: this.entity.device}, page: {size: 1}},
+          response = await api.sessionsFetchAll(payload);
+        this.session = response.data[0];
       } catch (e) {
-        console.error(e);
+        return console.error(e);
       } finally {
         this.loading = false;
+      }
+
+      this.sourceSwitchTo('gps');
+    },
+    watch: {
+      async source(current, previous) {
+        if (['obd', 'geo'].includes(current)) {
+          return;
+        }
+
+        let locations = [];
+        try {
+          locations = (await this.$store.getters['common/apiInsiderProgram']
+            .sessionLocationsFetchAll(this.session._id, {source: this.source})).data;
+        } catch (e) {
+          return console.error(e);
+        }
+        this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
+        this.locations = locations;
       }
     },
     methods: {
@@ -68,32 +98,54 @@
         map._handlers.forEach(h => h.disable());
       },
       leafletReady(map) {
-        // @todo! move the icon
-        L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
-
-        const polyline = L.polyline([], {color: '#039be5', interactive: false}),
-          coords = this.response.segments
-            .filter(s => _.has(s, 'attributes.latitude'))
-            .map(s => [s.attributes.latitude, s.attributes.longitude]);
-        polyline.setLatLngs(coords);
-        map.addLayer(polyline);
+        map.addLayer(this.polyline);
         map.addLayer(
           L.marker(
-            _.last(coords), {
+            _.last(this.polyline.getLatLngs()), {
               icon: L.AwesomeMarkers.icon({icon: 'model-s', markerColor: 'green'}),
               interactive: false
             }
           )
         );
-        map.fitBounds(polyline.getBounds());
+        map.fitBounds(this.polyline.getBounds());
+      },
+      sourceSwitchTo(source) {
+        this.source = source.toLowerCase();
+      },
+      sourceBtnClass(source) {
+        return (this.source === source) ? ['is-primary', 'is-active'] : [];
       }
     },
     computed: {
       leafletTileConfig() {
         return {
-          id: (this.response.statistics.nightDurationS > this.response.statistics.dayDurationS)
+          id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
             ? 'mapbox.dark' : 'mapbox.streets'
         };
+      },
+      sessionStatistics() {
+        const fields = {
+          distanceM: this.session.statistics.geoDistanceM,
+          durationS: this.session.statistics.durationS,
+          speedKmHAvg: this.session.statistics.geoSpeedKmHAvg
+        };
+        switch (this.source) {
+          case 'map':
+            fields.distanceM = this.session.statistics.mapDistanceM;
+            fields.durationS = this.session.statistics.mapDurationS;
+            break;
+
+          case 'gps':
+            fields.distanceM = this.session.statistics.gpsDistanceM;
+            fields.speedKmHAvg = this.session.statistics.gpsSpeedKmHAvg;
+            break;
+
+          case 'obd':
+            fields.distanceM = this.session.statistics.obdDistanceM;
+            fields.speedKmHAvg = this.session.statistics.obdSpeedKmHAvg;
+            break;
+        }
+        return fields;
       }
     }
   }

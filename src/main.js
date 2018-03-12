@@ -44,6 +44,8 @@ import moment from 'moment';
 Vue.prototype.$_ = lodash;
 Vue.prototype.$moment = moment;
 
+L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
+
 new Vue({
   el: '#app',
   render: h => h(ComponentsApp),
