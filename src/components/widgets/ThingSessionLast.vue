@@ -1,11 +1,11 @@
 <template>
   <div class="tile">
-    <div class="tile is-parent is-4">
+    <div class="tile is-parent">
       <div class="tile is-parent">
         <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
         <div v-else-if="session" class="card tile is-child">
-          <div class="card-image">
-            <leaflet v-if="(locations.length > 0)"
+          <div class="card-image" style="height: 400px;">
+            <leaflet style="height: 400px;" v-if="(locations.length > 0)"
               @init.once="leafletInit"
               @tileLoaded.once="leafletReady"
               :tileConfig="leafletTileConfig"></leaflet>
@@ -20,7 +20,9 @@
                 <span class="button"
                   @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
                 <span class="button" v-if="session.statistics.mapConfidenceAvg > 60"
-                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">MAP {{ session.statistics.mapConfidenceAvg }}%</span>
+                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">
+                    MAP {{ session.statistics.mapConfidenceAvg }}%
+                </span>
               </div>
               <p>
                 <time :datetime="$moment(session.start).format()">
@@ -40,8 +42,14 @@
                 Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
               </p>
               <p class="has-text-right">
-                <button class="button is-small" @click="sessionPrev">&larr;</button>
-                <button class="button is-small" @click="sessionNext">&rarr;</button>
+                <button class="button is-small"
+                  v-if="sessionHasPrev" @click="sessionPrev">
+                    <i class="ion-ios-arrow-back"></i>
+                </button>
+                <button class="button is-small"
+                  v-if="sessionHasNext" @click="sessionNext">
+                  <i class="ion-ios-arrow-forward"></i>
+                </button>
               </p>
             </div>
           </div>
@@ -95,11 +103,11 @@
     },
     methods: {
       leafletInit(map) {
-        map.zoomControl.remove();
         map._handlers.forEach(h => h.disable());
       },
       leafletReady(map) {
         map.addLayer(this.polyline);
+        map.fitBounds(this.polyline.getBounds());
         map.addLayer(
           L.marker(
             _.last(this.polyline.getLatLngs()), {
@@ -108,7 +116,6 @@
             }
           )
         );
-        map.fitBounds(this.polyline.getBounds());
       },
       sourceSwitchTo(source) {
         this.source = source.toLowerCase();
@@ -117,7 +124,7 @@
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
       },
       async updateLocations() {
-        let locations = [];
+        let locations = this.locations = [];
         try {
           locations = (await this.$store.getters['common/apiInsiderProgram']
             .sessionLocationsFetchAll(this.session._id, {source: this.source})).data;
@@ -125,28 +132,31 @@
           return console.error(e);
         }
 
-        this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
         this.locations = locations;
+        this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
       },
       sessionNext() {
-        if (this.sessionIdx >= this.sessions.length - 1) { return; }
-        this.locations = [];
         this.sessionIdx++;
         this.updateLocations();
       },
       sessionPrev() {
-        if (this.sessionIdx < 1) { return; }
-        this.locations = [];
         this.sessionIdx--;
         this.updateLocations();
       }
     },
     computed: {
+      sessionHasNext() {
+        return (this.sessionIdx < this.sessions.length - 1);
+      },
+      sessionHasPrev() {
+        return this.sessionIdx > 0;
+      },
       session() {
         return this.sessions[this.sessionIdx];
       },
       leafletTileConfig() {
         return {
+          minZoom: 7,
           id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
             ? 'mapbox.dark' : 'mapbox.streets'
         };
