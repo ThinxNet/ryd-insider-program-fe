@@ -1,62 +1,58 @@
 <template>
-  <div class="tile">
-    <div class="tile is-parent">
-      <div class="tile is-parent">
-        <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
-        <div v-else-if="session" class="card tile is-child">
-          <div class="card-image" style="height: 400px;">
-            <leaflet style="height: 400px;" v-if="(locations.length > 0)"
-              @init.once="leafletInit"
-              @tileLoaded.once="leafletReady"
-              :tileConfig="leafletTileConfig"></leaflet>
+  <article class="tile is-child">
+    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <div v-else-if="session" class="card">
+      <div class="card-image" style="height: 400px;">
+        <leaflet style="height: 400px;" v-if="(locations.length > 0)"
+          @init.once="leafletInit"
+          @tileLoaded.once="leafletReady"
+          :tileConfig="leafletTileConfig"></leaflet>
+      </div>
+      <div class="card-content">
+        <div class="content">
+          <div class="buttons has-addons">
+            <span class="button"
+              @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
+            <span class="button"
+              @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
+            <span class="button"
+              @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
+            <span class="button" v-if="session.statistics.mapConfidenceAvg > 60"
+              @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">
+                MAP {{ session.statistics.mapConfidenceAvg }}%
+            </span>
           </div>
-          <div class="card-content">
-            <div class="content">
-              <div class="buttons has-addons">
-                <span class="button"
-                  @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
-                <span class="button"
-                  @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-                <span class="button"
-                  @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-                <span class="button" v-if="session.statistics.mapConfidenceAvg > 60"
-                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">
-                    MAP {{ session.statistics.mapConfidenceAvg }}%
-                </span>
-              </div>
-              <p>
-                <time :datetime="$moment(session.start).format()">
-                  {{ $moment(session.start).format('LT') }}
-                </time>
-                &mdash;
-                <time :datetime="$moment(session.end).format()">
-                  {{ $moment(session.end).format('LT') }}
-                </time>
-                <br>
-                <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-                for
-                <span class="tag">
-                  ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
-                </span>
-                <br>
-                Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
-              </p>
-              <p class="has-text-right">
-                <button class="button is-small"
-                  v-if="sessionHasPrev" @click="sessionPrev">
-                    <i class="ion-ios-arrow-back"></i>
-                </button>
-                <button class="button is-small"
-                  v-if="sessionHasNext" @click="sessionNext">
-                  <i class="ion-ios-arrow-forward"></i>
-                </button>
-              </p>
-            </div>
-          </div>
+          <p>
+            <time :datetime="$moment(session.start).format()">
+              {{ $moment(session.start).format('LT') }}
+            </time>
+            &mdash;
+            <time :datetime="$moment(session.end).format()">
+              {{ $moment(session.end).format('LT') }}
+            </time>
+            <br>
+            <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
+            for
+            <span class="tag">
+              ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
+            </span>
+            <br>
+            Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+          </p>
+          <p class="has-text-right">
+            <button class="button is-small"
+              v-if="sessionHasPrev" @click="sessionNavigate('back')">
+                <i class="ion-ios-arrow-back"></i>
+            </button>
+            <button class="button is-small"
+              v-if="sessionHasNext" @click="sessionNavigate('forward')">
+              <i class="ion-ios-arrow-forward"></i>
+            </button>
+          </p>
         </div>
       </div>
     </div>
-  </div>
+  </article>
 </template>
 
 <script>
@@ -96,14 +92,12 @@
     },
     watch: {
       source(current, previous) {
-        if (!['obd', 'geo'].includes(current)) {
-          this.updateLocations();
-        }
+        this.updateLocations();
       }
     },
     methods: {
       leafletInit(map) {
-        map._handlers.forEach(h => h.disable());
+        //map._handlers.forEach(h => h.disable());
       },
       leafletReady(map) {
         map.addLayer(this.polyline);
@@ -124,10 +118,12 @@
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
       },
       async updateLocations() {
-        let locations = this.locations = [];
+        const source = ['obd', 'geo'].includes(this.source) ? 'gps' : this.source;
+
+        let locations = [];
         try {
           locations = (await this.$store.getters['common/apiInsiderProgram']
-            .sessionLocationsFetchAll(this.session._id, {source: this.source})).data;
+            .sessionLocationsFetchAll(this.session._id, {source})).data;
         } catch (e) {
           return console.error(e);
         }
@@ -135,12 +131,9 @@
         this.locations = locations;
         this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
       },
-      sessionNext() {
-        this.sessionIdx++;
-        this.updateLocations();
-      },
-      sessionPrev() {
-        this.sessionIdx--;
+      sessionNavigate(direction) {
+        this.locations = [];
+        this.sessionIdx += (direction === 'back') ? -1 : 1;
         this.updateLocations();
       }
     },

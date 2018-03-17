@@ -1,12 +1,9 @@
 <template>
-  <div class="tile is-parent">
+  <article v-show="!loading" class="tile is-child notification is-white">
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
-
-    <article v-show="!loading" class="tile is-child">
-      <p class="title">Activity</p>
-      <figure ref="chart"></figure>
-    </article>
-  </div>
+    <p class="title">Activity</p>
+    <div ref="chart"></div>
+  </article>
 </template>
 
 <script>
@@ -35,7 +32,7 @@
     watch: {
       loading (current, previous) {
         if (current) { return; }
-        this.chartRepaint();
+        setTimeout(this.chartRepaint);
       }
     },
     methods: {
@@ -60,8 +57,10 @@
         });
 
         (new google.visualization.BarChart(this.$refs.chart)).draw(data, {
-          chartArea: {width: '60%', height: '90%'},
-          legend: {position: 'none'},
+          chartArea: {width: '100%', height: '100%'},
+          theme: 'maximized',
+          legend: { position: 'in', maxLines: 3, alignment: 'center' },
+          vAxis: { viewWindowMode: 'explicit'},
           hAxis: {textPosition: 'none', baselineColor: '#039be5', gridlines: {color: 'none'}},
           isStacked: true
         });

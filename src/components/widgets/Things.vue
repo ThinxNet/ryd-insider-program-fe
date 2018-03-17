@@ -1,25 +1,23 @@
 <template>
-  <div class="column">
-    <div class="box">
-      <span v-if="loading" class="icon is-large">
-        <i class="ion-clock"></i>
-      </span>
+  <article class="tile is-child notification is-white">
+    <span v-if="loading" class="icon is-large">
+      <i class="ion-clock"></i>
+    </span>
 
-      <div v-else class="control has-icons-left">
-        <div class="select is-medium is-fullwidth">
-          <select v-model="selected">
-            <option disabled value="">Select one&hellip;</option>
-            <option :value="entry._id" v-for="entry in entries">
-              {{entry.nickName}} ({{entry.ymme.year}} {{entry.ymme.make}} {{entry.ymme.model}})
-            </option>
-          </select>
-        </div>
-        <span class="icon is-medium is-left">
-          <i class="ion-android-car"></i>
-        </span>
+    <div v-else class="control has-icons-left">
+      <div class="select is-medium is-fullwidth">
+        <select v-model="selected">
+          <option disabled value="">Select one&hellip;</option>
+          <option :value="entry._id" v-for="entry in entries">
+            {{entry.nickName}} ({{entry.ymme.year}} {{entry.ymme.make}} {{entry.ymme.model}})
+          </option>
+        </select>
       </div>
+      <span class="icon is-medium is-left">
+        <i class="ion-android-car"></i>
+      </span>
     </div>
-  </div>
+  </article>
 </template>
 
 <script>
