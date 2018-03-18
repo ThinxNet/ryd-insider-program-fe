@@ -43,6 +43,7 @@ import moment from 'moment';
 
 Vue.prototype.$_ = lodash;
 Vue.prototype.$moment = moment;
+moment.locale('de');
 
 L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
 

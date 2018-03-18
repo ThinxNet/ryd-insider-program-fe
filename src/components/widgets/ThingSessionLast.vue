@@ -11,20 +11,19 @@
       <div class="card-content">
         <div class="content">
           <div class="buttons has-addons">
-            <span class="button"
+            <span class="button is-small"
               @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
-            <span class="button"
+            <span class="button is-small"
               @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-            <span class="button"
+            <span class="button is-small"
               @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-            <span class="button" v-if="session.statistics.mapConfidenceAvg > 60"
-              @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')">
-                MAP {{ session.statistics.mapConfidenceAvg }}%
-            </span>
+            <span class="button is-small" v-if="session.statistics.mapConfidenceAvg > 60"
+              @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
+              :title="session.statistics.mapConfidenceAvg + '%'">MAP</span>
           </div>
           <p>
             <time :datetime="$moment(session.start).format()">
-              {{ $moment(session.start).format('LT') }}
+              {{ $moment(session.start).format('L LT') }}
             </time>
             &mdash;
             <time :datetime="$moment(session.end).format()">
@@ -36,8 +35,10 @@
             <span class="tag">
               ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
             </span>
-            <br>
-            Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+            <template v-if="sessionStatistics.speedKmHAvg">
+              <br>
+              Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+            </template>
           </p>
           <p class="has-text-right">
             <button class="button is-small"

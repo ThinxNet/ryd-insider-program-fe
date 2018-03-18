@@ -1,8 +1,8 @@
 <template>
-  <article v-show="!loading" class="tile is-child notification is-white">
-    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+  <article class="tile is-child notification is-white">
     <p class="title">Activity</p>
-    <div ref="chart"></div>
+    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <div v-else ref="chart"></div>
   </article>
 </template>
 
@@ -58,11 +58,11 @@
 
         (new google.visualization.BarChart(this.$refs.chart)).draw(data, {
           chartArea: {width: '100%', height: '100%'},
-          theme: 'maximized',
-          legend: { position: 'in', maxLines: 3, alignment: 'center' },
-          vAxis: { viewWindowMode: 'explicit'},
           hAxis: {textPosition: 'none', baselineColor: '#039be5', gridlines: {color: 'none'}},
-          isStacked: true
+          isStacked: true,
+          legend: { position: 'in', maxLines: 3, alignment: 'center' },
+          theme: 'maximized',
+          vAxis: { viewWindowMode: 'explicit'}
         });
       }
     }
