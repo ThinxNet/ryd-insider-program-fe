@@ -1,8 +1,6 @@
 <template>
   <article class="tile is-child notification is-white">
-    <span v-if="loading" class="icon is-large">
-      <i class="ion-clock"></i>
-    </span>
+    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
 
     <div v-else class="control has-icons-left">
       <div class="select is-medium is-fullwidth">

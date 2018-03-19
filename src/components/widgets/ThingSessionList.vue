@@ -61,7 +61,7 @@
   import _ from 'lodash';
 
   export default {
-    name: 'widget-thing-session-last',
+    name: 'widget-thing-session-list',
     props: {entity: Object},
     components: {Leaflet},
     data() {
@@ -129,6 +129,7 @@
           return console.error(e);
         }
 
+        this.$emit('onSessionChange', this.session._id);
         this.locations = locations;
         this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
       },

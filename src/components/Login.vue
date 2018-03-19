@@ -18,7 +18,7 @@
           @click.prevent="login">Login</a>
       </form>
     </div>
-    <p class="has-text-white has-text-weight-bold">
+    <p class="has-text-white has-text-weight-bold has-text-centered">
       <a href="https://www.tanktaler.de/blog/insider-program" target="_blank"
         class="has-text-white">What is it?</a>
     </p>
