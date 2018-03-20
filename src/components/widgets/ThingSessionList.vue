@@ -21,7 +21,7 @@
               @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
               :title="session.statistics.mapConfidenceAvg + '%'">MAP</span>
           </div>
-          <p>
+          <p class="notification is-white">
             <time :datetime="$moment(session.start).format()">
               {{ $moment(session.start).format('L LT') }}
             </time>
@@ -40,16 +40,28 @@
               Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
             </template>
           </p>
-          <p class="has-text-right">
-            <button class="button is-small"
-              v-if="sessionHasPrev" @click="sessionNavigate('back')">
-                <i class="ion-ios-arrow-back"></i>
-            </button>
-            <button class="button is-small"
-              v-if="sessionHasNext" @click="sessionNavigate('forward')">
-              <i class="ion-ios-arrow-forward"></i>
-            </button>
-          </p>
+
+          <div class="columns is-flex">
+            <div class="column is-2">
+              <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
+            </div>
+            <div class="column is-3">
+              <div class="buttons has-addons">
+                <span class="button is-size-7"><i class="ion-thumbsup"></i></span>
+                <span class="button is-size-7"><i class="ion-thumbsdown"></i></span>
+              </div>
+            </div>
+            <div class="column has-text-right is-7">
+              <button class="button is-small"
+                v-if="sessionHasPrev" @click="sessionNavigate('back')">
+                  <i class="ion-ios-arrow-back"></i>
+              </button>
+              <button class="button is-small"
+                v-if="sessionHasNext" @click="sessionNavigate('forward')">
+                <i class="ion-ios-arrow-forward"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -60,10 +72,13 @@
   import Leaflet from '../Leaflet';
   import _ from 'lodash';
 
+  import Widget from '../../lib/mixins/widget';
+
   export default {
     name: 'widget-thing-session-list',
-    props: {entity: Object},
     components: {Leaflet},
+    mixins: [Widget],
+    props: {entity: Object},
     data() {
       return {
         loading: true,

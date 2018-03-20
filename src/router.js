@@ -19,12 +19,14 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import ComponentsLogin from './components/Login';
 import ComponentsDashboard from './components/Dashboard';
+import ComponentsLogin from './components/Login';
+import WidgetsFeedback from './components/widgets/Feedback';
 
 export default new VueRouter({
   routes: [
     {path: '/', name: 'dashboard', component: ComponentsDashboard},
-    {path: '/login', name: 'login', component: ComponentsLogin}
+    {path: '/login', name: 'login', component: ComponentsLogin},
+    {path: '/widget-feedback', name: 'widget-feedback', component: WidgetsFeedback}
   ]
 });

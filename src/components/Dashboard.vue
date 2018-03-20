@@ -28,14 +28,14 @@
             <article class="tile is-child notification is-white">
               <div class="content">
                 <p class="title">Insider Program</p>
-                <p class="subtitle">Subtitle</p>
+                <p class="subtitle">news feed</p>
                 <div class="content">
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper diam at
-                    erat pulvinar, at pulvinar felis blandit. Vestibulum volutpat tellus diam,
-                    consequat gravida libero rhoncus ut. Morbi maximus, leo sit amet vehicula
-                    eleifend, nunc dui porta orci, quis semper odio felis ut quam.
-                  </p>
+                  <dl>
+                    <dt>12.03.2018 </dt>
+                    <dd>Initial demonstration to the awesome team.</dd>
+                    <dt>01.11.2017</dt>
+                    <dd>Initial demonstration to the awesome team.</dd>
+                  </dl>
                 </div>
               </div>
             </article>
