@@ -47,8 +47,10 @@
             </div>
             <div class="column is-3">
               <div class="buttons has-addons">
-                <span class="button is-size-7"><i class="ion-thumbsup"></i></span>
-                <span class="button is-size-7"><i class="ion-thumbsdown"></i></span>
+                <router-link :to="{name: 'widget-feedback', params: {direction: 'up'}}"
+                  class="button is-size-7"><i class="ion-thumbsup"></i></router-link>
+                <router-link :to="{name: 'widget-feedback', params: {direction: 'down'}}"
+                  class="button is-size-7"><i class="ion-thumbsdown"></i></router-link>
               </div>
             </div>
             <div class="column has-text-right is-7">
