@@ -1,6 +1,7 @@
 box: node:9
 
 build:
+  steps:
     - npm-install
 
     - script:
