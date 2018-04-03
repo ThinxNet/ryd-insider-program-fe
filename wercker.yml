@@ -1,0 +1,35 @@
+box: node:9
+
+build:
+    - npm-install
+
+    - script:
+      name: build
+      code: |-
+        node npm run build
+
+    - script:
+      name: artifacts
+      code: |-
+        mv "$WERCKER_SOURCE_DIR/dist" "$WERCKER_OUTPUT_DIR/"
+        mv "$WERCKER_SOURCE_DIR/assets" "$WERCKER_OUTPUT_DIR/"
+        mv "$WERCKER_SOURCE_DIR/index.html" "$WERCKER_OUTPUT_DIR/"
+
+deploy:
+  steps:
+    - install-packages:
+      packages: rsync
+
+    - add-to-known_hosts:
+      local: true
+      hostname: insider.thinxcloud-staging.de
+      fingerprint: 2b:24:80:d9:d6:08:33:8c:3f:5b:91:e1:2b:5b:36:b2
+
+    - add-ssh-key:
+      keyname: SSH_KEY
+      host: insider.thinxcloud-staging.de
+
+    - script:
+      name: sending files
+      code: |-
+        rsync -arz "$WERCKER_SOURCE_DIR/" insider@insider.thinxcloud-staging.de:/opt/tanktaler-insider-program-fe
