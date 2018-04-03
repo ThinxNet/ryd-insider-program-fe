@@ -24,7 +24,7 @@ deploy:
     - add-to-known_hosts:
       local: true
       hostname: insider.thinxcloud-staging.de
-      fingerprint: 2b:24:80:d9:d6:08:33:8c:3f:5b:91:e1:2b:5b:36:b2
+      fingerprint: EM54sOaXYyGY3YJsHm/mceg+Qmuauv1t68p20NxPpag
 
     - add-ssh-key:
       keyname: SSH_KEY
