@@ -7,7 +7,7 @@ build:
     - script:
       name: build
       code: |-
-        node npm run build
+        npm run build
 
     - script:
       name: artifacts
