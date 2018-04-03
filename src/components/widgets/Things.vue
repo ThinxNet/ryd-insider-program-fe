@@ -7,7 +7,7 @@
         <select v-model="selected">
           <option disabled value="">Select one&hellip;</option>
           <option :value="entry._id" v-for="entry in entries">
-            {{entry.nickName}} ({{entry.ymme.year}} {{entry.ymme.make}} {{entry.ymme.model}})
+            {{entry.nickName}}<template v-if="entry.ymme"> ({{entry.ymme.year}} {{entry.ymme.make}} {{entry.ymme.model}})</template>
           </option>
         </select>
       </div>
