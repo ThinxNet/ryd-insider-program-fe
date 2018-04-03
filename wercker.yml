@@ -22,9 +22,10 @@ deploy:
       packages: rsync
 
     - add-to-known_hosts:
-      local: true
-      hostname: insider.thinxcloud-staging.de
       fingerprint: EM54sOaXYyGY3YJsHm/mceg+Qmuauv1t68p20NxPpag
+      hostname: insider.thinxcloud-staging.de
+      local: true
+      type: ecdsa
 
     - add-ssh-key:
       keyname: SSH_KEY
