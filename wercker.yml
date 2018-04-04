@@ -41,7 +41,7 @@ deploy:
     - script:
       name: killing temporary server
       code: |-
-        ssh insider@185.201.144.128 "pkill -e -f 'SimpleHTTPServer' || true"
+        ssh insider@185.201.144.128 "ps -ef | grep SimpleHTTPServer | awk '{print $2}' | xargs kill -9 || true"
 
     - script:
       name: starting temporary server
