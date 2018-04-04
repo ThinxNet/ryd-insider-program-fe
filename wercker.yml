@@ -37,3 +37,8 @@ deploy:
         rsync -arz "$WERCKER_SOURCE_DIR/" "insider@185.201.144.128:/opt/insider/tanktaler-insider-program-fe_${WERCKER_GIT_COMMIT}"
         ssh insider@185.201.144.128 "rm -rf /opt/insider/tanktaler-insider-program-fe_backup"
         ssh insider@185.201.144.128 "cd /opt/insider; mv tanktaler-insider-program-fe tanktaler-insider-program-fe_backup && mv tanktaler-insider-program-fe_${WERCKER_GIT_COMMIT} tanktaler-insider-program-fe"
+
+    - script:
+      name: starting temporary server
+      code: |-
+        ssh insider@185.201.144.128 "cd /opt/insider/tanktaler-insider-program-fe; nohup python -m SimpleHTTPServer 8080 >> /tmp/tanktaler-insider-program-fe.log 2>&1 </dev/null & &"
