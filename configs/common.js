@@ -7,7 +7,7 @@ export default {
       baseURL: 'https://tt4.thinxcloud-staging.de'
     },
     insiderProgram: {
-      baseURL: 'http://localhost:8080'
+      baseURL: 'https://insider-api.thinxcloud-staging.de/'
     }
   }
 };
