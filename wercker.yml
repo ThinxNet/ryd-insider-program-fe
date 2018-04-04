@@ -35,4 +35,5 @@ deploy:
       name: sending files
       code: |-
         rsync -arz "$WERCKER_SOURCE_DIR/" "insider@185.201.144.128:/opt/insider/tanktaler-insider-program-fe_${WERCKER_GIT_COMMIT}"
+        ssh insider@185.201.144.128 "rm -rf /opt/insider/tanktaler-insider-program-fe_backup"
         ssh insider@185.201.144.128 "cd /opt/insider; mv tanktaler-insider-program-fe tanktaler-insider-program-fe_backup && mv tanktaler-insider-program-fe_${WERCKER_GIT_COMMIT} tanktaler-insider-program-fe"
