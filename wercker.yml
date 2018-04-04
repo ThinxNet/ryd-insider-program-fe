@@ -41,4 +41,4 @@ deploy:
     - script:
       name: starting temporary server
       code: |-
-        ssh insider@185.201.144.128 "cd /opt/insider/tanktaler-insider-program-fe; nohup python -m SimpleHTTPServer 8080 >> /tmp/tanktaler-insider-program-fe.log 2>&1 </dev/null & &"
+        ssh insider@185.201.144.128 "cd /opt/insider/tanktaler-insider-program-fe; nohup python -m SimpleHTTPServer 8080 >> /tmp/tanktaler-insider-program-fe.log 2>&1 </dev/null &"
