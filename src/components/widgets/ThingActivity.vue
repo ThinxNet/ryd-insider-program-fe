@@ -13,29 +13,37 @@
     name: 'widget-thing-charts',
     props: {entity: Object},
     data() {
-      return {loading: true, payload: []};
+      return {api: null, loading: true, payload: []};
     },
     beforeMount() {
       google.charts.load('current', {packages: ['corechart', 'bar']});
     },
     async mounted() {
-      try {
-        const response = await this.$store.getters['common/apiInsiderProgram']
-          .statisticsActivity(this.entity._id);
-        this.payload = response.data;
-      } catch (e) {
-        console.error(e);
-      } finally {
-        this.loading = false;
-      }
+      this.api = await this.$store.getters['common/apiInsiderProgram'];
+      google.charts.setOnLoadCallback(() => this.entityChange(this.entity));
     },
     watch: {
-      loading (current, previous) {
+      loading(current, previous) {
         if (current) { return; }
         setTimeout(this.chartRepaint);
+      },
+      entity(current, previous) {
+        this.entityChange(current);
       }
     },
     methods: {
+      async entityChange(entity) {
+        this.loading = true;
+        try {
+          const response = await this.api.statisticsActivity(entity._id);
+          this.payload = response.data;
+        } catch (e) {
+          console.error(e);
+        } finally {
+          this.loading = false;
+        }
+      },
+
       chartRepaint() {
         const data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
@@ -44,7 +52,7 @@
         data.addColumn('number', 'Standstill');
         data.addColumn({type: 'string', role: 'tooltip'});
 
-        this.payload.forEach(e => {
+        (this.payload || []).forEach(e => {
           const driveDuration = moment.duration(e.geoDriveDurationS, 's'),
             stayDuration = moment.duration(e.geoStayDurationS, 's');
           data.addRow([

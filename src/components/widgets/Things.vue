@@ -31,7 +31,7 @@
       try {
         const response = await this.$store.getters['common/apiInsiderProgram']
           .thingsFetchAll({page: {size: 1}});
-        this.entries = response.data;
+        this.entries = response.data.filter(e => e.device);
       } catch (e) {
         console.error(e);
       } finally {

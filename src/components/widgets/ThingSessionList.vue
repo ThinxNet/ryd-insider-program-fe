@@ -83,6 +83,7 @@
     props: {entity: Object},
     data() {
       return {
+        api: null,
         loading: true,
         locations: [],
         polyline: null,
@@ -91,26 +92,17 @@
         source: null
       };
     },
-    async mounted() {
+    mounted() {
+      this.api = this.$store.getters['common/apiInsiderProgram'];
       this.polyline = L.polyline([], {color: '#039be5', interactive: false});
-
-      try {
-        const api = this.$store.getters['common/apiInsiderProgram'],
-          payload = {filter: {device: this.entity.device}, page: {size: 10}},
-          response = await api.sessionsFetchAll(payload);
-        this.sessions = response.data;
-        this.sessionIdx = 0;
-      } catch (e) {
-        return console.error(e);
-      } finally {
-        this.loading = false;
-      }
-
-      this.sourceSwitchTo('gps');
+      this.entityChange(this.entity);
     },
     watch: {
       source(current, previous) {
         this.updateLocations();
+      },
+      entity(current, previous) {
+        this.entityChange(current);
       }
     },
     methods: {
@@ -128,6 +120,20 @@
             }
           )
         );
+      },
+      async entityChange(entity) {
+        this.loading = true;
+        try {
+          const payload = {filter: {device: entity.device}, page: {size: 10}},
+            response = await this.api.sessionsFetchAll(payload);
+          this.sessions = response.data;
+          this.sessionIdx = 0;
+        } catch (e) {
+          return console.error(e);
+        } finally {
+          this.loading = false;
+        }
+        this.sourceSwitchTo('gps');
       },
       sourceSwitchTo(source) {
         this.source = source.toLowerCase();
