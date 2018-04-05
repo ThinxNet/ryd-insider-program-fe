@@ -16,6 +16,11 @@ build:
         mv "$WERCKER_SOURCE_DIR/assets" "$WERCKER_OUTPUT_DIR/"
         mv "$WERCKER_SOURCE_DIR/index.html" "$WERCKER_OUTPUT_DIR/"
 
+    - script:
+      name: injecting commit number
+      code: |-
+        sed -i -e "s/%GIT_COMMIT%/${WERCKER_GIT_COMMIT}/g" "${WERCKER_OUTPUT_DIR}/index.html"
+
 deploy:
   steps:
     - install-packages:
