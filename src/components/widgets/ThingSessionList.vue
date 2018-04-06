@@ -164,7 +164,8 @@
           return console.error(e);
         }
 
-        if (source === 'map' && !locations.length) {
+        if (source === 'map'
+          && (!locations.length || this.session.statistics.mapConfidenceAvg <= 60)) {
           this.sourceSwitchTo('gps');
           return;
         }
