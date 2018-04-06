@@ -54,11 +54,11 @@
               </div>
             </div>
             <div class="column has-text-right is-7">
-              <button class="button is-small"
+              <button :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
                 v-if="sessionHasPrev" @click="sessionNavigate('back')">
                   <i class="ion-ios-arrow-back"></i>
               </button>
-              <button class="button is-small"
+              <button :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
                 v-if="sessionHasNext" @click="sessionNavigate('forward')">
                 <i class="ion-ios-arrow-forward"></i>
               </button>
@@ -84,6 +84,7 @@
     data() {
       return {
         api: null,
+        leafletBlocked: false,
         loading: true,
         locations: [],
         polyline: null,
@@ -92,23 +93,28 @@
         source: null
       };
     },
+
     mounted() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
       this.polyline = L.polyline([], {color: '#039be5', interactive: false});
       this.entityChange(this.entity);
     },
+
     watch: {
       source(current, previous) {
         this.updateLocations();
       },
+
       entity(current, previous) {
         this.entityChange(current);
       }
     },
+
     methods: {
       leafletInit(map) {
         //map._handlers.forEach(h => h.disable());
       },
+
       leafletReady(map) {
         map.addLayer(this.polyline);
         map.fitBounds(this.polyline.getBounds());
@@ -120,7 +126,9 @@
             }
           )
         );
+        this.leafletBlocked = false;
       },
+
       async entityChange(entity) {
         this.loading = true;
         try {
@@ -135,12 +143,15 @@
         }
         this.sourceSwitchTo('gps');
       },
+
       sourceSwitchTo(source) {
         this.source = source.toLowerCase();
       },
+
       sourceBtnClass(source) {
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
       },
+
       async updateLocations() {
         const source = ['obd', 'geo'].includes(this.source) ? 'gps' : this.source;
 
@@ -156,22 +167,28 @@
         this.locations = locations;
         this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
       },
+
       sessionNavigate(direction) {
+        this.leafletBlocked = true;
         this.locations = [];
         this.sessionIdx += (direction === 'back') ? -1 : 1;
         this.updateLocations();
       }
     },
+
     computed: {
       sessionHasNext() {
         return (this.sessionIdx < this.sessions.length - 1);
       },
+
       sessionHasPrev() {
         return this.sessionIdx > 0;
       },
+
       session() {
         return this.sessions[this.sessionIdx];
       },
+
       leafletTileConfig() {
         return {
           minZoom: 7,
@@ -179,6 +196,7 @@
             ? 'mapbox.dark' : 'mapbox.streets'
         };
       },
+
       sessionStatistics() {
         const fields = {
           distanceM: this.session.statistics.geoDistanceM,
