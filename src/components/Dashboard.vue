@@ -39,9 +39,9 @@
                 <p class="subtitle">news feed</p>
                 <div class="content">
                   <dl>
+                    <dt>06.04.2018 </dt>
+                    <dd>The first public available version.</dd>
                     <dt>12.03.2018 </dt>
-                    <dd>Initial demonstration to the awesome team.</dd>
-                    <dt>01.11.2017</dt>
                     <dd>Initial demonstration to the awesome team.</dd>
                   </dl>
                 </div>
