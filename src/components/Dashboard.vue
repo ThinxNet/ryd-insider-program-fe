@@ -5,6 +5,14 @@
         <widget-things @onEntrySelected="thingChange"></widget-things>
       </div>
 
+      <div class="tile is-parent">
+        <div class="notification is-warning">
+          Map information comes from very slow and unreliable machines. Some trips might
+          have less that 50% of real data. Having mentioned limitations, please consider these results
+          only for concept-demonstration purposes.
+        </div>
+      </div>
+
       <div class="tile" v-if="thing">
         <!-- last session -->
         <div class="tile is-parent is-4">
