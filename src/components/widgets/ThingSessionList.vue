@@ -126,7 +126,6 @@
             }
           )
         );
-        this.leafletBlocked = false;
       },
 
       async entityChange(entity) {
@@ -153,6 +152,8 @@
       },
 
       async updateLocations() {
+        this.leafletBlocked = true;
+
         const source = ['obd', 'geo'].includes(this.source) ? 'gps' : this.source;
 
         let locations = [];
@@ -163,13 +164,18 @@
           return console.error(e);
         }
 
+        if (source === 'map' && !locations.length) {
+          this.sourceSwitchTo('gps');
+          return;
+        }
+
         this.$emit('onSessionChange', this.session._id);
         this.locations = locations;
         this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
+        this.leafletBlocked = false;
       },
 
       sessionNavigate(direction) {
-        this.leafletBlocked = true;
         this.locations = [];
         this.sessionIdx += (direction === 'back') ? -1 : 1;
         this.updateLocations();
