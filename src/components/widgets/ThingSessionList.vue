@@ -29,6 +29,11 @@
             <time :datetime="$moment(session.end).format()">
               {{ $moment(session.end).format('LT') }}
             </time>
+
+            <template v-if="source === 'map' && viaStreets.length">
+              <br><small>{{ viaStreets.join(', ') }}</small>
+            </template>
+
             <br>
             <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
             for
@@ -196,14 +201,6 @@
         return this.sessions[this.sessionIdx];
       },
 
-      leafletTileConfig() {
-        return {
-          minZoom: 7,
-          id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
-            ? 'mapbox.dark' : 'mapbox.streets'
-        };
-      },
-
       sessionStatistics() {
         const fields = {
           distanceM: this.session.statistics.geoDistanceM,
@@ -227,6 +224,32 @@
             break;
         }
         return fields;
+      },
+
+      leafletTileConfig() {
+        return {
+          minZoom: 7,
+          id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
+            ? 'mapbox.dark' : 'mapbox.streets'
+        };
+      },
+
+      viaStreets() {
+        const streets = _(this.locations).map('street').reject(_.isEmpty).uniq().value();
+        if (!streets.length) {
+          return [];
+        }
+        if (streets.length < 2) {
+          return _.head(streets);
+        }
+        if (streets.length < 3) {
+          return streets;
+        }
+        return [
+          _.head(streets),
+          _.nth(streets, Math.round((streets.length - 1) / 2)),
+          _.last(streets)
+        ];
       }
     }
   }
