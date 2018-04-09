@@ -3,10 +3,15 @@
     <p class="title">Activity</p>
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
     <div v-else ref="chart"></div>
+    <p v-if="payload.length">
+      You've spent <span class="tag">{{ timeDrive }}</span> in the car
+      and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
+    </p>
   </article>
 </template>
 
 <script>
+  import _ from 'lodash';
   import moment from 'moment';
 
   export default {
@@ -72,6 +77,16 @@
           theme: 'maximized',
           vAxis: { viewWindowMode: 'explicit'}
         });
+      }
+    },
+
+    computed: {
+      timeStandstill() {
+        return moment.duration(_.sumBy(this.payload, 'geoStayDurationS'), 's').humanize();
+      },
+
+      timeDrive() {
+        return moment.duration(_.sumBy(this.payload, 'geoDriveDurationS'), 's').humanize();
       }
     }
   }
