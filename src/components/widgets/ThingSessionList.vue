@@ -10,41 +10,48 @@
       </div>
       <div class="card-content">
         <div class="content">
-          <div class="buttons has-addons">
-            <span class="button is-small"
-              @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
-            <span class="button is-small"
-              @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-            <span class="button is-small"
-              @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-            <span class="button is-small" v-if="session.statistics.mapConfidenceAvg > 60"
-              @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
-              :title="session.statistics.mapConfidenceAvg + '%'">MAP</span>
+          <div class="columns">
+            <div class="column">
+              <div class="buttons has-addons is-centered">
+                <span class="button is-small"
+                  @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
+                <span class="button is-small"
+                  @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
+                <span class="button is-small"
+                  @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
+                <span class="button is-small" v-if="session.statistics.mapConfidenceAvg > 60"
+                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
+                  :title="session.statistics.mapConfidenceAvg + '%'">MAP</span>
+              </div>
+            </div>
           </div>
-          <p class="notification is-white">
-            <time :datetime="$moment(session.start).format()">
-              {{ $moment(session.start).format('L LT') }}
-            </time>
-            &mdash;
-            <time :datetime="$moment(session.end).format()">
-              {{ $moment(session.end).format('LT') }}
-            </time>
 
-            <template v-if="source === 'map' && viaStreets.length">
-              <br><small>{{ viaStreets.join(', ') }}</small>
-            </template>
+          <div class="columns">
+            <div class="column">
+              <time :datetime="$moment(session.start).format()">
+                {{ $moment(session.start).format('L LT') }}
+              </time>
+              &mdash;
+              <time :datetime="$moment(session.end).format()">
+                {{ $moment(session.end).format('LT') }}
+              </time>
 
-            <br>
-            <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-            for
-            <span class="tag">
-              ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
-            </span>
-            <template v-if="sessionStatistics.speedKmHAvg">
+              <template v-if="source === 'map' && viaStreets.length">
+                <br><small>{{ viaStreets.join(', ') }}</small>
+              </template>
+
               <br>
-              Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
-            </template>
-          </p>
+              <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
+              for
+              <span class="tag">
+                ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
+              </span>
+              <template v-if="sessionStatistics.speedKmHAvg">
+                <br>
+                Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+              </template>
+            </div>
+          </div>
 
           <div class="columns is-flex">
             <div class="column is-2">
@@ -59,12 +66,14 @@
               </div>
             </div>
             <div class="column has-text-right is-7">
-              <button :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
-                v-if="sessionHasPrev" @click="sessionNavigate('back')">
+              <button @click="sessionNavigate('back')"
+                :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
+                :disabled="!sessionHasPrev">
                   <i class="ion-ios-arrow-back"></i>
               </button>
-              <button :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
-                v-if="sessionHasNext" @click="sessionNavigate('forward')">
+              <button @click="sessionNavigate('forward')"
+                :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
+                :disabled="!sessionHasNext">
                 <i class="ion-ios-arrow-forward"></i>
               </button>
             </div>

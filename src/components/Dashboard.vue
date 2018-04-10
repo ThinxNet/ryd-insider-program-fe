@@ -22,9 +22,9 @@
 
         <div class="tile is-vertical">
           <div class="tile">
-            <!-- session history -->
+            <!-- session details -->
             <div class="tile is-parent">
-              <widget-thing-session-history :sessionId="thingSessionId"></widget-thing-session-history>
+              <widget-thing-session-details :sessionId="thingSessionId"></widget-thing-session-details>
             </div>
 
             <!-- activity -->
@@ -58,7 +58,7 @@
 <script>
   import WidgetThingActivity from './widgets/ThingActivity';
   import WidgetThings from './widgets/Things';
-  import WidgetThingSessionHistory from './widgets/ThingSessionHistory';
+  import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
   import WidgetThingSessionList from './widgets/ThingSessionList';
 
   export default {
@@ -67,7 +67,7 @@
       return {thing: null, thingSessionId: null};
     },
     components: {
-      WidgetThingActivity, WidgetThings, WidgetThingSessionHistory, WidgetThingSessionList
+      WidgetThingActivity, WidgetThings, WidgetThingSessionDetails, WidgetThingSessionList
     },
     computed: {
       identity() {

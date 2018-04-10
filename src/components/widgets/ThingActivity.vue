@@ -73,9 +73,9 @@
           chartArea: {width: '100%', height: '100%'},
           hAxis: {textPosition: 'none', baselineColor: '#039be5', gridlines: {color: 'none'}},
           isStacked: true,
-          legend: { position: 'in', maxLines: 3, alignment: 'center' },
+          legend: {position: 'in', maxLines: 3, alignment: 'center'},
           theme: 'maximized',
-          vAxis: { viewWindowMode: 'explicit'}
+          vAxis: {viewWindowMode: 'explicit', gridlines: {color: 'none'}}
         });
       }
     },
