@@ -173,7 +173,7 @@
         let locations = [];
         try {
           locations = (await this.$store.getters['common/apiInsiderProgram']
-            .sessionLocationsFetchAll(this.session._id, {source})).data;
+            .sessionLocations(this.session._id, {source})).data;
         } catch (e) {
           return console.error(e);
         }
