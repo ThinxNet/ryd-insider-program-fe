@@ -249,7 +249,7 @@
           return [];
         }
         if (streets.length < 2) {
-          return _.head(streets);
+          return [_.head(streets)];
         }
         if (streets.length < 3) {
           return streets;
