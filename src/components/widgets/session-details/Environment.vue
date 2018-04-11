@@ -2,7 +2,7 @@
   <div v-if="loading" class="has-text-centered">
     <span class="icon is-large"><i class="ion-clock"></i></span>
   </div>
-  <div v-else style="max-height: 280px; overflow-y: scroll;">
+  <div v-else-if="Object.keys(entries).length" style="max-height: 280px; overflow-y: scroll;">
     <table class="table is-fullwidth is-narrow is-hoverable">
       <thead>
         <tr>
@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="key in $_.keys(entries)">
+        <tr v-for="key in Object.keys(entries)">
           <td><span class="tag">{{ key }}</span></td>
           <td>
             <table class="table is-narrow is-fullwidth">
@@ -27,24 +27,21 @@
       </tbody>
     </table>
   </div>
+  <div v-else class="notification">No environmental information is available.</div>
 </template>
 
 <script>
   import _ from 'lodash';
 
   const USABLE_TAGS = [
-    /*'access',
-    'bridge',*/
     'fee',
     'highway',
-    //'junction',
     'lanes',
     'lit',
     'maxspeed',
     'maxspeed:forward',
     'maxspeed:type',
     'name',
-    //'oneway',
     'shoulder',
     'smoothness',
     'surface',

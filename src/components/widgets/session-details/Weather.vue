@@ -17,7 +17,7 @@
     pressure <span class="tag">{{ weather[0].payload.main.pressure }} hPa</span>.
   </article>
 
-  <div v-else>No weather information available.</div>
+  <div v-else class="notification">No weather information available.</div>
 </template>
 
 <script>
