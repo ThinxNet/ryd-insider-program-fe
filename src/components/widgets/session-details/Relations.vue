@@ -43,7 +43,7 @@
         this.loading = true;
         try {
           this.relations = (await this.$store.getters['common/apiInsiderProgram']
-            .sessionAlike(id)).data;
+            .sessionAlike(id, {confidence: 40})).data;
         } catch (e) {
           console.error(e);
         } finally {
