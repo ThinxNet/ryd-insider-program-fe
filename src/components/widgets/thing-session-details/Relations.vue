@@ -4,7 +4,7 @@
   </div>
   <article v-else class="content">
     <p v-if="alikeSimilar.length && alikeClose.length">
-      You did <span class="tag">{{ alikeSimilar.length }}</span>
+      You did <span class="tag">{{ alikeSimilar.length }}</span> similar trips
       and <span class="tag">{{ alikeClose.length }}</span> trips with the
       same signature.
     </p>
@@ -14,7 +14,7 @@
       same signature.
     </p>
     <p v-else-if="alikeSimilar.length && !alikeClose.length">
-      You did <span class="tag">{{ alikeSimilar.length }}</span> similar trip
+      You did <span class="tag">{{ alikeSimilar.length }}</span> similar trips
       and no trips with the same signature.
     </p>
     <p v-else class="notification">
