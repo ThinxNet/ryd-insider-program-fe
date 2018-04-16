@@ -20,7 +20,7 @@ import Vuex from 'vuex';
 
 import Config from '../config';
 import InsiderProgramApi from "../lib/api/InsiderProgramApi";
-import TankTalerApi from '../lib/api/TankTalerApi';
+import RydApi from '../lib/api/RydApi';
 
 Vue.use(VueResource);
 Vue.use(Vuex);
@@ -32,12 +32,12 @@ export default new Vuex.Store(
         namespaced: true,
         state: {
           apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
-          apiTankTaler: new TankTalerApi(Vue.http, Config.api.tankTaler.baseURL),
+          apiRyd: new RydApi(Vue.http, Config.api.tankTaler.baseURL),
           locale: null
         },
         getters: {
           apiInsiderProgram: state => state.apiInsiderProgram,
-          apiTankTaler: state => state.apiTankTaler,
+          apiRyd: state => state.apiRyd,
           locale: state => state.locale || Config.ui.defaultLocale
         }
       },

@@ -1,7 +1,7 @@
 <template>
   <div class="column is-4 is-offset-4">
     <div class="box">
-      <form>
+      <form @keyup.enter="login">
         <div class="field">
           <div class="control">
             <input v-model="email"
@@ -14,12 +14,13 @@
               class="input is-large" type="password" placeholder="Your Password">
           </div>
         </div>
-        <a :class="['button', 'is-block', 'is-large', isFormValid ? 'is-success' : 'is-info']"
+        <a :class="['button', 'is-block', 'is-large', isFormValid ? 'is-success' : 'is-info', {'is-loading': loading}]"
+          :disabled="loading"
           @click.prevent="login">Login</a>
       </form>
     </div>
     <p class="has-text-white has-text-weight-bold has-text-centered">
-      <a href="https://www.tanktaler.de/blog/insider-program" target="_blank"
+      <a href="https://www.ryd.one/blog/insider-program" target="_blank"
         class="has-text-white">What is it?</a>
     </p>
   </div>
@@ -48,18 +49,18 @@
 
   export default {
     name: 'login',
-    data() {
-      return {email: '', password: ''};
-    },
+    data: () => ({email: '', loading: false, password: ''}),
+
     computed: {
       isFormValid() {
         return ~this.email.indexOf('@') && this.password.length > 4;
       }
     },
+
     async beforeRouteEnter (to, from, next) {
       if (!Store.getters['authentication/isAuthenticated']
         && Store.getters['authentication/authToken']) {
-        const identity = await _ttIdentity(Store.getters['common/apiTankTaler']);
+        const identity = await _ttIdentity(Store.getters['common/apiRyd']);
         if (identity) {
           Store.commit('authentication/identityUpdate', identity);
           return next(to.query.redirect);
@@ -67,9 +68,11 @@
       }
       return next();
     },
+
     methods: {
       async login() {
-        const tt4Api = Store.getters['common/apiTankTaler'],
+        this.loading = true;
+        const tt4Api = Store.getters['common/apiRyd'],
           token = await _ttToken(tt4Api, this.email, this.password);
         if (token) {
           Store.commit('authentication/tokenUpdate', token);

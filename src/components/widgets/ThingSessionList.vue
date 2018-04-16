@@ -1,12 +1,13 @@
 <template>
   <article class="tile is-child">
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
-    <div v-else-if="session" class="card">
+    <div v-else-if="paginationEntry" class="card">
       <div class="card-image" style="height: 400px;">
-        <leaflet style="height: 400px;" v-if="(locations.length > 0)"
-          @init.once="leafletInit"
-          @tileLoaded.once="leafletReady"
-          :tileConfig="leafletTileConfig"></leaflet>
+        <session-map style="height: 400px"
+          :config="mapConfig"
+          :polylineSource="source === 'map' ? 'map' : 'gps'"
+          :sessionId="paginationEntry._id" v-if="paginationEntry._id"
+          @onReadyStateChanged="mapReadyStateChange"></session-map>
       </div>
       <div class="card-content">
         <div class="content">
@@ -19,21 +20,22 @@
                   @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
                 <span class="button is-small"
                   @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-                <span class="button is-small" v-if="session.statistics.mapConfidenceAvg > 60"
+                <span class="button is-small"
+                  v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
-                  :title="session.statistics.mapConfidenceAvg + '%'">MAP</span>
+                  :title="paginationEntry.statistics.mapConfidenceAvg + '%'">MAP</span>
               </div>
             </div>
           </div>
 
           <div class="columns">
             <div class="column">
-              <time :datetime="$moment(session.start).format()">
-                {{ $moment(session.start).format('L LT') }}
+              <time :datetime="$moment(paginationEntry.start).format()">
+                {{ $moment(paginationEntry.start).format('L LT') }}
               </time>
               &mdash;
-              <time :datetime="$moment(session.end).format()">
-                {{ $moment(session.end).format('LT') }}
+              <time :datetime="$moment(paginationEntry.end).format()">
+                {{ $moment(paginationEntry.end).format('LT') }}
               </time>
 
               <template v-if="source === 'map' && viaStreets.length">
@@ -57,6 +59,8 @@
             <div class="column is-2">
               <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
             </div>
+
+            <!--
             <div class="column is-3">
               <div class="buttons has-addons">
                 <router-link :to="{name: 'widget-feedback', params: {direction: 'up'}}"
@@ -65,15 +69,17 @@
                   class="button is-size-7"><i class="ion-thumbsdown"></i></router-link>
               </div>
             </div>
-            <div class="column has-text-right is-7">
-              <button @click="sessionNavigate('back')"
-                :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
-                :disabled="!sessionHasPrev">
+            -->
+
+            <div class="column has-text-right is-10">
+              <button @click="paginationGoBackwards"
+                :class="['button', 'is-small', {'is-loading': !isMapReady}]"
+                :disabled="!paginationHasPrevious">
                   <i class="ion-ios-arrow-back"></i>
               </button>
-              <button @click="sessionNavigate('forward')"
-                :class="['button', 'is-small', {'is-loading': leafletBlocked}]"
-                :disabled="!sessionHasNext">
+              <button @click="paginationGoForward"
+                :class="['button', 'is-small', {'is-loading': !isMapReady}]"
+                :disabled="!paginationHasNext">
                 <i class="ion-ios-arrow-forward"></i>
               </button>
             </div>
@@ -85,70 +91,58 @@
 </template>
 
 <script>
-  import Leaflet from '../Leaflet';
   import _ from 'lodash';
 
+  import SessionMap from './shared/SessionMap';
+
+  import Pagination from '../../lib/mixins/pagination';
   import Widget from '../../lib/mixins/widget';
 
   export default {
     name: 'widget-thing-session-list',
-    components: {Leaflet},
-    mixins: [Widget],
+    components: {SessionMap},
+    mixins: [Pagination, Widget],
     props: {entity: Object},
     data() {
       return {
         api: null,
-        leafletBlocked: false,
+        isMapBlocked: true,
         loading: true,
         locations: [],
-        polyline: null,
-        sessionIdx: null,
         sessions: [],
         source: null
       };
     },
 
-    mounted() {
+    created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
-      this.polyline = L.polyline([], {color: '#039be5', interactive: false});
-      this.entityChange(this.entity);
+    },
+
+    mounted() {
+      this.$on('onPaginationChanged', () => {
+        this.locations = [];
+        this.$emit('onSessionChange', this.paginationEntry._id);
+        if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
+          this.sourceSwitchTo('gps');
+        }
+      });
+      this.fetchData(this.entity);
     },
 
     watch: {
-      source(current, previous) {
-        this.updateLocations();
-      },
-
-      entity(current, previous) {
-        this.entityChange(current);
+      entity(current) {
+        this.fetchData(current);
       }
     },
 
     methods: {
-      leafletInit(map) {
-        //map._handlers.forEach(h => h.disable());
-      },
-
-      leafletReady(map) {
-        map.addLayer(this.polyline);
-        map.fitBounds(this.polyline.getBounds());
-        map.addLayer(
-          L.marker(
-            _.last(this.polyline.getLatLngs()), {
-              icon: L.AwesomeMarkers.icon({icon: 'model-s', markerColor: 'green'}),
-              interactive: false
-            }
-          )
-        );
-      },
-
-      async entityChange(entity) {
+      async fetchData(entity) {
         this.loading = true;
         try {
           const payload = {filter: {device: entity.device}, page: {size: 10}},
             response = await this.api.sessionsFetchAll(payload);
           this.sessions = response.data;
-          this.sessionIdx = 0;
+          this.paginationResetEntries(this.sessions);
         } catch (e) {
           return console.error(e);
         } finally {
@@ -165,84 +159,46 @@
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
       },
 
-      async updateLocations() {
-        this.leafletBlocked = true;
-
-        const source = ['obd', 'geo'].includes(this.source) ? 'gps' : this.source;
-
-        let locations = [];
-        try {
-          locations = (await this.$store.getters['common/apiInsiderProgram']
-            .sessionLocations(this.session._id, {source})).data;
-        } catch (e) {
-          return console.error(e);
-        }
-
-        if (source === 'map'
-          && (!locations.length || this.session.statistics.mapConfidenceAvg <= 60)) {
-          this.sourceSwitchTo('gps');
-          return;
-        }
-
-        this.$emit('onSessionChange', this.session._id);
-        this.locations = locations;
-        this.polyline.setLatLngs(locations.map(s => s.coordinate.reverse()));
-        this.leafletBlocked = false;
-      },
-
-      sessionNavigate(direction) {
-        this.locations = [];
-        this.sessionIdx += (direction === 'back') ? -1 : 1;
-        this.updateLocations();
+      mapReadyStateChange(flag) {
+        this.isMapBlocked = !flag;
       }
     },
 
     computed: {
-      sessionHasNext() {
-        return (this.sessionIdx < this.sessions.length - 1);
-      },
-
-      sessionHasPrev() {
-        return this.sessionIdx > 0;
-      },
-
-      session() {
-        return this.sessions[this.sessionIdx];
-      },
-
       sessionStatistics() {
         const fields = {
-          distanceM: this.session.statistics.geoDistanceM,
-          durationS: this.session.statistics.durationS,
-          speedKmHAvg: this.session.statistics.geoSpeedKmHAvg
+          distanceM: this.paginationEntry.statistics.geoDistanceM,
+          durationS: this.paginationEntry.statistics.durationS,
+          speedKmHAvg: this.paginationEntry.statistics.geoSpeedKmHAvg
         };
         switch (this.source) {
           case 'map':
-            fields.distanceM = this.session.statistics.mapDistanceM;
-            fields.durationS = this.session.statistics.mapDurationS;
+            fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
+            fields.durationS = this.paginationEntry.statistics.mapDurationS;
             break;
 
           case 'gps':
-            fields.distanceM = this.session.statistics.gpsDistanceM;
-            fields.speedKmHAvg = this.session.statistics.gpsSpeedKmHAvg;
+            fields.distanceM = this.paginationEntry.statistics.gpsDistanceM;
+            fields.speedKmHAvg = this.paginationEntry.statistics.gpsSpeedKmHAvg;
             break;
 
           case 'obd':
-            fields.distanceM = this.session.statistics.obdDistanceM;
-            fields.speedKmHAvg = this.session.statistics.obdSpeedKmHAvg;
+            fields.distanceM = this.paginationEntry.statistics.obdDistanceM;
+            fields.speedKmHAvg = this.paginationEntry.statistics.obdSpeedKmHAvg;
             break;
         }
         return fields;
       },
-
-      leafletTileConfig() {
+      mapConfig() {
         return {
           minZoom: 7,
-          id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
-            ? 'mapbox.dark' : 'mapbox.streets'
+          id: (this.paginationEntry.statistics.nightDurationS
+            > this.paginationEntry.statistics.dayDurationS) ? 'mapbox.dark' : 'mapbox.streets'
         };
       },
-
+      isMapReady() {
+        return !this.isMapBlocked;
+      },
       viaStreets() {
         const streets = _(this.locations).map('street').reject(_.isEmpty).uniq().value();
         if (!streets.length) {

@@ -16,7 +16,7 @@
 
 import ApiAbstract from './ApiAbstract';
 
-export default class TankTalerApi extends ApiAbstract {
+export default class RydApi extends ApiAbstract {
   authLogin(email, password, clientId = 'ip_tt') {
     return this._request('auth/login/local', {email, password, clientId}, 'POST');
   }

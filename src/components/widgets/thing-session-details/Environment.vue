@@ -2,30 +2,23 @@
   <div v-if="loading" class="has-text-centered">
     <span class="icon is-large"><i class="ion-clock"></i></span>
   </div>
-  <div v-else-if="Object.keys(entries).length" style="max-height: 280px; overflow-y: scroll;">
-    <table class="table is-fullwidth is-narrow is-hoverable">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Percentage</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="key in Object.keys(entries)">
-          <td><span class="tag">{{ key }}</span></td>
-          <td>
-            <table class="table is-narrow is-fullwidth">
-              <tbody>
-                <tr v-for="sub in percentileOf(entries[key])">
-                  <td>{{ sub.key }}</td>
-                  <td><span class="tag">{{ sub.percent }}%</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div v-else-if="Object.keys(entries).length"
+    style="max-height: 280px; overflow-y: scroll; overflow-x: hidden;">
+    <div class="columns" v-for="key in Object.keys(entries)">
+      <div class="column is-4">
+        <span class="tag">{{ key }}</span>
+      </div>
+      <div class="column">
+        <table class="table is-narrow is-fullwidth" style="overflow: hidden">
+          <tbody>
+            <tr v-for="sub in percentileOf(entries[key])">
+              <td>{{ sub.key }}</td>
+              <td><span class="tag">{{ sub.percent }}%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
   <div v-else class="notification">No environmental information is available.</div>
 </template>
@@ -51,7 +44,7 @@
   ];
 
   export default {
-    name: 'widget-thing-session-details-environment',
+    name: 'thing-session-details-environment',
     props: {sessionId: String},
     data() {
       return {loading: true, entries: []};

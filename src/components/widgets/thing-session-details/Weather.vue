@@ -22,7 +22,7 @@
 
 <script>
   export default {
-    name: 'widget-thing-session-details-weather',
+    name: 'thing-session-details-weather',
     props: {sessionId: String},
     data() {
       return {loading: true, weather: []};

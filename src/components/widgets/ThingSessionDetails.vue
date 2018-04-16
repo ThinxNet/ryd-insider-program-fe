@@ -14,9 +14,9 @@
 <script>
   import Widget from '../../lib/mixins/widget';
 
-  import SessionDetailsEnvironment from './session-details/Environment';
-  import SessionDetailsRelations from './session-details/Relations';
-  import SessionDetailsWeather from './session-details/Weather';
+  import SessionDetailsEnvironment from './thing-session-details/Environment';
+  import SessionDetailsRelations from './thing-session-details/Relations';
+  import SessionDetailsWeather from './thing-session-details/Weather';
 
   export default {
     name: 'widget-thing-session-details',

@@ -26,11 +26,10 @@
 
       _.merge(tileConfig, this.tileConfig);
 
-      this.instance = L.map(this.$el, {
-        attributionControl: false,
-        center: [48.1223046, 11.5620394],
-        zoom: 18
-      });
+      this.instance = L.map(
+        this.$el,
+        {attributionControl: false, center: [48.1480617, 11.5481421], zoom: 18}
+      );
 
       this.instance.addLayer(
         L.tileLayer(
@@ -42,15 +41,6 @@
       this.instance.whenReady(() => this.$emit('ready', this.instance));
 
       this.$emit('init', this.instance);
-    },
-    methods: {
-      async logout() {
-        try {
-          await this.$store.getters['common/apiTankTaler'].authLogout();
-          this.$store.dispatch('authentication/logout');
-          this.$router.push({name: 'login'});
-        } catch (e) { console.error(e); }
-      }
     }
   };
 </script>

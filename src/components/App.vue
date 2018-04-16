@@ -6,8 +6,8 @@
           <div class="navbar-brand">
             <a class="navbar-item">
               <img
-                src="https://storage.googleapis.com/instapage-user-media/8c07daac/5426852-0-TankTaler-Logo-wei.png"
-                alt="TankTaler">
+                src="https://ryd.one/wp-content/uploads/ryd_logo_ehem-tanktaler.png"
+                alt="Ryd">
             </a>
             <span class="navbar-burger burger" data-target="navbar-menu">
               <span></span>
@@ -37,7 +37,7 @@
         <div class="container">
           <ul>
             <li>
-              <a href="https://github.com/ThinxNet/tanktaler-insider-program-fe"
+              <a href="https://github.com/ThinxNet/ryd-insider-program-fe"
                 target="_blank">GitHub</a>
             </li>
           </ul>
@@ -58,7 +58,7 @@
     methods: {
       async logout() {
         try {
-          await this.$store.getters['common/apiTankTaler'].authLogout();
+          await this.$store.getters['common/apiRyd'].authLogout();
           this.$store.dispatch('authentication/logout');
           this.$router.push({name: 'login'});
         } catch (e) { console.error(e); }
