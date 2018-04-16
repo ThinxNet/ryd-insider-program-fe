@@ -10,6 +10,7 @@
 <script>
   import Leaflet from '../../Leaflet';
 
+  // @onLocationsChanged([])
   // @onMapInit(map)
   // @onMapReady(map)
   // @onReadyStateChanged(boolean)
@@ -66,6 +67,9 @@
           this.loading = false;
         }
         this.polyline.setLatLngs(this.locations.map(s => s.coordinate.reverse()));
+
+        // @todo! missing session id change
+        this.$emit('onLocationsChanged', this.locations);
       },
       leafletInit(instance) {
         this.$emit('onMapInit', instance);

@@ -7,6 +7,7 @@
           :config="mapConfig"
           :polylineSource="source === 'map' ? 'map' : 'gps'"
           :sessionId="paginationEntry._id" v-if="paginationEntry._id"
+          @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"></session-map>
       </div>
       <div class="card-content">
@@ -150,17 +151,17 @@
         }
         this.sourceSwitchTo('gps');
       },
-
       sourceSwitchTo(source) {
         this.source = source.toLowerCase();
       },
-
       sourceBtnClass(source) {
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
       },
-
       mapReadyStateChange(flag) {
         this.isMapBlocked = !flag;
+      },
+      mapLocationsChange(locations) {
+        this.locations = locations;
       }
     },
 
