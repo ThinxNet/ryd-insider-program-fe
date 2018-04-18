@@ -5,7 +5,7 @@
   <article v-else class="content">
     <p v-if="alikeSimilar.length && alikeClose.length">
       You have <span class="tag">{{ alikeSimilar.length }}</span> identical trip(s)
-      and <span class="tag">{{ alikeClose.length }}</span> trip(s) which are partially similar.
+      and <span class="tag">{{ alikeClose.length }}</span> partially similar trip(s).
     </p>
     <p v-else-if="!alikeSimilar.length && alikeClose.length">
       You have <span class="tag">{{ alikeClose.length }}</span> partially similar trip(s).
