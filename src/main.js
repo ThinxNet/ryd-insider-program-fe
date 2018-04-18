@@ -40,9 +40,11 @@ import ComponentsApp from './components/App.vue';
 
 import lodash from 'lodash';
 import moment from 'moment';
+import pluralize from 'pluralize';
 
 Vue.prototype.$_ = lodash;
 Vue.prototype.$moment = moment;
+Vue.prototype.$plural = pluralize;
 moment.locale('de');
 
 L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
