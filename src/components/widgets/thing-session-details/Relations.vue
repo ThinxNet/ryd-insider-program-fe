@@ -4,21 +4,17 @@
   </div>
   <article v-else class="content">
     <p v-if="alikeSimilar.length && alikeClose.length">
-      You did <span class="tag">{{ alikeSimilar.length }}</span> similar trips
-      and <span class="tag">{{ alikeClose.length }}</span> trips with the
-      same signature.
+      You have <span class="tag">{{ alikeSimilar.length }}</span> identical trip(s)
+      and <span class="tag">{{ alikeClose.length }}</span> trip(s) which are partially similar.
     </p>
     <p v-else-if="!alikeSimilar.length && alikeClose.length">
-      You have no similar trips, but
-      <span class="tag">{{ alikeClose.length }}</span> trips with the
-      same signature.
+      You have <span class="tag">{{ alikeClose.length }}</span> partially similar trip(s).
     </p>
     <p v-else-if="alikeSimilar.length && !alikeClose.length">
-      You did <span class="tag">{{ alikeSimilar.length }}</span> similar trips
-      and no trips with the same signature.
+      You have <span class="tag">{{ alikeSimilar.length }}</span> identical trip(s).
     </p>
     <p v-else class="notification">
-      You have no similar trips, and no trips with the same signature.
+      Neither identical nor partially similar trips have been found.
     </p>
 
     <div v-if="paginationEntry">
