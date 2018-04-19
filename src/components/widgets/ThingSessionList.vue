@@ -2,8 +2,8 @@
   <article class="tile is-child">
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
     <div v-else-if="paginationEntry" class="card">
-      <div class="card-image" style="height: 400px;">
-        <session-map style="height: 400px"
+      <div class="card-image" style="height: 450px;">
+        <session-map style="height: 450px"
           :config="mapConfig"
           :polylineSource="source === 'map' ? 'map' : 'gps'"
           :sessionId="paginationEntry._id" v-if="paginationEntry._id"

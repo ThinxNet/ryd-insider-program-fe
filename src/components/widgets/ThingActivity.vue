@@ -3,6 +3,13 @@
     <p class="title">Activity</p>
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
     <div v-else ref="chart"></div>
+    <div class="buttons has-addons is-centered">
+      <span v-for="type in ['obd', 'geo', 'gps']"
+        @click="sourceSwitchTo(type)"
+        :class="['button', 'is-small', source === type ? 'is-primary is-active' : '']">
+          {{ type.toUpperCase() }}
+      </span>
+    </div>
     <p v-if="payload.length">
       You've spent <span class="tag">{{ timeDrive }}</span> in the car
       and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
@@ -18,7 +25,7 @@
     name: 'widget-thing-charts',
     props: {entity: Object},
     data() {
-      return {api: null, loading: true, payload: []};
+      return {api: null, loading: true, payload: [], source: 'geo'};
     },
     beforeMount() {
       google.charts.load('current', {packages: ['corechart', 'bar']});
@@ -48,7 +55,10 @@
           this.loading = false;
         }
       },
-
+      sourceSwitchTo(type) {
+        this.source = type;
+        this.chartRepaint();
+      },
       chartRepaint() {
         const data = new google.visualization.DataTable();
         data.addColumn('date', 'Date');
@@ -58,8 +68,8 @@
         data.addColumn({type: 'string', role: 'tooltip'});
 
         (this.payload || []).forEach(e => {
-          const driveDuration = moment.duration(e.geoDriveDurationS, 's'),
-            stayDuration = moment.duration(e.geoStayDurationS, 's');
+          const driveDuration = moment.duration(e[this.driveDurationKey], 's'),
+            stayDuration = moment.duration(e[this.stayDurationKey], 's');
           data.addRow([
             moment().dayOfYear(e.dayOfYear).toDate(),
             driveDuration.asMinutes(),
@@ -82,11 +92,16 @@
 
     computed: {
       timeStandstill() {
-        return moment.duration(_.sumBy(this.payload, 'geoStayDurationS'), 's').humanize();
+        return moment.duration(_.sumBy(this.payload, this.stayDurationKey), 's').humanize();
       },
-
       timeDrive() {
-        return moment.duration(_.sumBy(this.payload, 'geoDriveDurationS'), 's').humanize();
+        return moment.duration(_.sumBy(this.payload, this.driveDurationKey), 's').humanize();
+      },
+      stayDurationKey() {
+        return `${this.source}StayDurationS`;
+      },
+      driveDurationKey() {
+        return `${this.source}DriveDurationS`;
       }
     }
   }

@@ -18,7 +18,14 @@
           :disabled="loading"
           @click.prevent="login">Login</a>
       </form>
+
     </div>
+
+    <div class="notification is-danger" v-if="notification">
+      <button class="delete" @click.prevent="notificationClose"></button>
+      {{ notification }}
+    </div>
+
     <p class="has-text-white has-text-weight-bold has-text-centered">
       <a href="https://www.ryd.one/blog/insider-program" target="_blank"
         class="has-text-white">What is it?</a>
@@ -29,27 +36,13 @@
 <script>
   import Store from '../store';
 
-  async function _ttIdentity(api) {
-    try {
-      return await api.authStatus();
-    } catch (e) {
-      console.error(e);
-      return false;
-    }
-  }
-
-  async function _ttToken(api, email, password) {
-    try {
-      return (await api.authLogin(email, password)).auth_token;
-    } catch (e) {
-      console.error(e);
-      return false;
-    }
-  }
-
   export default {
     name: 'login',
-    data: () => ({email: '', loading: false, password: ''}),
+    data: () => ({api: null, email: '', loading: false, notification: null, password: ''}),
+
+    created() {
+      this.api = this.$store.getters['common/apiRyd'];
+    },
 
     computed: {
       isFormValid() {
@@ -60,10 +53,14 @@
     async beforeRouteEnter (to, from, next) {
       if (!Store.getters['authentication/isAuthenticated']
         && Store.getters['authentication/authToken']) {
-        const identity = await _ttIdentity(Store.getters['common/apiRyd']);
-        if (identity) {
-          Store.commit('authentication/identityUpdate', identity);
-          return next(to.query.redirect);
+        try {
+          const identity = await Store.getters['common/apiRyd'].authStatus();
+          if (identity) {
+            Store.commit('authentication/identityUpdate', identity);
+            return next(to.query.redirect);
+          }
+        } catch (e) {
+          console.error(e);
         }
       }
       return next();
@@ -72,16 +69,27 @@
     methods: {
       async login() {
         this.loading = true;
-        const tt4Api = Store.getters['common/apiRyd'],
-          token = await _ttToken(tt4Api, this.email, this.password);
-        if (token) {
-          Store.commit('authentication/tokenUpdate', token);
+
+        try {
+          const token = (await this.api.authLogin(this.email, this.password)).auth_token;
+          if (token) {
+            Store.commit('authentication/tokenUpdate', token);
+          }
+          const identity = await this.api.authStatus();
+          if (identity) {
+            Store.commit('authentication/identityUpdate', identity);
+          }
+        } catch (e) {
+          this.notification = e.body ? e.body.message : e.message;
+          return;
+        } finally {
+          this.loading = false;
         }
-        const identity = await _ttIdentity(tt4Api);
-        if (identity) {
-          Store.commit('authentication/identityUpdate', identity);
-        }
+
         this.$router.push(this.$route.query.redirect || {name: 'dashboard'});
+      },
+      notificationClose() {
+        this.notification = null;
       }
     }
   };
