@@ -52,6 +52,7 @@
               <template v-if="sessionStatistics.speedKmHAvg">
                 <br>
                 Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+                (max: <span class="tag">{{ sessionStatistics.speedKmHMax }} km/h</span>)
               </template>
             </div>
           </div>
@@ -170,22 +171,21 @@
         const fields = {
           distanceM: this.paginationEntry.statistics.geoDistanceM,
           durationS: this.paginationEntry.statistics.durationS,
-          speedKmHAvg: this.paginationEntry.statistics.geoSpeedKmHAvg
+          speedKmHAvg: this.paginationEntry.statistics.geoSpeedKmHAvg,
+          speedKmHMax: this.paginationEntry.statistics.geoSpeedKmHMax
         };
         switch (this.source) {
           case 'map':
             fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
             fields.durationS = this.paginationEntry.statistics.mapDurationS;
+            fields.speedKmHAvg = this.paginationEntry.statistics.mapSpeedKmHAvg;
+            fields.speedKmHMax = this.paginationEntry.statistics.mapSpeedKmHMax;
             break;
 
-          case 'gps':
-            fields.distanceM = this.paginationEntry.statistics.gpsDistanceM;
-            fields.speedKmHAvg = this.paginationEntry.statistics.gpsSpeedKmHAvg;
-            break;
-
-          case 'obd':
-            fields.distanceM = this.paginationEntry.statistics.obdDistanceM;
-            fields.speedKmHAvg = this.paginationEntry.statistics.obdSpeedKmHAvg;
+          default:
+            Object.keys(fields).filter(key => key !== 'durationS').forEach(
+              key => fields[key] = this.paginationEntry.statistics[this.source + _.upperFirst(key)]
+            );
             break;
         }
         return fields;
