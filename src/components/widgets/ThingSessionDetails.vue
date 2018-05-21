@@ -1,6 +1,6 @@
 <template>
   <article class="tile is-child box">
-    <div class="tabs is-centered is-small is-toggle is-fullwidth">
+    <div class="tabs is-centered is-fullwidth">
       <ul v-for="(entry, idx) in componentList">
         <li :class="{'is-active': componentIdx === idx}">
           <a @click.prevent="componentIdx = idx">{{ entry.title }}</a>
@@ -21,6 +21,7 @@
   export default {
     name: 'widget-thing-session-details',
     props: {sessionId: String},
+    data: () => ({api: null, loading: true, payload: [], source: 'geo'}),
     mixins: [Widget],
     data() {
       return {

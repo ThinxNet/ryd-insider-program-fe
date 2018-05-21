@@ -46,9 +46,7 @@
   export default {
     name: 'thing-session-details-environment',
     props: {sessionId: String},
-    data() {
-      return {loading: true, entries: []};
-    },
+    data: () => ({loading: true, entries: []}),
     mounted() {
       this.fetchData(this.sessionId);
     },
@@ -72,7 +70,6 @@
           this.loading = false;
         }
       },
-
       percentileOf(arr) {
         const len = arr.length,
           values = _.countBy(arr);

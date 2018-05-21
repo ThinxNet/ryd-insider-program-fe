@@ -16,40 +16,27 @@
       <div class="tile" v-if="thing">
         <!-- last session -->
         <div class="tile is-parent is-4">
-          <widget-thing-session-list
-            :entity="thing" @onSessionChange="thingSessionListChange"></widget-thing-session-list>
+          <widget-thing-session-list :entity="thing" @onSessionChange="thingSessionListChange"/>
         </div>
 
         <div class="tile is-vertical">
           <div class="tile">
             <!-- session details -->
             <div class="tile is-parent">
-              <widget-thing-session-details :sessionId="thingSessionId"></widget-thing-session-details>
+              <widget-thing-session-details :sessionId="selectedSessionId"/>
             </div>
 
             <!-- activity -->
             <div class="tile is-parent">
-              <widget-thing-activity :entity="thing"></widget-thing-activity>
+              <widget-thing-activity :entity="thing"/>
             </div>
           </div>
-          <div class="tile is-parent">
-            <article class="tile is-child notification is-white">
-              <div class="content">
-                <p class="title">Insider Program</p>
-                <p class="subtitle">news feed</p>
-                <div class="content">
-                  <dl>
-                    <dt>06.04.2018 </dt>
-                    <dd>The first public available version.</dd>
-                    <dt>12.03.2018 </dt>
-                    <dd>Initial demonstration to the awesome team.</dd>
-                  </dl>
-                </div>
-              </div>
-            </article>
+
+          <div class="tile is-parent" v-if="selectedSessionId">
+            <!-- timeline -->
+            <widget-thing-session-timeline :sessionId="selectedSessionId"/>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -60,14 +47,14 @@
   import WidgetThings from './widgets/Things';
   import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
   import WidgetThingSessionList from './widgets/ThingSessionList';
+  import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline';
 
   export default {
     name: 'dashboard',
-    data() {
-      return {thing: null, thingSessionId: null};
-    },
+    data: () => ({thing: null, selectedSessionId: null}),
     components: {
-      WidgetThingActivity, WidgetThings, WidgetThingSessionDetails, WidgetThingSessionList
+      WidgetThingActivity, WidgetThings, WidgetThingSessionDetails, WidgetThingSessionList,
+      WidgetThingSessionTimeline
     },
     computed: {
       identity() {
@@ -80,7 +67,7 @@
       },
 
       thingSessionListChange(sessionId) {
-        this.thingSessionId = sessionId;
+        this.selectedSessionId = sessionId;
       }
     }
   }
