@@ -3,9 +3,10 @@
     <div v-if="loading" class="has-text-centered">
       <span class="icon is-large"><i class="ion-clock"></i></span>
     </div>
-    <div v-else>
+    <div v-else-if="entries.length">
       <div ref="timeline"></div>
     </div>
+    <p v-else class="notification">Not enough data to build the timeline.</p>
   </article>
 </template>
 
