@@ -50,7 +50,12 @@
       },
       chartRepaint() {
         const dataTable = new google.visualization.DataTable(),
-          presets = {'Country': 'country', 'State': 'state', 'City': 'city', 'Suburb': 'suburb'};
+          presets = {
+            'Country': a => a.country,
+            'State': a => a.state,
+            'City': a => a.city || a.county,
+            'Suburb': a => a.suburb || a.vilage || a.town
+          };
 
         dataTable.addColumn({ type: 'string', id: 'Location' });
         dataTable.addColumn({ type: 'string', id: 'Name' });
@@ -59,7 +64,7 @@
 
         _.keys(presets).forEach(title => {
           const data = _(this.entries).filter('address')
-            .groupBy(v => v.address[presets[title]])
+            .groupBy(v => presets[title](v.address))
             .mapValues(v => _.map(v, a => _.pick(a, ['speed', 'distance', 'timestamp']))).value();
 
           _.keys(data).forEach(key => {
