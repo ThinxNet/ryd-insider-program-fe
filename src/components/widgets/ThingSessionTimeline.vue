@@ -54,7 +54,7 @@
             'Country': a => a.country,
             'State': a => a.state,
             'City': a => a.city || a.county,
-            'Suburb': a => a.suburb || a.vilage || a.town
+            'Suburb': a => a.suburb || a.village || a.town
           };
 
         dataTable.addColumn({ type: 'string', id: 'Location' });
