@@ -47,6 +47,7 @@
           console.error(e);
         } finally {
           this.loading = false;
+          return;
         }
         setTimeout(this.chartRepaint);
       },
