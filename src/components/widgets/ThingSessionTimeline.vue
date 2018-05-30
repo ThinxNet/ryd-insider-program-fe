@@ -12,6 +12,7 @@
 
 <script>
   import _ from 'lodash';
+  import moment from 'moment';
 
   import Widget from '../../lib/mixins/widget';
 
@@ -57,20 +58,28 @@
             'Suburb': a => a.suburb || a.village || a.town
           };
 
-        dataTable.addColumn({ type: 'string', id: 'Location' });
-        dataTable.addColumn({ type: 'string', id: 'Name' });
-        dataTable.addColumn({ type: 'date', id: 'Start' });
-        dataTable.addColumn({ type: 'date', id: 'End' });
+        dataTable.addColumn({type: 'string', id: 'Location'});
+        dataTable.addColumn({type: 'string', id: 'Name'});
+        dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
+        dataTable.addColumn({type: 'date', id: 'Start'});
+        dataTable.addColumn({type: 'date', id: 'End'});
 
         _.keys(presets).forEach(title => {
           const data = _(this.entries).filter('address')
             .groupBy(v => presets[title](v.address))
             .mapValues(v => _.map(v, a => _.pick(a, ['speed', 'distance', 'timestamp']))).value();
-
           _.keys(data).forEach(key => {
+            const distance = _.round(_.sumBy(data[key], 'distance') / 1000, 1),
+            duration = moment
+              .duration(moment(_.head(data[key]).timestamp).diff(_.last(data[key]).timestamp))
+              .humanize();
             dataTable.addRow([
               title,
               key === 'null' ? 'Other' : key,
+              `<div class="notification">
+                <b>Duration:</b> ${duration}<br>
+                <b>Distance:</b> ${distance} km.
+               </div>`,
               new Date(_.head(data[key]).timestamp),
               new Date(_.last(data[key]).timestamp)
             ]);
@@ -78,8 +87,8 @@
         });
 
         const options = {
-          chartArea: {width: '100%', height: '100%'},
           avoidOverlappingGridLines: false,
+          chartArea: {width: '100%', height: '100%'},
           height: 215
         };
 
