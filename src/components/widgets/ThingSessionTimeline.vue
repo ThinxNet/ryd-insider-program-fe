@@ -65,23 +65,24 @@
         dataTable.addColumn({type: 'date', id: 'End'});
 
         _.keys(presets).forEach(title => {
-          const data = _(this.entries).filter('address')
-            .groupBy(v => presets[title](v.address))
-            .mapValues(v => _.map(v, a => _.pick(a, ['speed', 'distance', 'timestamp']))).value();
+          const fields = ['speed', 'duration', 'distance', 'timestamp'],
+            data = _(this.entries).filter('address')
+              .groupBy(v => presets[title](v.address))
+              .mapValues(v => _.map(v, a => _.pick(a, fields))).value();
+          let timestamp = moment(_.head(this.entries).timestamp);
           _.keys(data).forEach(key => {
             const distance = _.round(_.sumBy(data[key], 'distance') / 1000, 1),
-            duration = moment
-              .duration(moment(_.head(data[key]).timestamp).diff(_.last(data[key]).timestamp))
-              .humanize();
+              duration = _.sumBy(data[key], 'duration'),
+              tooltip = `<div class="notification">
+                <b>Duration:</b> ${moment.duration(duration, 's').humanize()}<br>
+                <b>Distance:</b> ${distance} km.
+               </div>`;
             dataTable.addRow([
               title,
               key === 'null' ? 'Other' : key,
-              `<div class="notification">
-                <b>Duration:</b> ${duration}<br>
-                <b>Distance:</b> ${distance} km.
-               </div>`,
-              new Date(_.head(data[key]).timestamp),
-              new Date(_.last(data[key]).timestamp)
+              tooltip,
+              timestamp.toDate(),
+              timestamp.add(duration, 's').toDate()
             ]);
           });
         });
