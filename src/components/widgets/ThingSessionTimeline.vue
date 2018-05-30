@@ -47,11 +47,12 @@
           console.error(e);
         } finally {
           this.loading = false;
-          return;
         }
         setTimeout(this.chartRepaint);
       },
       chartRepaint() {
+        if (!this.entries.length) { return; }
+
         const dataTable = new google.visualization.DataTable(),
           presets = {
             'Country': a => a.country,
