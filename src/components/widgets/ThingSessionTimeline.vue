@@ -75,10 +75,13 @@
           let timestamp = moment(_.head(this.entries).timestamp);
           _.keys(data).forEach(key => {
             const distance = _.round(_.sumBy(data[key], 'distance') / 1000, 1),
+              speed = _.round(_.meanBy(data[key], 'speed'), 1),
               duration = _.sumBy(data[key], 'duration'),
               tooltip = `<div class="notification">
+                <b>${key}</b><br>
                 <b>Duration:</b> ${moment.duration(duration, 's').humanize()}<br>
-                <b>Distance:</b> ${distance} km.
+                <b>Distance:</b> ${distance} km.<br>
+                <b>Avg. speed:</b> ${speed} km/h
                </div>`;
             dataTable.addRow([
               title,
