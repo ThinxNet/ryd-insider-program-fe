@@ -40,6 +40,7 @@
     methods: {
       async fetchData(id) {
         this.loading = true;
+        this.entries = [];
         try {
           this.entries = (await this.api.sessionEnvironment(id)).data;
         } catch (e) {
