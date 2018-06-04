@@ -24,7 +24,7 @@
                 <span class="button is-small"
                   v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
-                  :title="paginationEntry.statistics.mapConfidenceAvg + '%'">MAP</span>
+                  :title="mapMatchingConfidenceHint">MAP</span>
               </div>
             </div>
           </div>
@@ -216,6 +216,13 @@
           _.nth(streets, Math.round((streets.length - 1) / 2)),
           _.last(streets)
         ];
+      },
+      mapMatchingConfidenceHint() {
+        return [
+          this.paginationEntry.statistics.mapConfidenceAvg + '%',
+          this.paginationEntry.statistics.mapHasGaps ? 'with' : 'without',
+          'gaps'
+        ].join(' ');
       }
     }
   }
