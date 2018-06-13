@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-child notification is-white">
+  <article class="tile is-child is-radiusless box">
     <div v-if="loading" class="has-text-centered">
       <span class="icon is-large"><i class="ion-clock"></i></span>
     </div>
@@ -21,11 +21,13 @@
     props: {sessionId: String},
     mixins: [Widget],
     data: () => ({api: null, loading: true, entries: []}),
+    created() {
+      this.api = this.$store.getters['common/apiInsiderProgram'];
+    },
     beforeMount() {
       google.charts.load('current', {packages: ['timeline']});
     },
-    async mounted() {
-      this.api = await this.$store.getters['common/apiInsiderProgram'];
+    mounted() {
       google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
     },
     watch: {

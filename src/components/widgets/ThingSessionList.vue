@@ -123,6 +123,7 @@
     mounted() {
       this.$on('onPaginationChanged', () => {
         this.locations = [];
+        if (!this.paginationEntry) { return; }
         this.$emit('onSessionChange', this.paginationEntry._id);
         if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
           this.sourceSwitchTo('gps');

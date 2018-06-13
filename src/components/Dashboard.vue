@@ -32,9 +32,16 @@
             </div>
           </div>
 
-          <div class="tile is-parent" v-if="selectedSessionId">
+          <div class="tile">
             <!-- timeline -->
-            <widget-thing-session-timeline :sessionId="selectedSessionId"/>
+            <div class="tile is-parent" v-if="selectedSessionId">
+              <widget-thing-session-timeline :sessionId="selectedSessionId"/>
+            </div>
+
+            <!-- device confidence -->
+            <div class="tile is-parent">
+              <widget-device-confidence :deviceId="thing.device"/>
+            </div>
           </div>
         </div>
       </div>
@@ -43,6 +50,7 @@
 </template>
 
 <script>
+  import WidgetDeviceConfidence from './widgets/DeviceConfidence';
   import WidgetThingActivity from './widgets/ThingActivity';
   import WidgetThings from './widgets/Things';
   import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
@@ -53,8 +61,8 @@
     name: 'dashboard',
     data: () => ({thing: null, selectedSessionId: null}),
     components: {
-      WidgetThingActivity, WidgetThings, WidgetThingSessionDetails, WidgetThingSessionList,
-      WidgetThingSessionTimeline
+      WidgetDeviceConfidence, WidgetThingActivity, WidgetThings, WidgetThingSessionDetails,
+      WidgetThingSessionList, WidgetThingSessionTimeline
     },
     computed: {
       identity() {

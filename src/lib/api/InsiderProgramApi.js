@@ -17,6 +17,10 @@
 import ApiAbstract from './ApiAbstract';
 
 export default class InsiderProgramApi extends ApiAbstract {
+  deviceConfidence(id, params) {
+    return this._request(`devices/${id}/confidence`, {params});
+  }
+
   thingsFetchAll(params) {
     return this._request('things', {params});
   }

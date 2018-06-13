@@ -1,8 +1,8 @@
 <template>
-  <article class="tile is-child notification is-white">
-    <p class="title">Activity</p>
+  <article class="tile is-child is-radiusless box">
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
-    <div v-else ref="chart"></div>
+    <div v-else ref="chart" class="is-fullwidth"></div>
+    <br>
     <div class="buttons has-addons is-centered">
       <span v-for="type in ['obd', 'geo', 'gps']"
         @click="sourceSwitchTo(type)"
@@ -27,11 +27,13 @@
     data() {
       return {api: null, loading: true, payload: [], source: 'geo'};
     },
+    created() {
+      this.api = this.$store.getters['common/apiInsiderProgram'];
+    },
     beforeMount() {
       google.charts.load('current', {packages: ['corechart', 'bar']});
     },
     async mounted() {
-      this.api = await this.$store.getters['common/apiInsiderProgram'];
       google.charts.setOnLoadCallback(() => this.entityChange(this.entity));
     },
     watch: {
@@ -81,7 +83,7 @@
 
         (new google.visualization.BarChart(this.$refs.chart)).draw(data, {
           chartArea: {width: '100%', height: '100%'},
-          hAxis: {textPosition: 'none', baselineColor: '#039be5', gridlines: {color: 'none'}},
+          hAxis: {textPosition: 'none', baselineColor: 'none', gridlines: {color: 'none'}},
           isStacked: true,
           legend: {position: 'in', maxLines: 3, alignment: 'center'},
           theme: 'maximized',
