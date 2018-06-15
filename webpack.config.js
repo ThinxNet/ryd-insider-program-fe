@@ -1,7 +1,8 @@
-var path = require('path')
-var webpack = require('webpack')
+const path = require('path'),
+  webpack = require('webpack'),
+  VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-module.exports = {
+const config = {
   entry: ['babel-polyfill', './src/main.js'],
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -28,7 +29,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
+        exclude: file => (/node_modules/.test(file) && !/\.vue\.js/.test(file))
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -53,24 +54,18 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
-}
+  devtool: '#eval-source-map',
+  plugins: [
+    new VueLoaderPlugin()
+  ]
+};
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    /*new webpack.optimize.UglifyJsPlugin({
-      compress: {warnings: false},
-      sourceMap: true
-    }),*/
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    })
-  ])
-}
+module.exports = (env, argv) => {
+  if (argv.mode === 'production') {
+    config.devtool = '#source-map';
+    config.plugins = config.plugins.concat([
+      new webpack.LoaderOptionsPlugin({minimize: true})
+    ]);
+  }
+  return config;
+};

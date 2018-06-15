@@ -5,12 +5,12 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "dev": "webpack-dev-server --open --hot --mode development",
+    "build": "webpack --progress --hide-modules --mode production"
   },
   "dependencies": {
     "lodash": "^4.17.10",
-    "moment": "^2.22.1",
+    "moment": "^2.22.2",
     "pluralize": "^7.0.0",
     "vue": "^2.5.16",
     "vue-resource": "^1.5.1",
@@ -28,12 +28,12 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-3": "^6.24.1",
-    "cross-env": "^5.1.5",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
-    "vue-loader": "^14.2.2",
+    "vue-loader": "^15.2.4",
     "vue-template-compiler": "^2.5.16",
-    "webpack": "^3.12.0",
-    "webpack-dev-server": "^2.11.2"
+    "webpack": "^4.12.0",
+    "webpack-cli": "^3.0.7",
+    "webpack-dev-server": "^3.1.4"
   }
 }
