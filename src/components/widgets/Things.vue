@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-child notification is-white">
+  <article class="tile is-child box is-radiusless">
     <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
 
     <div v-else class="control has-icons-left">
@@ -47,8 +47,6 @@
           this.$emit('onEntrySelected', this.entries.find(e => e._id === current));
         }
       }
-    },
-    methods: {
     }
   }
 </script>
