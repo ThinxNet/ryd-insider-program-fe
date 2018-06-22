@@ -26,7 +26,7 @@
       componentList: [
         {title: 'Relations', component: SessionDetailsRelations},
         {title: 'Weather', component: SessionDetailsWeather},
-        {title: 'Environment', component: SessionDetailsEnvironment}
+        {title: 'Context', component: SessionDetailsEnvironment}
       ]
     }),
     mixins: [Widget],

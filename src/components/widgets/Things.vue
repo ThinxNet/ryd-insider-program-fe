@@ -4,7 +4,7 @@
 
     <div v-else class="control has-icons-left">
       <div class="select is-medium is-fullwidth">
-        <select v-model="selected">
+        <select v-model="selected" class="is-radiusless">
           <option disabled value="">Select one&hellip;</option>
           <option :value="entry._id" v-for="entry in entries">
             {{entry.nickName}}
