@@ -24,7 +24,7 @@
     <div v-if="paginationEntry">
       <div class="columns">
         <div class="column">
-          <session-map class="box" style="height: 150px"
+          <session-map class="box is-radiusless" style="height: 150px"
             polylineSource="map"
             :sessionId="paginationEntry.session"
             @onReadyStateChanged="readyStateChanged"
