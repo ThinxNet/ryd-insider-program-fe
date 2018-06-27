@@ -18,26 +18,26 @@
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Consumption (L)</p>
+            <p class="heading">Cons. (L)</p>
             <p class="title">{{ confidencePercent('fuelConsumptionL') || 'N/A' }}</p>
           </div>
         </div>
       </nav>
 
-      <!--<nav class="level">
+      <nav class="level">
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">Odometer</p>
-            <p class="title">N/A</p>
+            <p class="title">{{ confidencePercent('obdCarOdometer') || 'N/A' }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">GPS</p>
-            <p class="title">N/A</p>
+            <p class="title">{{ confidencePercent('gpsDistanceM') || 'N/A' }}</p>
           </div>
         </div>
-      </nav>-->
+      </nav>
     </div>
   </article>
 </template>
