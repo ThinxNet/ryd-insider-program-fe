@@ -73,7 +73,7 @@
             </div>
             -->
 
-            <div class="column has-text-right is-10">
+            <div class="column has-text-right is-10 is-unselectable">
               <button @click="paginationGoBackwards"
                 :class="['button', 'is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasPrevious">

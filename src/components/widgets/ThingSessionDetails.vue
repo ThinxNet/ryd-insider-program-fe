@@ -1,6 +1,6 @@
 <template>
   <article class="tile is-child">
-    <div class="tabs is-centered is-small is-fullwidth is-radiusless box">
+    <div class="tabs box is-centered is-small is-fullwidth is-radiusless">
       <ul v-for="(entry, idx) in componentList">
         <li :class="{'is-active': componentIdx === idx}">
           <a @click.prevent="componentIdx = idx">{{ entry.title }}</a>
@@ -14,7 +14,7 @@
 <script>
   import Widget from '../../lib/mixins/widget';
 
-  import SessionDetailsEnvironment from './thing-session-details/Environment';
+  import SessionDetailsContext from './thing-session-details/Context';
   import SessionDetailsRelations from './thing-session-details/Relations';
   import SessionDetailsWeather from './thing-session-details/Weather';
 
@@ -26,7 +26,7 @@
       componentList: [
         {title: 'Relations', component: SessionDetailsRelations},
         {title: 'Weather', component: SessionDetailsWeather},
-        {title: 'Context', component: SessionDetailsEnvironment}
+        {title: 'Context', component: SessionDetailsContext}
       ]
     }),
     mixins: [Widget],

@@ -36,7 +36,7 @@
         <div class="column">
           <span class="tag" title="Confidence">{{ paginationEntry.confidence }}%</span>
         </div>
-        <div class="column has-text-right" v-if="relations.length > 1">
+        <div class="column has-text-right is-unselectable" v-if="relations.length > 1">
           <button @click="paginationGoBackwards"
             :class="['button', 'is-small', {'is-loading': !isMapReady}]"
             :disabled="!paginationHasPrevious">
