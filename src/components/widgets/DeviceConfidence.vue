@@ -1,7 +1,7 @@
 <template>
   <article class="tile is-child is-radiusless box">
     <h6 class="subtitle">Device confidence</h6>
-    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else>
       <nav class="level">
         <div class="level-item has-text-centered">

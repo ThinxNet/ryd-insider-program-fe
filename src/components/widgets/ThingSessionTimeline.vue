@@ -1,7 +1,7 @@
 <template>
   <article class="tile is-child is-radiusless box">
     <div v-if="loading" class="has-text-centered">
-      <span class="icon is-large"><i class="ion-clock"></i></span>
+      <span class="icon is-large"><i class="ion-ios-time"></i></span>
     </div>
     <div v-else-if="entries.length">
       <div ref="timeline"></div>
@@ -98,7 +98,8 @@
         const options = {
           avoidOverlappingGridLines: false,
           chartArea: {width: '100%', height: '100%'},
-          height: 215
+          height: 215,
+          timeline: {showRowLabels: false}
         };
 
         (new google.visualization.Timeline(this.$refs.timeline)).draw(dataTable, options);

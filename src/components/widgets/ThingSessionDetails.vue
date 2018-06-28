@@ -7,7 +7,14 @@
         </li>
       </ul>
     </div>
-    <component class="box is-radiusless" :is='component' :sessionId='sessionId' v-if='sessionId'/>
+    <div class="box is-radiusless" style="min-height: 16.95rem;">
+      <div v-if="!sessionId" class="has-text-centered">
+        <span class="icon is-large"><i class="ion-ios-time"></i></span>
+      </div>
+      <transition v-else name="fade" mode="out-in" :duration="100">
+        <component :is='component' :sessionId='sessionId'/>
+      </transition>
+    </div>
   </article>
 </template>
 

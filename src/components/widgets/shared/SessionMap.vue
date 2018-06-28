@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="has-text-centered">
-    <span class="icon is-large"><i class="ion-clock"></i></span>
+    <span class="icon is-large"><i class="ion-ios-time"></i></span>
   </div>
   <leaflet v-else
     @init.once="leafletInit" @tileLoaded.once="baseTileLoaded"

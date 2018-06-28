@@ -1,9 +1,9 @@
 <template>
   <div v-if="loading" class="has-text-centered">
-    <span class="icon is-large"><i class="ion-clock"></i></span>
+    <span class="icon is-large"><i class="ion-ios-time"></i></span>
   </div>
   <div v-else-if="Object.keys(entries).length"
-    style="max-height: 280px; overflow-y: scroll; overflow-x: hidden;">
+    style="max-height: 14rem; overflow-y: scroll; overflow-x: hidden;">
     <div class="columns" v-for="key in Object.keys(entries)">
       <div class="column is-4">
         <span class="tag">{{ key }}</span>

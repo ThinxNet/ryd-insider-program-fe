@@ -1,6 +1,6 @@
 <template>
   <article class="tile is-child">
-    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image" style="height: 450px;">
         <session-map style="height: 450px"

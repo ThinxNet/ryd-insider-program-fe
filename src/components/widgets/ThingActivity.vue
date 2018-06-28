@@ -1,6 +1,6 @@
 <template>
   <article class="tile is-child is-radiusless box">
-    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else ref="chart" class="is-fullwidth"></div>
     <br>
     <div class="buttons has-addons is-centered">

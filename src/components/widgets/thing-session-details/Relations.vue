@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="has-text-centered">
-    <span class="icon is-large"><i class="ion-clock"></i></span>
+    <span class="icon is-large"><i class="ion-ios-time"></i></span>
   </div>
   <article v-else class="content">
     <p v-if="alikeSimilar.length && alikeClose.length">
@@ -24,7 +24,7 @@
     <div v-if="paginationEntry">
       <div class="columns">
         <div class="column">
-          <session-map class="box is-radiusless" style="height: 150px"
+          <session-map class="box is-radiusless" style="height: 7rem"
             polylineSource="map"
             :sessionId="paginationEntry.session"
             @onReadyStateChanged="readyStateChanged"

@@ -1,6 +1,6 @@
 <template>
   <article class="tile is-child box is-radiusless">
-    <span v-if="loading" class="icon is-large"><i class="ion-clock"></i></span>
+    <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
 
     <div v-else class="control has-icons-left">
       <div class="select is-medium is-fullwidth">
@@ -15,7 +15,7 @@
         </select>
       </div>
       <span class="icon is-medium is-left">
-        <i class="ion-android-car"></i>
+        <i class="ion-ios-car"></i>
       </span>
     </div>
   </article>
