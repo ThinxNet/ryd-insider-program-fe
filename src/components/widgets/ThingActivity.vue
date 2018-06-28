@@ -66,18 +66,21 @@
         data.addColumn('date', 'Date');
         data.addColumn('number', 'Driving');
         data.addColumn({type: 'string', role: 'tooltip'});
+        data.addColumn({type: 'string', role: 'annotation'});
         data.addColumn('number', 'Standstill');
         data.addColumn({type: 'string', role: 'tooltip'});
 
         (this.payload || []).forEach(e => {
-          const driveDuration = moment.duration(e[this.driveDurationKey], 's'),
-            stayDuration = moment.duration(e[this.stayDurationKey], 's');
+          const driveDuration = moment.duration(e[this.keyDriveDuration], 's'),
+            stayDuration = moment.duration(e[this.keyStayDuration], 's'),
+            distance = _.round(e[this.keyDistance] / 1000, 1);
           data.addRow([
             moment().dayOfYear(e.dayOfYear).toDate(),
             driveDuration.asMinutes(),
-            `${moment.utc(driveDuration.asMilliseconds()).format("HH:mm")}h`,
+            `Driving: ${moment.utc(driveDuration.asMilliseconds()).format("HH:mm")}h`,
+            `~${distance}km`,
             stayDuration.asMinutes(),
-            `${moment.utc(stayDuration.asMilliseconds()).format("HH:mm")}h`,
+            `~5 km/h: ${moment.utc(stayDuration.asMilliseconds()).format("HH:mm")}h`
           ]);
         });
 
@@ -85,25 +88,33 @@
           chartArea: {width: '100%', height: '100%'},
           hAxis: {textPosition: 'none', baselineColor: 'none', gridlines: {color: 'none'}},
           isStacked: true,
-          legend: {position: 'in', maxLines: 3, alignment: 'center'},
+          // legend: {position: 'in', maxLines: 3, alignment: 'center'},
+          legend: {position: 'none'},
           theme: 'maximized',
-          vAxis: {viewWindowMode: 'explicit', gridlines: {color: 'none'}}
+          vAxis: {
+            format: 'MM.dd',
+            gridlines: {color: 'none'},
+            viewWindowMode: 'explicit'
+          }
         });
       }
     },
 
     computed: {
       timeStandstill() {
-        return moment.duration(_.sumBy(this.payload, this.stayDurationKey), 's').humanize();
+        return moment.duration(_.sumBy(this.payload, this.keyStayDuration), 's').humanize();
       },
       timeDrive() {
-        return moment.duration(_.sumBy(this.payload, this.driveDurationKey), 's').humanize();
+        return moment.duration(_.sumBy(this.payload, this.keyDriveDuration), 's').humanize();
       },
-      stayDurationKey() {
+      keyStayDuration() {
         return `${this.source}StayDurationS`;
       },
-      driveDurationKey() {
+      keyDriveDuration() {
         return `${this.source}DriveDurationS`;
+      },
+      keyDistance() {
+        return `${this.source}DistanceM`;
       }
     }
   }
