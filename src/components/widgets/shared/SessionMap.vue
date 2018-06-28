@@ -78,7 +78,7 @@
         const layers = {'Trip': this.polyline};
         const iconParking = L.marker(
           _.last(this.polyline.getLatLngs()), {
-            icon: L.AwesomeMarkers.icon({icon: 'model-s', markerColor: 'green'}),
+            icon: L.AwesomeMarkers.icon({icon: 'logo-model-s', markerColor: 'green'}),
             interactive: false
           }
         );
