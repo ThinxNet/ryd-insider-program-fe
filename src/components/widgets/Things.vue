@@ -4,7 +4,8 @@
 
     <div v-else class="control has-icons-left">
       <div class="select is-medium is-fullwidth">
-        <select v-model="selected" class="is-radiusless">
+        <select class="is-radiusless"
+          v-model="selected" :autofocus="!selected && entries.length > 1">
           <option disabled value="">Select one&hellip;</option>
           <option :value="entry._id" v-for="entry in entries">
             {{entry.nickName}}

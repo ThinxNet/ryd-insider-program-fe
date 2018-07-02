@@ -71,10 +71,10 @@
 
         _.keys(presets).forEach(title => {
           const fields = ['speed', 'duration', 'distance', 'timestamp'],
+            timestamp = moment(_.head(this.entries).timestamp),
             data = _(this.entries).filter('address')
               .groupBy(v => presets[title](v.address))
               .mapValues(v => _.map(v, a => _.pick(a, fields))).value();
-          let timestamp = moment(_.head(this.entries).timestamp);
           _.keys(data).forEach(key => {
             const distance = _.round(_.sumBy(data[key], 'distance') / 1000, 1),
               speed = _.round(_.meanBy(data[key], 'speed'), 1),
