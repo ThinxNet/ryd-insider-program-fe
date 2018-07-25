@@ -66,7 +66,10 @@
         } finally {
           this.loading = false;
         }
-        this.polyline.setLatLngs(this.locations.map(s => s.coordinate.reverse()));
+
+        this.polyline.setLatLngs(
+          _(this.locations).map('coordinates').flatten().map(Array.reverse).value()
+        );
 
         // @todo! missing session id change
         this.$emit('onLocationsChanged', this.locations);

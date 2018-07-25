@@ -70,15 +70,15 @@
         dataTable.addColumn({type: 'date', id: 'End'});
 
         _.keys(presets).forEach(title => {
-          const fields = ['speed', 'duration', 'distance', 'timestamp'],
+          const fields = ['speedMs', 'durationS', 'distanceM', 'timestamp'],
             timestamp = moment(_.head(this.entries).timestamp),
             data = _(this.entries).filter('address')
               .groupBy(v => presets[title](v.address))
               .mapValues(v => _.map(v, a => _.pick(a, fields))).value();
           _.keys(data).forEach(key => {
-            const distance = _.round(_.sumBy(data[key], 'distance') / 1000, 1),
-              speed = _.round(_.meanBy(data[key], 'speed'), 1),
-              duration = _.sumBy(data[key], 'duration'),
+            const distance = _.round(_.sumBy(data[key], 'distanceM') / 1000, 1),
+              speed = _.round(_.meanBy(data[key], 'speedMs') * 3.6, 1),
+              duration = _.sumBy(data[key], 'durationS'),
               tooltip = `<div class="notification">
                 <b>${key}</b><br>
                 <b>Duration:</b> ${moment.duration(duration, 's').humanize()}<br>

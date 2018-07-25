@@ -45,13 +45,21 @@
 
               <br>
               <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-              for
+
+              <template v-if="source !== 'map'">
+                for
+              </template>
+              <template v-else>
+                ideally doable within
+              </template>
+
               <span class="tag">
                 ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
               </span>
+
               <template v-if="sessionStatistics.speedKmHAvg">
                 <br>
-                Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+                Avg. speed <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
                 (max: <span class="tag">{{ sessionStatistics.speedKmHMax }} km/h</span>)
               </template>
             </div>
@@ -202,7 +210,7 @@
         return !this.isMapBlocked;
       },
       viaStreets() {
-        const streets = _(this.locations).map('street').reject(_.isEmpty).uniq().value();
+        const streets = _(this.locations).map('name').reject(_.isEmpty).uniq().value();
         if (!streets.length) {
           return [];
         }
