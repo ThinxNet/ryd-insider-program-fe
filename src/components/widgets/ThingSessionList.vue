@@ -5,7 +5,7 @@
       <div class="card-image" style="height: 450px;">
         <session-map style="height: 440px"
           :config="mapConfig"
-          :polylineSource="source === 'map' ? 'map' : 'gps'"
+          :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
           :sessionId="paginationEntry._id" v-if="paginationEntry._id"
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"></session-map>
@@ -25,6 +25,9 @@
                   v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
                   :title="mapMatchingConfidenceHint">MAP</span>
+                <span class="button is-small"
+                  v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
+                  @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
               </div>
             </div>
           </div>
@@ -133,7 +136,8 @@
         this.locations = [];
         if (!this.paginationEntry) { return; }
         this.$emit('onSessionChange', this.paginationEntry._id);
-        if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
+        if (['map', 'mixed'].includes(this.source)
+          && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
           this.sourceSwitchTo('gps');
         }
       });
