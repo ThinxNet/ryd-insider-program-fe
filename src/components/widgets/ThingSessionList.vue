@@ -39,10 +39,10 @@
               </time>
               &mdash;
               <time :datetime="$moment(paginationEntry.end).format()">
-                {{ $moment(paginationEntry.end).format('LT') }}
+                {{ $moment(paginationEntry.end).format('L LT') }}
               </time>
 
-              <template v-if="source === 'map' && viaStreets.length">
+              <template v-if="['mixed', 'map'].includes(source) && viaStreets.length">
                 <br><small>{{ viaStreets.join(', ') }}</small>
               </template>
 
@@ -187,7 +187,15 @@
           speedKmHAvg: this.paginationEntry.statistics.geoSpeedKmHAvg,
           speedKmHMax: this.paginationEntry.statistics.geoSpeedKmHMax
         };
+
         switch (this.source) {
+          case 'mixed':
+            if (this.paginationEntry.statistics.mapConfidenceAvg > 90
+              && !this.paginationEntry.statistics.mapHasGaps) {
+              fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
+            }
+            break;
+
           case 'map':
             fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
             fields.durationS = this.paginationEntry.statistics.mapDurationS;
