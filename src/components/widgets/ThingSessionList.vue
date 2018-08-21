@@ -5,7 +5,7 @@
       <div class="card-image" style="height: 450px;">
         <session-map style="height: 440px"
           :config="mapConfig"
-          :polylineSource="source === 'map' ? 'map' : 'gps'"
+          :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
           :sessionId="paginationEntry._id" v-if="paginationEntry._id"
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"></session-map>
@@ -25,6 +25,9 @@
                   v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
                   :title="mapMatchingConfidenceHint">MAP</span>
+                <span class="button is-small"
+                  v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
+                  @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
               </div>
             </div>
           </div>
@@ -36,22 +39,30 @@
               </time>
               &mdash;
               <time :datetime="$moment(paginationEntry.end).format()">
-                {{ $moment(paginationEntry.end).format('LT') }}
+                {{ $moment(paginationEntry.end).format('L LT') }}
               </time>
 
-              <template v-if="source === 'map' && viaStreets.length">
+              <template v-if="['mixed', 'map'].includes(source) && viaStreets.length">
                 <br><small>{{ viaStreets.join(', ') }}</small>
               </template>
 
               <br>
               <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-              for
+
+              <template v-if="source !== 'map'">
+                for
+              </template>
+              <template v-else>
+                ideally doable within
+              </template>
+
               <span class="tag">
                 ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
               </span>
+
               <template v-if="sessionStatistics.speedKmHAvg">
                 <br>
-                Avg. speed was <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
+                Avg. speed <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
                 (max: <span class="tag">{{ sessionStatistics.speedKmHMax }} km/h</span>)
               </template>
             </div>
@@ -125,7 +136,8 @@
         this.locations = [];
         if (!this.paginationEntry) { return; }
         this.$emit('onSessionChange', this.paginationEntry._id);
-        if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
+        if (['map', 'mixed'].includes(this.source)
+          && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
           this.sourceSwitchTo('gps');
         }
       });
@@ -175,7 +187,15 @@
           speedKmHAvg: this.paginationEntry.statistics.geoSpeedKmHAvg,
           speedKmHMax: this.paginationEntry.statistics.geoSpeedKmHMax
         };
+
         switch (this.source) {
+          case 'mixed':
+            if (this.paginationEntry.statistics.mapConfidenceAvg > 90
+              && !this.paginationEntry.statistics.mapHasGaps) {
+              fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
+            }
+            break;
+
           case 'map':
             fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
             fields.durationS = this.paginationEntry.statistics.mapDurationS;
@@ -202,7 +222,7 @@
         return !this.isMapBlocked;
       },
       viaStreets() {
-        const streets = _(this.locations).map('street').reject(_.isEmpty).uniq().value();
+        const streets = _(this.locations).map('name').reject(_.isEmpty).uniq().value();
         if (!streets.length) {
           return [];
         }
