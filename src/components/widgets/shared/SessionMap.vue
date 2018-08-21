@@ -9,6 +9,7 @@
 
 <script>
   import Leaflet from '../../Leaflet';
+  import moment from 'moment';
 
   // @onLocationsChanged([])
   // @onMapInit(map)
@@ -24,6 +25,7 @@
     },
     data: () => ({
       api: null,
+      events: [],
       loading: true,
       locations: [],
       polyline: null,
@@ -57,10 +59,12 @@
         try {
           const results = await Promise.all([
             this.api.sessionsFetchOne(id),
-            this.api.sessionLocations(id, {source})
+            this.api.sessionLocations(id, {source}),
+            this.api.sessionEvents(id)
           ]);
           this.session = results[0].data;
           this.locations = results[1].data;
+          this.events = results[2].data;
         } catch (e) {
           console.error(e);
         } finally {
@@ -78,25 +82,58 @@
         this.$emit('onMapInit', instance);
       },
       baseTileLoaded(instance) {
-        const layers = {'Trip': this.polyline};
         const iconParking = L.marker(
           _.last(this.polyline.getLatLngs()), {
             icon: L.AwesomeMarkers.icon({icon: 'logo-model-s', markerColor: 'green'}),
             interactive: false
           }
         );
+        const layers = {'Trip': this.polyline},
+          groups = {'Parking': iconParking};
 
-        instance.addLayer(this.polyline);
-        instance.addLayer(iconParking);
+        this.events.forEach(event => {
+          const icon = this.eventTypeIcon(event.type);
+          if (!groups[icon.title]) {
+            groups[icon.title] = L.layerGroup();
+          }
+          groups[icon.title].addLayer(
+            L
+              .marker(
+                [event.payload.latitude, event.payload.longitude], {
+                  icon: L.AwesomeMarkers
+                    .icon({icon: icon.id, markerColor: icon.bg, iconColor: icon.fg})
+                }
+              )
+              .bindTooltip(
+                `
+                  <b>${icon.title}</b>
+                  <br>${moment(event.timestamp).format('LTS')}
+                  <br>Duration: ${event.payload.durationS}s.
+                  <br>Starting speed: ${event.payload.startingSpeedKmH} km/h.
+                `
+              )
+          );
+        });
 
-        /*instance.addControl(
-          L.control.layers(layers, {'Parking': iconParking}, {hideSingleBase: true})
-        );*/
+        // show all by default
+        _.keys(layers).forEach(key => instance.addLayer(layers[key]));
+        _.keys(groups).forEach(key => instance.addLayer(groups[key]));
 
+        instance.addControl(L.control.layers(layers, groups, {hideSingleBase: true}));
         instance.fitBounds(this.polyline.getBounds());
 
         this.$emit('onMapReady', instance);
-      }
+      },
+      eventTypeIcon(type) {
+        return {
+          ACC_HARD_CURVE_LEFT:
+            {bg: 'orange', fg: '#FFF', id: 'ios-undo', title: 'Hard curve (left)'},
+          ACC_HARD_CURVE_RIGHT:
+            {bg: 'orange', fg: '#FFF', id: 'ios-redo', title: 'Hard curve (right)'},
+          HARD_BRAKING:
+            {id: 'ios-warning', bg: 'darkred', fg: '#FFF', title: 'Hard braking'},
+        }[type] || {id: 'ios-help-circle', bg: 'white', fg: 'black', title: 'Unknown'};
+      },
     },
 
     computed: {
