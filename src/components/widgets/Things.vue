@@ -31,7 +31,7 @@
     async mounted() {
       try {
         const response = await this.$store.getters['common/apiInsiderProgram']
-          .thingsFetchAll({page: {size: 1}});
+          .things({page: {size: 1}});
         this.entries = response.data.filter(e => e.device);
         if (this.entries.length < 2) {
           this.selected = this.entries[0]._id;
