@@ -58,7 +58,7 @@
         this.loading = true;
         try {
           const results = await Promise.all([
-            this.api.sessionsFetchOne(id),
+            this.api.session(id),
             this.api.sessionLocations(id, {source}),
             this.api.sessionEvents(id)
           ]);

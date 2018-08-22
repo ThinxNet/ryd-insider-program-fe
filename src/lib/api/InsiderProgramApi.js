@@ -17,27 +17,31 @@
 import ApiAbstract from './ApiAbstract';
 
 export default class InsiderProgramApi extends ApiAbstract {
+  // /devices
   deviceConfidence(id, params) {
     return this._request(`devices/${id}/confidence`, {params});
   }
 
-  thingsFetchAll(params) {
+  // /things
+  things(params) {
     return this._request('things', {params});
   }
 
-  thingsFetchOne(id, params) {
+  thing(id, params) {
     return this._request(`things/${id}`, {params});
   }
 
+  // /statistics
   statisticsActivity(thingId, params) {
     return this._request(`statistics/${thingId}/activity`, {params});
   }
 
-  sessionsFetchAll(params) {
+  // sessions
+  sessions(params) {
     return this._request('sessions', {params});
   }
 
-  sessionsFetchOne(id, params) {
+  session(id, params) {
     return this._request(`sessions/${id}`, {params});
   }
 

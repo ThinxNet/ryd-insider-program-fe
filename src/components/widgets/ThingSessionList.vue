@@ -12,6 +12,13 @@
       </div>
       <div class="card-content">
         <div class="content">
+          <!-- @todo: move it out-->
+          <div class="columns" style="height: 180px;width: 100%;left: 12px;top: 324px;position: absolute;background-color: #FFF;z-index: 1000">
+            <div class="column">
+              <thing-session-details-speed :session-id="paginationEntry._id"/>
+            </div>
+          </div>
+
           <div class="columns">
             <div class="column">
               <div class="buttons has-addons is-centered">
@@ -108,12 +115,14 @@
 
   import SessionMap from './shared/SessionMap';
 
+  import ThingSessionDetailsSpeed from './thing-session-details/Speed';
+
   import Pagination from '../../lib/mixins/pagination';
   import Widget from '../../lib/mixins/widget';
 
   export default {
     name: 'widget-thing-session-list',
-    components: {SessionMap},
+    components: {ThingSessionDetailsSpeed, SessionMap},
     mixins: [Pagination, Widget],
     props: {entity: Object},
     data() {
@@ -155,7 +164,7 @@
         this.loading = true;
         try {
           const payload = {filter: {device: entity.device}, page: {size: 10}},
-            response = await this.api.sessionsFetchAll(payload);
+            response = await this.api.sessions(payload);
           this.sessions = response.data;
           this.paginationResetEntries(this.sessions);
         } catch (e) {
@@ -204,11 +213,14 @@
             break;
 
           default:
-            Object.keys(fields).filter(key => key !== 'durationS').forEach(
-              key => fields[key] = this.paginationEntry.statistics[this.source + _.upperFirst(key)]
-            );
+            Object.keys(fields)
+              .filter(key => key !== 'durationS')
+              .forEach(key =>
+                fields[key] = this.paginationEntry.statistics[this.source + _.upperFirst(key)]
+              );
             break;
         }
+
         return fields;
       },
       mapConfig() {
