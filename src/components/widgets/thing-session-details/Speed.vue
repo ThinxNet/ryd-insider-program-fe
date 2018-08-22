@@ -57,8 +57,8 @@
         dataTable.addColumn({type: 'string', role: 'tooltip', label: 'Id'});
         dataTable.addColumn({type: 'number', label: 'Speed (km/h)'});
         dataTable.addColumn({type: 'string', role: 'tooltip'});
-        dataTable.addColumn({type: 'number', label: 'RPM'});
-        dataTable.addColumn({type: 'string', role: 'tooltip'});
+/*        dataTable.addColumn({type: 'number', label: 'RPM'});
+        dataTable.addColumn({type: 'string', role: 'tooltip'});*/
         dataTable.addColumn({type: 'number', label: `⌀ ${avg} km/h`});
         dataTable.addColumn({type: 'string', role: 'tooltip'});
 
@@ -70,8 +70,8 @@
             segment._id,
             segment.attributes.geoSpeedKmH,
             `${timestamp}\n${segment.attributes.geoSpeedKmH} km/h`,
-            segment.attributes.obdMaxRpm,
-            `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,
+/*            segment.attributes.obdMaxRpm,
+            `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,*/
             avg,
             `${avg} km/h`
           ]);
@@ -81,7 +81,7 @@
           chartArea: {width: '85%'},
           hAxis: {format: 'mm'},
           legend: {position: 'top'},
-          series: {1: {type: 'line'}, 2: {type: 'line'}},
+          series: {1: {type: 'line'}/*, 2: {type: 'line'}*/},
           seriesType: 'steppedArea'
         };
 
