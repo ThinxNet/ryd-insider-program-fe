@@ -7,17 +7,29 @@
           :config="mapConfig"
           :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
           :sessionId="paginationEntry._id" v-if="paginationEntry._id"
+          @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
-          @onReadyStateChanged="mapReadyStateChange"></session-map>
+          @onReadyStateChanged="mapReadyStateChange"/>
       </div>
       <div class="card-content">
         <div class="content">
-          <!-- @todo: move it out-->
-          <div class="columns" style="height: 180px;width: 100%;left: 12px;top: 324px;position: absolute;background-color: #FFF;z-index: 1000">
-            <div class="column">
-              <thing-session-details-speed :session-id="paginationEntry._id"/>
+          <transition name="fade">
+            <div v-if="uiSpeedDetails"
+              style="position: absolute; z-index: 1000; left: 0; top: 230px; width: 423px">
+              <article class="message is-info">
+                <div class="message-header is-radiusless">
+                  Speed details
+                  <button class="delete" @click.prevent="uiSpeedDetails = false"></button>
+                </div>
+                <div class="message-body is-paddingless" style="height: 200px;">
+                  <thing-session-details-speed
+                    :source="['mixed', 'map'].includes(source) ? 'geo' : source"
+                    :session-id="paginationEntry._id"
+                    @onSegmentSelected=""/>
+                </div>
+              </article>
             </div>
-          </div>
+          </transition>
 
           <div class="columns">
             <div class="column">
@@ -25,9 +37,9 @@
                 <span class="button is-small"
                   @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
                 <span class="button is-small"
-                  @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-                <span class="button is-small"
                   @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
+                <span class="button is-small"
+                  @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
                 <span class="button is-small"
                   v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
@@ -132,14 +144,13 @@
         loading: true,
         locations: [],
         sessions: [],
-        source: null
+        source: null,
+        uiSpeedDetails: false
       };
     },
-
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
-
     mounted() {
       this.$on('onPaginationChanged', () => {
         this.locations = [];
@@ -152,13 +163,11 @@
       });
       this.fetchData(this.entity);
     },
-
     watch: {
       entity(current) {
         this.fetchData(current);
       }
     },
-
     methods: {
       async fetchData(entity) {
         this.loading = true;
@@ -180,6 +189,26 @@
       sourceBtnClass(source) {
         return (this.source === source) ? ['is-primary', 'is-active'] : [];
       },
+      mapInit(instance) {
+        const self = this,
+          control = L.Control.extend({
+            options: {position: 'bottomleft'},
+            onAdd(map) {
+              const icon = L.DomUtil.create('i', 'ion-ios-speedometer'),
+                container = L.DomUtil
+                  .create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+              icon.style.cssText = 'font-size: 1.5rem;padding: 0.1rem 0.5rem;cursor: pointer;';
+              container.style.backgroundColor = 'white';
+              container.onclick = () => { self.uiSpeedDetails = true; };
+              container.appendChild(icon);
+              return container;
+            },
+            onRemove(map) {
+              return map;
+            }
+          });
+        instance.addControl(new control());
+      },
       mapReadyStateChange(flag) {
         this.isMapBlocked = !flag;
       },
@@ -187,7 +216,6 @@
         this.locations = locations;
       }
     },
-
     computed: {
       sessionStatistics() {
         const fields = {

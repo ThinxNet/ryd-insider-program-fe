@@ -16,7 +16,7 @@
 
   export default {
     name: 'thing-session-details-speed',
-    props: {sessionId: String},
+    props: {sessionId: String, source: {default: 'gps', type: String}},
     data() {
       return {api: null, loading: true, session: null};
     },
@@ -32,6 +32,9 @@
     watch: {
       sessionId(currentId) {
         this.fetchData(currentId);
+      },
+      source() {
+        this.fetchData(this.sessionId);
       }
     },
     methods: {
@@ -51,14 +54,16 @@
         if (!this.session || !this.session.segments.length) { return; }
 
         const dataTable = new google.visualization.DataTable(),
-          avg = _.ceil(_.meanBy(this.session.segments, 'attributes.geoSpeedKmH'));
+          field = this.source + (this.source === 'obd' ? 'MaxSpeedKmH': 'SpeedKmH'),
+          avg = _.ceil(_.meanBy(this.session.segments, `attributes.${field}`)),
+          normalizer = avg * this.session.segments.length;
 
         dataTable.addColumn({type: 'datetime', label: 'Time'});
         dataTable.addColumn({type: 'string', role: 'tooltip', label: 'Id'});
         dataTable.addColumn({type: 'number', label: 'Speed (km/h)'});
         dataTable.addColumn({type: 'string', role: 'tooltip'});
-/*        dataTable.addColumn({type: 'number', label: 'RPM'});
-        dataTable.addColumn({type: 'string', role: 'tooltip'});*/
+        dataTable.addColumn({type: 'number', label: 'RPM'});
+        dataTable.addColumn({type: 'string', role: 'tooltip'});
         dataTable.addColumn({type: 'number', label: `⌀ ${avg} km/h`});
         dataTable.addColumn({type: 'string', role: 'tooltip'});
 
@@ -68,10 +73,10 @@
           dataTable.addRow([
             date.toDate(),
             segment._id,
-            segment.attributes.geoSpeedKmH,
-            `${timestamp}\n${segment.attributes.geoSpeedKmH} km/h`,
-/*            segment.attributes.obdMaxRpm,
-            `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,*/
+            segment.attributes[field],
+            `${timestamp}\n${segment.attributes[field]} km/h`,
+            segment.attributes.obdMaxRpm / normalizer,
+            `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,
             avg,
             `${avg} km/h`
           ]);
@@ -81,7 +86,7 @@
           chartArea: {width: '85%'},
           hAxis: {format: 'mm'},
           legend: {position: 'top'},
-          series: {1: {type: 'line'}/*, 2: {type: 'line'}*/},
+          series: {1: {type: 'line'}, 2: {type: 'line'}},
           seriesType: 'steppedArea'
         };
 
