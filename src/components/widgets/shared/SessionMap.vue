@@ -20,21 +20,25 @@
     components: {Leaflet},
     props: {
       config: Object,
+      highlights: Array,
       polylineSource: {default: 'gps', type: String},
       sessionId: String
     },
     data: () => ({
       api: null,
       events: [],
+      highlightGroup: null,
       loading: true,
       locations: [],
+      map: null,
       polyline: null,
       session: null
     }),
 
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
-      this.polyline = L.polyline([], {color: '#039be5', interactive: false});
+      this.polyline = L.polyline([], {color: '#039be5', interactive: false, weight: 3});
+      this.highlightGroup = L.layerGroup();
     },
 
     mounted() {
@@ -42,14 +46,40 @@
     },
 
     watch: {
+      highlights(current) {
+        if (!this.map.hasLayer(this.highlightGroup)) {
+          this.map.addLayer(this.highlightGroup);
+        }
+
+        this.highlightGroup.clearLayers();
+        if (!current.length) { return; }
+
+        const location = this.locations.find(location => location._id === current[0]);
+        if (!location || !location.coordinates.length) { return; }
+
+        if (location.coordinates.length > 1) {
+          this.highlightGroup
+            .addLayer(L.polyline(location.coordinates, {color: '#ff3860', weight: 10}));
+          return;
+        }
+
+        this.highlightGroup.addLayer(
+          L.circle(location.coordinates[0], {
+            color: '#ff3860',
+            fillColor: '#FFF',
+            fillOpacity: 0.5,
+            radius: 20, weight: 15
+          })
+        );
+      },
+      loading(current) {
+        this.$emit('onReadyStateChanged', !current);
+      },
       polylineSource(currentSource) {
         this.fetchData(this.sessionId, currentSource);
       },
       sessionId(currentId) {
         this.fetchData(currentId, this.polylineSource);
-      },
-      loading(current) {
-        this.$emit('onReadyStateChanged', !current);
       }
     },
 
@@ -71,14 +101,13 @@
           this.loading = false;
         }
 
-        this.polyline.setLatLngs(
-          _(this.locations).map('coordinates').flatten().map(Array.reverse).value()
-        );
+        this.polyline
+          .setLatLngs(_(this.locations).map('coordinates').flatten().map(Array.reverse).value());
 
-        // @todo! missing session id change
         this.$emit('onLocationsChanged', this.locations);
       },
       leafletInit(instance) {
+        this.map = instance;
         this.$emit('onMapInit', instance);
       },
       baseTileLoaded(instance) {

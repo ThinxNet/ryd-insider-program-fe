@@ -7,6 +7,7 @@
           :config="mapConfig"
           :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
           :sessionId="paginationEntry._id" v-if="paginationEntry._id"
+          :highlights="segmentsHighlighted"
           @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"/>
@@ -19,12 +20,13 @@
               <article class="message is-info">
                 <div class="message-header is-radiusless">
                   Speed details
-                  <button class="delete" @click.prevent="uiSpeedDetails = false"></button>
+                  <button class="delete" @click.prevent="uiSpeedDetailsClose"></button>
                 </div>
                 <div class="message-body is-paddingless" style="height: 200px;">
                   <thing-session-details-speed
                     :source="['mixed', 'map'].includes(source) ? 'geo' : source"
                     :session-id="paginationEntry._id"
+                    @onSegmentHighlighted="segmentHighlight"
                     @onSegmentSelected=""/>
                 </div>
               </article>
@@ -143,6 +145,7 @@
         isMapBlocked: true,
         loading: true,
         locations: [],
+        segmentsHighlighted: [],
         sessions: [],
         source: null,
         uiSpeedDetails: false
@@ -214,6 +217,13 @@
       },
       mapLocationsChange(locations) {
         this.locations = locations;
+      },
+      uiSpeedDetailsClose() {
+        this.uiSpeedDetails = false;
+        this.segmentsHighlighted = [];
+      },
+      segmentHighlight(segmentId) {
+        this.segmentsHighlighted = [segmentId];
       }
     },
     computed: {
@@ -232,14 +242,12 @@
               fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
             }
             break;
-
           case 'map':
             fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
             fields.durationS = this.paginationEntry.statistics.mapDurationS;
             fields.speedKmHAvg = this.paginationEntry.statistics.mapSpeedKmHAvg;
             fields.speedKmHMax = this.paginationEntry.statistics.mapSpeedKmHMax;
             break;
-
           default:
             Object.keys(fields)
               .filter(key => key !== 'durationS')
