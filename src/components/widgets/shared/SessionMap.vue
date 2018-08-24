@@ -137,7 +137,8 @@
                 `
                   <b>${icon.title}</b>
                   <br>${moment(event.timestamp).format('LTS')}
-                  <br>Duration: ${event.payload.durationS}s.
+                  <br>Duration: ${event.payload.durationS} s.
+                  <br>Strength: ${_.round(event.payload.maxAccCmS2 / 980.665, 2)} g
                   <br>Starting speed: ${event.payload.startingSpeedKmH} km/h.
                 `
               )
