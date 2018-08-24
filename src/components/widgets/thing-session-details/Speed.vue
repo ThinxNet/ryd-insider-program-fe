@@ -82,15 +82,14 @@
           ]);
         });
 
-        const options = {
-          chartArea: {width: '85%'},
-          hAxis: {format: 'mm'},
-          legend: {position: 'top'},
-          series: {1: {type: 'line'}, 2: {type: 'line'}},
-          seriesType: 'steppedArea'
-        };
-
-        const chart = new google.visualization.SteppedAreaChart(this.$refs.chart);
+        const chart = new google.visualization.SteppedAreaChart(this.$refs.chart),
+          options = {
+            chartArea: {width: '85%'},
+            hAxis: {format: 'mm'},
+            legend: {position: 'top'},
+            series: {1: {type: 'line'}, 2: {type: 'line'}},
+            seriesType: 'steppedArea'
+          };
 
         google.visualization.events
           .addListener(chart, 'onmouseover', sel => this.chartHover(sel, chart, dataTable));
@@ -102,7 +101,7 @@
       chartHover(selection, instance, dataTable) {
         if (!selection.row) { return; }
         if (selection.column !== 6) {
-          this.$emit('onSegmentSelected', dataTable.getValue(selection.row, 1));
+          this.$emit('onSegmentHighlighted', dataTable.getValue(selection.row, 1));
         }
       }
     }

@@ -8,9 +8,7 @@
   export default {
     name: 'leaflet',
     props: {tileConfig: Object},
-    data() {
-      return {instance: null};
-    },
+    data: () => ({instance: null}),
     computed: {
       isAuthenticated() {
         return this.$store.getters['authentication/isAuthenticated'];
