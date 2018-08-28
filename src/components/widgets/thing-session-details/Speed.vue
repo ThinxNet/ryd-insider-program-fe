@@ -69,7 +69,7 @@
 
         this.session.segments.forEach(segment => {
           const date = moment(segment.timestamp),
-            timestamp = date.format('LT');
+            timestamp = date.format('LTS');
           dataTable.addRow([
             date.toDate(),
             segment._id,
