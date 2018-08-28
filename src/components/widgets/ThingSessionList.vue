@@ -47,7 +47,6 @@
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
                   :title="mapMatchingConfidenceHint">MAP</span>
                 <span class="button is-small"
-                  v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
               </div>
             </div>
