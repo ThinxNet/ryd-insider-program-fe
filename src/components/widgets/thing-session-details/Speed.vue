@@ -55,8 +55,7 @@
 
         const dataTable = new google.visualization.DataTable(),
           field = this.source + (this.source === 'obd' ? 'MaxSpeedKmH': 'SpeedKmH'),
-          avg = _.ceil(_.meanBy(this.session.segments, `attributes.${field}`)),
-          normalizer = avg * this.session.segments.length;
+          avg = _.ceil(_.meanBy(this.session.segments, `attributes.${field}`));
 
         dataTable.addColumn({type: 'datetime', label: 'Time'});
         dataTable.addColumn({type: 'string', role: 'tooltip', label: 'Id'});
@@ -75,7 +74,7 @@
             segment._id,
             segment.attributes[field],
             `${timestamp}\n${segment.attributes[field]} km/h`,
-            segment.attributes.obdMaxRpm / normalizer,
+            segment.attributes.obdMaxRpm / avg,
             `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,
             avg,
             `${avg} km/h`
