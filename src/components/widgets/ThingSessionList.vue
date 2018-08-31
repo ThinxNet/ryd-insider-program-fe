@@ -3,14 +3,19 @@
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image" style="height: 450px;">
-        <session-map style="height: 440px"
+        <session-map v-if="paginationEntry._id" style="height: 440px"
+          :ui-controls="true"
           :config="mapConfig"
           :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
-          :sessionId="paginationEntry._id" v-if="paginationEntry._id"
+          :sessionId="paginationEntry._id"
           :highlights="segmentsHighlighted"
           @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
-          @onReadyStateChanged="mapReadyStateChange"/>
+          @onReadyStateChanged="mapReadyStateChange">
+          <session-map-locations
+            :sessionId="paginationEntry._id"
+            :source="['mixed', 'map'].includes(source) ? source : 'gps'"></session-map-locations>
+        </session-map>
       </div>
       <div class="card-content">
         <div class="content">
@@ -127,6 +132,8 @@
   import _ from 'lodash';
 
   import SessionMap from './shared/SessionMap';
+  import SessionMapLocations from './shared/session-map/Locations';
+  import SessionMapEvents from './shared/session-map/Events';
 
   import ThingSessionDetailsSpeed from './thing-session-details/Speed';
 
@@ -135,7 +142,7 @@
 
   export default {
     name: 'widget-thing-session-list',
-    components: {ThingSessionDetailsSpeed, SessionMap},
+    components: {SessionMap, SessionMapEvents, SessionMapLocations, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
     props: {entity: Object},
     data() {

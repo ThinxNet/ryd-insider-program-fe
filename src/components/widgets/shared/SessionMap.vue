@@ -3,8 +3,9 @@
     <span class="icon is-large"><i class="ion-ios-time"></i></span>
   </div>
   <leaflet v-else
-    @init.once="leafletInit" @tileLoaded.once="baseTileLoaded"
-    :tileConfig="tileConfig"></leaflet>
+    @init.once="leafletInit"
+    @tileLoaded.once="baseTileLoaded"
+    :tileConfig="tileConfig"><slot></slot></leaflet>
 </template>
 
 <script>
@@ -22,10 +23,10 @@
       config: Object,
       highlights: Array,
       polylineSource: {default: 'gps', type: String},
-      sessionId: String
+      sessionId: {type: String, required: true},
+      uiControls: {default: false, type: Boolean}
     },
     data: () => ({
-      api: null,
       events: [],
       highlightGroup: null,
       loading: true,
@@ -89,81 +90,51 @@
         try {
           const results = await Promise.all([
             this.api.session(id),
-            this.api.sessionLocations(id, {source}),
-            this.api.sessionEvents(id)
+            //this.api.sessionLocations(id, {source}),
+            //this.api.sessionEvents(id)
           ]);
           this.session = results[0].data;
-          this.locations = results[1].data;
-          this.events = results[2].data;
+          //this.locations = results[1].data;
+          //this.events = results[1].data;
         } catch (e) {
           console.error(e);
         } finally {
           this.loading = false;
         }
 
-        this.polyline
-          .setLatLngs(_(this.locations).map('coordinates').flatten().map(Array.reverse).value());
+        /*this.polyline
+          .setLatLngs(_(this.locations).map('coordinates').flatten().map(Array.reverse).value());*/
 
-        this.$emit('onLocationsChanged', this.locations);
+        //this.$emit('onLocationsChanged', this.locations);
       },
       leafletInit(instance) {
         this.map = instance;
         this.$emit('onMapInit', instance);
       },
       baseTileLoaded(instance) {
-        const iconParking = L.marker(
+        /*const iconParking = L.marker(
           _.last(this.polyline.getLatLngs()), {
             icon: L.AwesomeMarkers.icon({icon: 'logo-model-s', markerColor: 'green'}),
             interactive: false
           }
-        );
-        const layers = {'Trip': this.polyline},
-          groups = {'Parking': iconParking};
-
-        this.events.forEach(event => {
-          const icon = this.eventTypeIcon(event.type);
-          if (!groups[icon.title]) {
-            groups[icon.title] = L.layerGroup();
-          }
-          groups[icon.title].addLayer(
-            L
-              .marker(
-                [event.payload.latitude, event.payload.longitude], {
-                  icon: L.AwesomeMarkers
-                    .icon({icon: icon.id, markerColor: icon.bg, iconColor: icon.fg})
-                }
-              )
-              .bindTooltip(
-                `
-                  <b>${icon.title}</b>
-                  <br>${moment(event.timestamp).format('LTS')}
-                  <br>Duration: ${event.payload.durationS} s.
-                  <br>Strength: ${_.round(event.payload.maxAccCmS2 / 980.665, 2)} g
-                  <br>Starting speed: ${event.payload.startingSpeedKmH} km/h.
-                `
-              )
-          );
-        });
+        );*/
+        const layers = {/*'Trip': this.polyline*/},
+          groups = {/*'Parking': iconParking*/};
 
         // show all by default
         _.keys(layers).forEach(key => instance.addLayer(layers[key]));
         _.keys(groups).forEach(key => instance.addLayer(groups[key]));
 
-        instance.addControl(L.control.layers(layers, groups, {hideSingleBase: true}));
-        instance.fitBounds(this.polyline.getBounds());
+
+        if (this.uiControls) {
+          instance.addControl(L.control.layers(layers, groups, {hideSingleBase: true}));
+        }
+
+        //instance.fitBounds(this.polyline.getBounds());
 
         this.$emit('onMapReady', instance);
       },
-      eventTypeIcon(type) {
-        return {
-          ACC_HARD_CURVE_LEFT:
-            {bg: 'orange', fg: '#FFF', id: 'ios-undo', title: 'Hard curve (left)'},
-          ACC_HARD_CURVE_RIGHT:
-            {bg: 'orange', fg: '#FFF', id: 'ios-redo', title: 'Hard curve (right)'},
-          HARD_BRAKING:
-            {id: 'ios-warning', bg: 'darkred', fg: '#FFF', title: 'Hard braking'},
-        }[type] || {id: 'ios-help-circle', bg: 'white', fg: 'black', title: 'Unknown'};
-      },
+
     },
 
     computed: {

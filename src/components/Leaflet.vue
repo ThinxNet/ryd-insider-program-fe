@@ -1,5 +1,8 @@
 <template>
-  <div></div>
+  <div>
+    <div ref="leaflet" style="width: 100%; height: 100%"></div>
+    <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -25,7 +28,7 @@
       _.merge(tileConfig, this.tileConfig);
 
       this.instance = L.map(
-        this.$el,
+        this.$refs.leaflet,
         {attributionControl: false, center: [48.1480617, 11.5481421], zoom: 18}
       );
 
