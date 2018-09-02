@@ -5,10 +5,26 @@
   <leaflet v-else
     @init.once="leafletInit"
     @tileLoaded.once="baseTileLoaded"
-    :tileConfig="tileConfig"><slot></slot></leaflet>
+    :tileConfig="tileConfig">
+    <session-map-locations v-if="uiMapLocations"
+      :map-fit-bounds="true"
+      :session-id="sessionId"
+      :source="mapLocationsSource"
+      @onReadyStateChanged="mapLocationsReady"/>
+    <session-map-events v-if="uiMapEvents"
+      :session-id="sessionId"
+      @onReadyStateChanged="mapEventsReady"/>
+    <session-map-highlights v-if="uiMapHighlights"
+      :locations="mapLocations"
+      :highlights="mapHighlights"/>
+  </leaflet>
 </template>
 
 <script>
+  import SessionMapEvents from '../shared/session-map/Events';
+  import SessionMapHighlights from '../shared/session-map/Highlights';
+  import SessionMapLocations from '../shared/session-map/Locations';
+
   import Leaflet from '../../Leaflet';
   import moment from 'moment';
 
@@ -18,125 +34,131 @@
   // @onReadyStateChanged(boolean)
   export default {
     name: 'session-map',
-    components: {Leaflet},
+    components: {Leaflet, SessionMapEvents, SessionMapHighlights, SessionMapLocations},
     props: {
-      config: Object,
-      highlights: Array,
-      polylineSource: {default: 'gps', type: String},
+      mapConfig: Object,
+      mapHighlights: Array,
+      mapLocationsSource: {default: 'geo', type: String},
       sessionId: {type: String, required: true},
-      uiControls: {default: false, type: Boolean}
+      uiControls: {default: false, type: Boolean},
+      uiMapEvents: {default: false, type: Boolean},
+      uiMapHighlights: {default: false, type: Boolean},
+      uiMapLocations: {default: false, type: Boolean}
     },
     data: () => ({
-      events: [],
-      highlightGroup: null,
       loading: true,
-      locations: [],
-      map: null,
-      polyline: null,
+      mapControl: null,
+      mapGroups: {},
+      mapInstance: null,
+      mapLayers: {},
+      mapLocations: [],
       session: null
     }),
-
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
-      this.polyline = L.polyline([], {color: '#039be5', interactive: false, weight: 3});
-      this.highlightGroup = L.layerGroup();
     },
-
     mounted() {
-      this.fetchData(this.sessionId, this.polylineSource);
+      this.fetchData(this.sessionId);
     },
-
     watch: {
-      highlights(current) {
-        if (!this.map.hasLayer(this.highlightGroup)) {
-          this.map.addLayer(this.highlightGroup);
-        }
-
-        this.highlightGroup.clearLayers();
-        if (!current.length) { return; }
-
-        const location = this.locations.find(location => location._id === current[0]);
-        if (!location || !location.coordinates.length) { return; }
-
-        if (location.coordinates.length > 1) {
-          this.highlightGroup
-            .addLayer(L.polyline(location.coordinates, {color: '#ff3860', weight: 10}));
-          return;
-        }
-
-        this.highlightGroup.addLayer(
-          L.circle(location.coordinates[0], {
-            color: '#ff3860',
-            fillColor: '#FFF',
-            fillOpacity: 0.5,
-            radius: 20, weight: 15
-          })
-        );
-      },
       loading(current) {
         this.$emit('onReadyStateChanged', !current);
       },
-      polylineSource(currentSource) {
-        this.fetchData(this.sessionId, currentSource);
-      },
-      sessionId(currentId) {
-        this.fetchData(currentId, this.polylineSource);
+      sessionId(current) {
+        this.fetchData(current);
       }
     },
-
     methods: {
-      async fetchData(id, source) {
+      async fetchData(id) {
         this.loading = true;
         try {
-          const results = await Promise.all([
-            this.api.session(id),
-            //this.api.sessionLocations(id, {source}),
-            //this.api.sessionEvents(id)
-          ]);
-          this.session = results[0].data;
-          //this.locations = results[1].data;
-          //this.events = results[1].data;
+          const results = await this.api.session(id);
+          if (results.data) {
+            this.session = results.data;
+          }
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
-
-        /*this.polyline
-          .setLatLngs(_(this.locations).map('coordinates').flatten().map(Array.reverse).value());*/
-
-        //this.$emit('onLocationsChanged', this.locations);
       },
       leafletInit(instance) {
-        this.map = instance;
+        this.mapInstance = instance;
         this.$emit('onMapInit', instance);
       },
       baseTileLoaded(instance) {
-        /*const iconParking = L.marker(
-          _.last(this.polyline.getLatLngs()), {
+        if (this.uiControls && !this.mapControl) {
+          this.mapControl = L.control
+            .layers(this.mapLayers, this.mapGroups, {hideSingleBase: true})
+            .addTo(instance);
+        }
+        this.$emit('onMapReady', instance);
+      },
+      mapEventsReady(isReady, events) {
+        if (!isReady || !events.length) { return; }
+
+        for (const event of events) {
+          const icon = this.eventTypeIcon(event.type),
+            marker = L
+              .marker(
+                [event.payload.latitude, event.payload.longitude], {
+                  icon: L.AwesomeMarkers
+                    .icon({icon: icon.id, markerColor: icon.bg, iconColor: icon.fg})
+                }
+              )
+              .bindTooltip(
+                `
+                  <b>${icon.title}</b>
+                  <br>${moment(event.timestamp).format('LTS')}
+                  <br>Duration: ${event.payload.durationS} s.
+                  <br>Strength: ${_.round(event.payload.maxAccCmS2 / 980.665, 2)} g
+                  <br>Starting speed: ${event.payload.startingSpeedKmH} km/h.
+                `
+              );
+
+          if (!this.mapGroups[icon.title]) {
+            this.mapGroups[icon.title] = L.layerGroup().addTo(this.mapInstance);
+          }
+          this.mapGroups[icon.title].addLayer(marker.addTo(this.mapInstance));
+        }
+      },
+      mapLocationsReady(isReady, locations) {
+        if (!isReady) { return; }
+
+        _(this.mapGroups).extend(this.mapLayers).values()
+          .forEach(v => this.mapInstance.removeLayer(v));
+
+        if (!locations.length) { return; }
+
+        const polyline = L.polyline([], {color: '#039be5', interactive: false, weight: 4})
+          .setLatLngs(_(locations).map('coordinates').flatten().map(Array.reverse).value());
+        const iconParking = L.marker(
+          _.last(polyline.getLatLngs()), {
             icon: L.AwesomeMarkers.icon({icon: 'logo-model-s', markerColor: 'green'}),
             interactive: false
           }
-        );*/
-        const layers = {/*'Trip': this.polyline*/},
-          groups = {/*'Parking': iconParking*/};
+        );
 
-        // show all by default
-        _.keys(layers).forEach(key => instance.addLayer(layers[key]));
-        _.keys(groups).forEach(key => instance.addLayer(groups[key]));
+        this.mapGroups['Parking'] = iconParking.addTo(this.mapInstance);
+        this.mapLayers['Trip'] = polyline.addTo(this.mapInstance);
+        this.mapLocations = locations;
 
+        this.mapInstance.fitBounds(polyline.getBounds());
 
-        if (this.uiControls) {
-          instance.addControl(L.control.layers(layers, groups, {hideSingleBase: true}));
-        }
-
-        //instance.fitBounds(this.polyline.getBounds());
-
-        this.$emit('onMapReady', instance);
+        this.$emit('onLocationsChanged', locations);
       },
-
+      eventTypeIcon(type) {
+        return {
+          ACC_HARD_CURVE_LEFT:
+            {bg: 'orange', fg: '#FFF', id: 'ios-undo', title: 'Hard curve (left)'},
+          ACC_HARD_CURVE_RIGHT:
+            {bg: 'orange', fg: '#FFF', id: 'ios-redo', title: 'Hard curve (right)'},
+          HARD_BRAKING:
+            {id: 'ios-warning', bg: 'darkred', fg: '#FFF', title: 'Hard braking'},
+        }[type] || {id: 'ios-help-circle', bg: 'white', fg: 'black', title: 'Unknown'};
+      }
     },
-
     computed: {
       tileConfig() {
         return this.config ? this.config : {

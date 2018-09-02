@@ -24,11 +24,12 @@
     <div v-if="paginationEntry">
       <div class="columns">
         <div class="column">
-          <session-map class="box is-radiusless" style="height: 7rem"
-            polylineSource="map"
-            :sessionId="paginationEntry.session"
+          <session-map class="box is-radiusless is-paddingless" style="height: 7rem"
+            :session-id="paginationEntry.session"
+            :ui-map-locations="true"
+            map-locations-source="mixed"
             @onReadyStateChanged="readyStateChanged"
-            @onMapInit="mapInit"></session-map>
+            @onMapInit="mapInit"/>
         </div>
       </div>
 

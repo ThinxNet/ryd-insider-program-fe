@@ -4,18 +4,16 @@
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image" style="height: 450px;">
         <session-map v-if="paginationEntry._id" style="height: 440px"
+          :map-highlights="segmentsHighlighted"
+          :map-locations-source="['mixed', 'map'].includes(source) ? source : 'gps'"
+          :session-id="paginationEntry._id"
           :ui-controls="true"
-          :config="mapConfig"
-          :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
-          :sessionId="paginationEntry._id"
-          :highlights="segmentsHighlighted"
+          :ui-map-events="true"
+          :ui-map-locations="true"
+          :ui-map-highlights="true"
           @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
-          @onReadyStateChanged="mapReadyStateChange">
-          <session-map-locations
-            :sessionId="paginationEntry._id"
-            :source="['mixed', 'map'].includes(source) ? source : 'gps'"></session-map-locations>
-        </session-map>
+          @onReadyStateChanged="mapReadyStateChange"/>
       </div>
       <div class="card-content">
         <div class="content">
@@ -132,9 +130,6 @@
   import _ from 'lodash';
 
   import SessionMap from './shared/SessionMap';
-  import SessionMapLocations from './shared/session-map/Locations';
-  import SessionMapEvents from './shared/session-map/Events';
-
   import ThingSessionDetailsSpeed from './thing-session-details/Speed';
 
   import Pagination from '../../lib/mixins/pagination';
@@ -142,7 +137,7 @@
 
   export default {
     name: 'widget-thing-session-list',
-    components: {SessionMap, SessionMapEvents, SessionMapLocations, ThingSessionDetailsSpeed},
+    components: {SessionMap, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
     props: {entity: Object},
     data() {
@@ -264,13 +259,6 @@
         }
 
         return fields;
-      },
-      mapConfig() {
-        return {
-          minZoom: 7,
-          id: (this.paginationEntry.statistics.nightDurationS
-            > this.paginationEntry.statistics.dayDurationS) ? 'mapbox.dark' : 'mapbox.streets'
-        };
       },
       isMapReady() {
         return !this.isMapBlocked;
