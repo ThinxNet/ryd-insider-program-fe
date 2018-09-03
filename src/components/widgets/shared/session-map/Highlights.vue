@@ -1,5 +1,4 @@
 <script>
-  // @onReadyStateChanged(true|false, events)
   export default {
     name: 'session-map-highlights',
     template: '<div></div>',
@@ -16,9 +15,6 @@
       this.$parent.instance.removeLayer(this.group);
     },
     watch: {
-      loading(current) {
-        this.$emit('onReadyStateChanged', !current, this.events);
-      },
       locations() {
         this.group.clearLayers();
         if (!this.$parent.instance.hasLayer(this.group)) {
