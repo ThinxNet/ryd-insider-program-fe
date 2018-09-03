@@ -48,9 +48,8 @@
     data: () => ({
       loading: true,
       mapControl: null,
-      mapGroups: {},
+      mapElements: [],
       mapInstance: null,
-      mapLayers: {},
       mapLocations: [],
       session: null
     }),
@@ -64,7 +63,36 @@
       loading(current) {
         this.$emit('onReadyStateChanged', !current);
       },
+      mapElements(current, previous) {
+        previous.forEach(obj => this.mapInstance.removeLayer(obj.element));
+        current.forEach(obj => this.mapInstance.addLayer(obj.element));
+
+        if (!this.uiControls) {
+          return;
+        }
+
+        const layers = _(current).pickBy({type: 'layer'})
+          .transform((r, v) => r[v.title] = v.element).value();
+        const groups = _(current).reject({type: 'layer'}).sortBy('title').groupBy('type')
+          .reduce((result, value) => {
+            value.forEach(v => {
+              if (!result[v.title]) {
+                result[v.title] = L.layerGroup().addTo(this.mapInstance);
+              }
+              result[v.title].addLayer(v.element);
+            });
+            return result;
+          }, {});
+
+        if (this.mapControl) {
+          this.mapInstance.removeControl(this.mapControl);
+        }
+        this.mapControl = L.control
+          .layers(layers, groups, {hideSingleBase: true})
+          .addTo(this.mapInstance);
+      },
       sessionId(current) {
+        this.mapElements = [];
         this.fetchData(current);
       }
     },
@@ -88,16 +116,12 @@
         this.$emit('onMapInit', instance);
       },
       baseTileLoaded(instance) {
-        if (this.uiControls && !this.mapControl) {
-          this.mapControl = L.control
-            .layers(this.mapLayers, this.mapGroups, {hideSingleBase: true})
-            .addTo(instance);
-        }
         this.$emit('onMapReady', instance);
       },
       mapEventsReady(isReady, events) {
         if (!isReady || !events.length) { return; }
 
+        const entries = [];
         for (const event of events) {
           const icon = this.eventTypeIcon(event.type),
             marker = L
@@ -117,22 +141,17 @@
                 `
               );
 
-          if (!this.mapGroups[icon.title]) {
-            this.mapGroups[icon.title] = L.layerGroup().addTo(this.mapInstance);
-          }
-          this.mapGroups[icon.title].addLayer(marker.addTo(this.mapInstance));
+          entries.push({element: marker, title: icon.title, type: 'event'});
         }
+
+        this.mapElements = _(this.mapElements).reject({type: 'event'}).concat(entries).value();
       },
       mapLocationsReady(isReady, locations) {
-        if (!isReady) { return; }
+        if (!isReady || !locations.length) { return; }
 
-        _(this.mapGroups).extend(this.mapLayers).values()
-          .forEach(v => this.mapInstance.removeLayer(v));
+        const polyline = L.polyline([], {color: '#039be5', interactive: false, weight: 4});
+        polyline.setLatLngs(_(locations).map('coordinates').flatten().map(Array.reverse).value());
 
-        if (!locations.length) { return; }
-
-        const polyline = L.polyline([], {color: '#039be5', interactive: false, weight: 4})
-          .setLatLngs(_(locations).map('coordinates').flatten().map(Array.reverse).value());
         const iconParking = L.marker(
           _.last(polyline.getLatLngs()), {
             icon: L.AwesomeMarkers.icon({icon: 'logo-model-s', markerColor: 'green'}),
@@ -140,10 +159,15 @@
           }
         );
 
-        this.mapGroups['Parking'] = iconParking.addTo(this.mapInstance);
-        this.mapLayers['Trip'] = polyline.addTo(this.mapInstance);
-        this.mapLocations = locations;
+        const entries = [
+          {element: iconParking, title: 'Parking', type: 'parking'},
+          {element: polyline, title: 'Trip', type: 'layer'}
+        ];
 
+        this.mapElements = _(this.mapElements)
+          .reject(v => _.map(entries, 'type').includes(v.type))
+          .concat(entries).value();
+        this.mapLocations = locations;
         this.mapInstance.fitBounds(polyline.getBounds());
 
         this.$emit('onLocationsChanged', locations);
@@ -163,6 +187,7 @@
       tileConfig() {
         return this.config ? this.config : {
           minZoom: 7,
+          zoom: 7,
           id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
             ? 'mapbox.dark' : 'mapbox.light'
         };

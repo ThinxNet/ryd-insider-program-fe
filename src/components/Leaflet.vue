@@ -27,18 +27,13 @@
 
       _.merge(tileConfig, this.tileConfig);
 
-      this.instance = L.map(
-        this.$refs.leaflet,
-        {attributionControl: false, center: [48.1480617, 11.5481421], zoom: 18}
-      );
-
+      this.instance = L.map(this.$refs.leaflet, {attributionControl: false});
       this.instance.addLayer(
         L.tileLayer(
           'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
           tileConfig
         ).on('load', () => this.$emit('tileLoaded', this.instance))
       );
-
       this.instance.whenReady(() => this.$emit('ready', this.instance));
 
       this.$emit('init', this.instance);
