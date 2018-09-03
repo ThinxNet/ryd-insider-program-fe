@@ -1,5 +1,5 @@
 <script>
-  // @onReadyStateChanged(true|false, polyline)
+  // @onReadyStateChanged(true|false, locations)
   export default {
     name: 'session-map-locations',
     template: '<div></div>',
