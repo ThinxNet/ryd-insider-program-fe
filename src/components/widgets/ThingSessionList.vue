@@ -3,11 +3,14 @@
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image" style="height: 450px;">
-        <session-map style="height: 440px"
-          :config="mapConfig"
-          :polylineSource="['mixed', 'map'].includes(source) ? source : 'gps'"
-          :sessionId="paginationEntry._id" v-if="paginationEntry._id"
-          :highlights="segmentsHighlighted"
+        <session-map v-if="paginationEntry._id" style="height: 440px"
+          :map-highlights="segmentsHighlighted"
+          :map-locations-source="['mixed', 'map'].includes(source) ? source : 'gps'"
+          :session-id="paginationEntry._id"
+          :ui-controls="true"
+          :ui-map-events="true"
+          :ui-map-locations="true"
+          :ui-map-highlights="true"
           @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"/>
@@ -127,7 +130,6 @@
   import _ from 'lodash';
 
   import SessionMap from './shared/SessionMap';
-
   import ThingSessionDetailsSpeed from './thing-session-details/Speed';
 
   import Pagination from '../../lib/mixins/pagination';
@@ -135,7 +137,7 @@
 
   export default {
     name: 'widget-thing-session-list',
-    components: {ThingSessionDetailsSpeed, SessionMap},
+    components: {SessionMap, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
     props: {entity: Object},
     data() {
@@ -257,13 +259,6 @@
         }
 
         return fields;
-      },
-      mapConfig() {
-        return {
-          minZoom: 7,
-          id: (this.paginationEntry.statistics.nightDurationS
-            > this.paginationEntry.statistics.dayDurationS) ? 'mapbox.dark' : 'mapbox.streets'
-        };
       },
       isMapReady() {
         return !this.isMapBlocked;
