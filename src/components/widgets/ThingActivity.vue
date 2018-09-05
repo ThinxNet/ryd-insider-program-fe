@@ -108,7 +108,8 @@
         if (!entry) {
           return _.isUndefined(entry) ? '' : 'No trips';
         }
-        return `Trips: ${entry.count}\nDistance: ${_.round(entry[this.keyDistance] / 1000, 1)} km.`;
+        return `${moment().dayOfYear(entry.dayOfYear).format("L")}\nTrips: ${entry.count}`
+          + `\nDistance: ${_.round(entry[this.keyDistance] / 1000, 1)} km.`;
       },
       calendarEntryBgColor(entry, top) {
         const count = _.isUndefined(entry) ? -1 : _.get(entry, 'count', 0),
