@@ -54,8 +54,13 @@
         if (!this.session || !this.session.segments.length) { return; }
 
         const dataTable = new google.visualization.DataTable(),
+          segmentsWrapped = _(this.session.segments),
           field = this.source + (this.source === 'obd' ? 'MaxSpeedKmH': 'SpeedKmH'),
-          avg = _.ceil(_.meanBy(this.session.segments, `attributes.${field}`));
+          avg = _.ceil(segmentsWrapped.meanBy(`attributes.${field}`));
+
+        const obdRpmValues = segmentsWrapped.map('attributes.obdMaxRpm').reject(_.lte),
+          obdRpmMax = obdRpmValues.max(),
+          obdRpmMin = obdRpmValues.min();
 
         dataTable.addColumn({type: 'datetime', label: 'Time'});
         dataTable.addColumn({type: 'string', role: 'tooltip', label: 'Id'});
@@ -68,13 +73,16 @@
 
         this.session.segments.forEach(segment => {
           const date = moment(segment.timestamp),
-            timestamp = date.format('LTS');
+            timestamp = date.format('LTS'),
+            obdMaxRpm = segment.attributes.obdMaxRpm
+              ? ((segment.attributes.obdMaxRpm - obdRpmMin) / (obdRpmMax - obdRpmMin)) * avg
+              : null;
           dataTable.addRow([
             date.toDate(),
             segment._id,
             segment.attributes[field],
             `${timestamp}\n${segment.attributes[field]} km/h`,
-            segment.attributes.obdMaxRpm / avg,
+            obdMaxRpm,
             `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,
             avg,
             `${avg} km/h`
