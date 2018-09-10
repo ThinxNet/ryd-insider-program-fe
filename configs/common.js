@@ -3,7 +3,7 @@ export default {
     defaultLocale: 'de-DE'
   },
   api: {
-    tankTaler: {
+    ryd: {
       baseURL: 'https://tt4.thinxcloud-staging.de'
     },
     insiderProgram: {

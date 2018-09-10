@@ -32,7 +32,7 @@ export default new Vuex.Store(
         namespaced: true,
         state: {
           apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
-          apiRyd: new RydApi(Vue.http, Config.api.tankTaler.baseURL),
+          apiRyd: new RydApi(Vue.http, Config.api.ryd.baseURL),
           locale: null
         },
         getters: {
