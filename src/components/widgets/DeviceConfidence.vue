@@ -6,19 +6,19 @@
       <nav class="level">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Level (%)</p>
+            <p class="heading" title="Fuel level percent">Fuel (%)</p>
             <p class="title">{{ confidencePercent('obdFuelLevelPercent') || 'N/A' }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Level (L)</p>
+            <p class="heading" title="Fuel level liters">Fuel (L)</p>
             <p class="title">{{ confidencePercent('obdFuelLevelL') || 'N/A' }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Cons. (L)</p>
+            <p class="heading" title="Fuel consumption liters">Cons. (L)</p>
             <p class="title">{{ confidencePercent('fuelConsumptionL') || 'N/A' }}</p>
           </div>
         </div>
@@ -27,13 +27,13 @@
       <nav class="level">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Odometer</p>
+            <p class="heading" title="Odometer quality">Odometer</p>
             <p class="title">{{ confidencePercent('obdCarOdometer') || 'N/A' }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">GPS</p>
+            <p class="heading" title="GPS quality">GPS</p>
             <p class="title">{{ confidencePercent('gpsDistanceM') || 'N/A' }}</p>
           </div>
         </div>

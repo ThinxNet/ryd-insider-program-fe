@@ -8,7 +8,7 @@
           <div class="media-content">
             <b class="is-size-4 has-text-white">{{currentThing.nickName}}</b>
             <span v-if="currentThing.ymme" class="has-text-light">
-             <span class="has-text-primary">|</span>
+             <span class="has-text-primary is-size-5">|</span>
              {{currentThing.ymme.year}} {{currentThing.ymme.make}} {{currentThing.ymme.model}}
             </span>
           </div>
