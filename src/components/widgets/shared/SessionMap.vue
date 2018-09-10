@@ -174,10 +174,12 @@
       },
       eventTypeIcon(type) {
         return {
+          ACCELERATION:
+            {bg: 'red', fg: '#FFF', id: 'ios-speedometer', title: 'Acceleration'},
           ACC_HARD_CURVE_LEFT:
-            {bg: 'orange', fg: '#FFF', id: 'ios-undo', title: 'Hard curve (left)'},
+            {bg: 'cadetblue', fg: '#FFF', id: 'ios-undo', title: 'Hard curve (left)'},
           ACC_HARD_CURVE_RIGHT:
-            {bg: 'orange', fg: '#FFF', id: 'ios-redo', title: 'Hard curve (right)'},
+            {bg: 'cadetblue', fg: '#FFF', id: 'ios-redo', title: 'Hard curve (right)'},
           HARD_BRAKING:
             {id: 'ios-warning', bg: 'darkred', fg: '#FFF', title: 'Hard braking'},
         }[type] || {id: 'ios-help-circle', bg: 'white', fg: 'black', title: 'Unknown'};
