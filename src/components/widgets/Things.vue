@@ -1,23 +1,29 @@
 <template>
-  <article class="tile is-child box is-radiusless">
+  <article class="tile is-child">
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
 
-    <div v-else class="control has-icons-left">
-      <div class="select is-medium is-fullwidth">
-        <select class="is-radiusless"
-          v-model="selected" :autofocus="!selected && entries.length > 1">
-          <option disabled value="">Select one&hellip;</option>
-          <option :value="entry._id" v-for="entry in entries">
-            {{entry.nickName}}
-            <template v-if="entry.ymme">
-              ({{entry.ymme.year}} {{entry.ymme.make}} {{entry.ymme.model}})
-            </template>
-          </option>
-        </select>
+    <div v-else class="columns is-radiusless is-flex is-gapless">
+      <div class="column is-11 has-text-centered">
+        <div class="media" v-if="currentThing">
+          <div class="media-content">
+            <b class="is-size-4 has-text-white">{{currentThing.nickName}}</b>
+            <span v-if="currentThing.ymme" class="has-text-light">
+             <span class="has-text-primary">|</span>
+             {{currentThing.ymme.year}} {{currentThing.ymme.make}} {{currentThing.ymme.model}}
+            </span>
+          </div>
+        </div>
       </div>
-      <span class="icon is-medium is-left">
-        <i class="ion-ios-car"></i>
-      </span>
+      <div class="column has-text-right">
+        <button class="button is-white"
+          :disabled="!hasPreviousThing"
+          @click.prevent="previousThing">
+          <span class="icon"><i class="ion-ios-arrow-back"></i></span>
+        </button>
+        <button class="button is-white" :disabled="!hasNextThing" @click.prevent="nextThing">
+          <span class="icon"><i class="ion-ios-arrow-forward"></i></span>
+        </button>
+      </div>
     </div>
   </article>
 </template>
@@ -25,16 +31,14 @@
 <script>
   export default {
     name: 'widget-things',
-    data() {
-      return {entries: [], loading: true, selected: ''};
-    },
+    data: () => ({entries: [], loading: true, selectedIdx: null}),
     async mounted() {
       try {
         const response = await this.$store.getters['common/apiInsiderProgram']
           .things({page: {size: 1}});
         this.entries = response.data.filter(e => e.device);
-        if (this.entries.length < 2) {
-          this.selected = this.entries[0]._id;
+        if (this.entries.length > 0) {
+          this.selectedIdx = 0;
         }
       } catch (e) {
         console.error(e);
@@ -43,10 +47,33 @@
       }
     },
     watch: {
-      selected: function (current, previous) {
-        if (current !== '') {
-          this.$emit('onEntrySelected', this.entries.find(e => e._id === current));
+      selectedIdx() {
+        this.$emit('onEntrySelected', this.currentThing);
+      }
+    },
+    methods: {
+      previousThing() {
+        if (this.hasPreviousThing) {
+          this.selectedIdx--;
         }
+        return false;
+      },
+      nextThing() {
+        if (this.hasNextThing) {
+          this.selectedIdx++;
+        }
+        return false;
+      }
+    },
+    computed: {
+      currentThing() {
+        return this.entries[this.selectedIdx];
+      },
+      hasNextThing() {
+        return this.selectedIdx + 1 < this.entries.length;
+      },
+      hasPreviousThing() {
+        return this.selectedIdx > 0;
       }
     }
   }
