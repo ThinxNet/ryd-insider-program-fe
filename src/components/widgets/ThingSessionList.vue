@@ -19,7 +19,7 @@
         <div class="content">
           <transition name="fade">
             <div v-if="uiSpeedDetails"
-              style="position: absolute; z-index: 1000; left: 0; top: 230px; width: 423px">
+              style="position: absolute; z-index: 1000; left: 0; top: 210px; width: 423px">
               <article class="message is-info">
                 <div class="message-header is-radiusless">
                   Speed details
