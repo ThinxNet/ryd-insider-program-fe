@@ -37,7 +37,7 @@
           </transition>
 
           <div class="columns">
-            <div class="column">
+            <div class="column is-paddingless">
               <div class="buttons has-addons is-centered">
                 <span class="button is-small"
                   @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
