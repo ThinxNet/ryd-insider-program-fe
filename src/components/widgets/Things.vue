@@ -1,6 +1,9 @@
 <template>
   <article class="tile is-child">
-    <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
+    <div v-if="loading" class="has-text-centered has-text-white">
+      <span class="icon is-large is-radiusless box"><i class="ion-ios-time"></i></span>
+      loading&hellip;
+    </div>
 
     <div v-else class="columns is-radiusless is-flex is-gapless">
       <div class="column is-11 has-text-centered">

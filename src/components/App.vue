@@ -38,7 +38,7 @@
           <ul>
             <li>
               <a href="https://github.com/ThinxNet/ryd-insider-program-fe"
-                target="_blank">GitHub</a>
+                class="has-text-white" target="_blank">GitHub</a>
             </li>
           </ul>
         </div>
