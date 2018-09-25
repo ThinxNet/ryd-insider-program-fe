@@ -27,18 +27,22 @@
       google.charts.load('current', {packages: ['corechart']});
     },
     mounted() {
-      google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
+      google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId, this.source));
     },
     watch: {
       sessionId(currentId) {
-        this.fetchData(currentId);
+        this.fetchData(currentId, this.source);
       },
-      source() {
-        this.fetchData(this.sessionId);
+      source(source) {
+        this.fetchData(this.sessionId, source);
       }
     },
     methods: {
-      async fetchData(id) {
+      async fetchData(id, source) {
+        if (!['geo', 'gps', 'obd'].includes(source)) {
+          return;
+        }
+
         this.loading = true;
         try {
           this.session = (await this.api.session(id, {fields: {segments: 'attributes,timestamp'}}))
@@ -48,14 +52,14 @@
         } finally {
           this.loading = false;
         }
-        setTimeout(this.chartRepaint);
+        setTimeout(() => this.chartRepaint(source));
       },
-      chartRepaint() {
+      chartRepaint(source) {
         if (!this.session || !this.session.segments.length) { return; }
 
         const dataTable = new google.visualization.DataTable(),
           segmentsWrapped = _(this.session.segments),
-          field = this.source + (this.source === 'obd' ? 'MaxSpeedKmH': 'SpeedKmH'),
+          field = source + (source === 'obd' ? 'MaxSpeedKmH': 'SpeedKmH'),
           avg = _.ceil(segmentsWrapped.meanBy(`attributes.${field}`));
 
         const obdRpmValues = segmentsWrapped.map('attributes.obdMaxRpm').reject(_.lte),

@@ -15,8 +15,12 @@
       :session-id="sessionId"
       @onReadyStateChanged="mapEventsReady"/>
     <session-map-highlights v-if="uiMapHighlights"
-      :locations="mapLocations"
-      :highlights="mapHighlights"/>
+      :highlights="mapHighlights"
+      :locations="mapLocations"/>
+    <session-map-overspeed v-if="uiMapOverspeed"
+      :session-id="sessionId"
+      :speed-source="mapLocationsSource"
+      @onReadyStateChanged="mapOverspeedReady"/>
   </leaflet>
 </template>
 
@@ -24,6 +28,7 @@
   import SessionMapEvents from '../shared/session-map/Events';
   import SessionMapHighlights from '../shared/session-map/Highlights';
   import SessionMapLocations from '../shared/session-map/Locations';
+  import SessionMapOverspeed from '../shared/session-map/Overspeed';
 
   import Leaflet from '../../Leaflet';
   import moment from 'moment';
@@ -34,7 +39,9 @@
   // @onReadyStateChanged(boolean)
   export default {
     name: 'session-map',
-    components: {Leaflet, SessionMapEvents, SessionMapHighlights, SessionMapLocations},
+    components: {
+      Leaflet, SessionMapEvents, SessionMapHighlights, SessionMapLocations, SessionMapOverspeed
+    },
     props: {
       mapConfig: Object,
       mapHighlights: Array,
@@ -43,7 +50,8 @@
       uiControls: {default: false, type: Boolean},
       uiMapEvents: {default: false, type: Boolean},
       uiMapHighlights: {default: false, type: Boolean},
-      uiMapLocations: {default: false, type: Boolean}
+      uiMapLocations: {default: false, type: Boolean},
+      uiMapOverspeed: {default: false, type: Boolean}
     },
     data: () => ({
       loading: true,
@@ -145,6 +153,15 @@
         }
 
         this.mapElements = _(this.mapElements).reject({type: 'event'}).concat(entries).value();
+      },
+      mapOverspeedReady(isReady, lGroup) {
+        if (!isReady) { return; }
+
+        this.mapElements = _.reject(this.mapElements, {type: 'overspeed'});
+
+        if (lGroup.getLayers().length > 0) {
+          this.mapElements.push({element: lGroup, title: 'Over-speed', type: 'overspeed'});
+        }
       },
       mapLocationsReady(isReady, locations) {
         if (!isReady || !locations.length) { return; }

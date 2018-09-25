@@ -5,12 +5,13 @@
       <div class="card-image" style="height: 450px;">
         <session-map v-if="paginationEntry._id" style="height: 440px"
           :map-highlights="segmentsHighlighted"
-          :map-locations-source="['mixed', 'map'].includes(source) ? source : 'gps'"
+          :map-locations-source="source"
           :session-id="paginationEntry._id"
           :ui-controls="true"
           :ui-map-events="true"
-          :ui-map-locations="true"
           :ui-map-highlights="true"
+          :ui-map-locations="true"
+          :ui-map-overspeed="true"
           @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"/>

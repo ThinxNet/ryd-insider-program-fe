@@ -61,6 +61,10 @@ export default class InsiderProgramApi extends ApiAbstract {
     return this._request(`sessions/${id}/environment`, {params});
   }
 
+  sessionEnvironmentOverspeed(id, params) {
+    return this._request(`sessions/${id}/environment/overspeed`, {params});
+  }
+
   sessionAlike(id, params) {
     return this._request(`sessions/${id}/alike`, {params});
   }

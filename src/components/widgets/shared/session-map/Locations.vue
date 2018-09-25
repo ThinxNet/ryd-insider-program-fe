@@ -26,7 +26,11 @@
       async fetchData(sessionId, source) {
         this.loading = true;
         try {
-          this.locations = (await this.api.sessionLocations(sessionId, {source})).data || [];
+          this.locations = (await
+            this.api.sessionLocations(
+              sessionId, {source: ['mixed', 'map'].includes(source) ? source : 'gps'}
+            )
+          ).data || [];
         } catch (e) {
           console.error(e);
           return;
