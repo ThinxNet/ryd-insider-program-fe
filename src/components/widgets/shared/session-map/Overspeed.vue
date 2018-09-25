@@ -26,7 +26,7 @@
       }
     },
     mounted() {
-      this.fetchData(this.sessionId);
+      this.fetchData(this.sessionId, this.speedSource);
     },
     beforeDestroy() {
       this.$parent.instance.removeLayer(this.group);
