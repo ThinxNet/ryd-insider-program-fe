@@ -56,7 +56,7 @@
 
         this.entries.forEach(entry => {
           const diff = entry.currentSpeedKmH - entry.maxSpeedKmH,
-            level = (diff < 20) ? 0 : (diff < 40) ? 2 : 3,
+            level = (diff < 21) ? 0 : (diff < 41) ? 2 : 3,
             lineSettings = {fillOpacity: 0.5, weight: 10},
             colors = [{color: '#FF9F1C'}, {color: '#ED6A5A'}, {color: '#FF3860'}];
           this.group.addLayer(
