@@ -1,5 +1,6 @@
 <script>
   import _ from 'lodash';
+  import moment from 'moment';
 
   // @onReadyStateChanged(true|false, group)
   export default {
@@ -55,15 +56,23 @@
         }
 
         this.entries.forEach(entry => {
-          const diff = entry.currentSpeedKmH - entry.maxSpeedKmH,
-            level = (diff < 21) ? 0 : (diff < 41) ? 2 : 3,
+          const diff = entry.currentSpeedKmH - entry.maxSpeedKmH;
+          if (diff <= 0) { return; }
+
+          const level = (diff < 21) ? 0 : (diff < 41) ? 1 : 2,
             lineSettings = {fillOpacity: 0.5, weight: 10},
             colors = [{color: '#FF9F1C'}, {color: '#ED6A5A'}, {color: '#FF3860'}];
           this.group.addLayer(
-            L.polyline(
-              entry.geometry.map(Array.reverse.bind(this)),
-              _.merge(lineSettings, colors[level])
-            )
+            L
+              .polyline(
+                entry.geometry.map(Array.reverse.bind(this)),
+                _.merge(lineSettings, colors[level])
+              )
+              .bindTooltip(
+                `<b>${moment(entry.timestamp).format('LTS')}</b><br>
+                Speed: ${entry.currentSpeedKmH} km/h<br>
+                Limit: ${entry.maxSpeedKmH} km/h`
+              )
           );
         });
       }
