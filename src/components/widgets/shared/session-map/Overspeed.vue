@@ -57,7 +57,7 @@
 
         this.entries.forEach(entry => {
           const diff = entry.currentSpeedKmH - entry.maxSpeedKmH;
-          if (diff <= 0) { return; }
+          if (diff <= 5) { return; }
 
           const level = (diff < 21) ? 0 : (diff < 41) ? 1 : 2,
             lineSettings = {fillOpacity: 0.5, weight: 10},
