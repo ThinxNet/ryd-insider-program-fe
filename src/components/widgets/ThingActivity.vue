@@ -108,8 +108,11 @@
         if (!entry) {
           return _.isUndefined(entry) ? '' : 'No trips';
         }
-        return `${moment().dayOfYear(entry.dayOfYear).format("L")}\nTrips: ${entry.count}`
-          + `\nDistance: ${_.round(entry[this.keyDistance] / 1000, 1)} km.`;
+        return `${moment().dayOfYear(entry.dayOfYear).format("L")}\n`
+          + `Trips: ${entry.count}\n`
+          + `Distance: ${_.round(entry[this.keyDistance] / 1000, 1)} km.\n`
+          + `Moving: ${moment.duration(entry[this.keyDriveDuration], 's').humanize()}\n`
+          + `Stay: ${moment.duration(entry[this.keyStayDuration], 's').humanize()}`;
       },
       calendarEntryBgColor(entry, top) {
         const count = _.isUndefined(entry) ? -1 : _.get(entry, 'count', 0),
