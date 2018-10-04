@@ -2,13 +2,13 @@ box: node:9
 
 build:
   steps:
-    - npm-install:
-      options: "--only=dev"
+    - npm-install
 
     - script:
       name: build
       code: |-
-        npm run build production
+        NODE_ENV=`[ "${WERCKER_GIT_BRANCH}" = "master" ] && echo "production" || echo "${WERCKER_GIT_BRANCH}"` \
+          npm run build production
 
     - script:
       name: artifacts
