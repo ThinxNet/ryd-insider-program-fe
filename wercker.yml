@@ -7,7 +7,7 @@ build:
     - script:
       name: build
       code: |-
-        NODE_ENV=`[ "${WERCKER_GIT_BRANCH}" = "master" ] && echo "production" || echo "${WERCKER_GIT_BRANCH}"` \
+        NODE_ENV=`[ "${WERCKER_GIT_BRANCH}" = "master" ] && echo "staging" || echo "${WERCKER_GIT_BRANCH}"` \
           npm run build production
 
     - script:
