@@ -2,3 +2,16 @@
 
 Ryd.one Insider Program
 =========================
+
+## Build
+```js
+// local development
+export NODE_ENV=development
+npm run build development
+```
+
+```js
+// minified and uglified version
+export NODE_ENV=production
+npm run build production
+```

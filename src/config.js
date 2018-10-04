@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-import config from '../configs/development';
+import configs from '../config.js';
+
+const env = process.env.NODE_ENV || 'development',
+  config = configs[env];
+if (!config) {
+  throw new Error(`Configuration file is not found (${env}).`);
+}
 
 export default config;
