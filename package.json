@@ -5,8 +5,8 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --open --hot --mode development",
-    "build": "webpack --progress --hide-modules --mode"
+    "dev": "./node_modules/.bin/webpack-dev-server --open --hot --mode development",
+    "build": "./node_modules/.bin/webpack --progress --hide-modules --mode"
   },
   "dependencies": {
     "lodash": "^4.17.11",
