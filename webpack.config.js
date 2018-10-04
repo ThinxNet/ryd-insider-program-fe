@@ -72,7 +72,8 @@ const config = {
   },
   devtool: '#eval-source-map',
   plugins: [
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new webpack.EnvironmentPlugin({NODE_ENV: 'development', DEBUG: false})
   ]
 };
 
