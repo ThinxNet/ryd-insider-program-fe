@@ -2,7 +2,7 @@ box: node:9
 
 build:
   steps:
-    - npm-install
+    - npm-install:
       options: "--only=dev"
 
     - script:
