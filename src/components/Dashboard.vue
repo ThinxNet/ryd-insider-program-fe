@@ -15,7 +15,7 @@
           <div class="tile">
             <!-- session details -->
             <div class="tile is-parent">
-              <widget-thing-session-details :sessionId="selectedSessionId"/>
+              <widget-thing-session-details :session-id="selectedSessionId"/>
             </div>
 
             <!-- activity -->
@@ -27,12 +27,12 @@
           <div class="tile">
             <!-- timeline -->
             <div class="tile is-parent" v-if="selectedSessionId">
-              <widget-thing-session-timeline :sessionId="selectedSessionId"/>
+              <widget-thing-session-timeline :session-id="selectedSessionId"/>
             </div>
 
             <!-- device confidence -->
             <div class="tile is-parent">
-              <widget-device-confidence :deviceId="thing.device"/>
+              <widget-device-confidence :thing-id="thing._id"/>
             </div>
           </div>
         </div>

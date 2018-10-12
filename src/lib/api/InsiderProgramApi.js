@@ -17,11 +17,6 @@
 import ApiAbstract from './ApiAbstract';
 
 export default class InsiderProgramApi extends ApiAbstract {
-  // /devices
-  deviceConfidence(id, params) {
-    return this._request(`devices/${id}/confidence`, {params});
-  }
-
   // /things
   things(params) {
     return this._request('things', {params});
@@ -29,6 +24,10 @@ export default class InsiderProgramApi extends ApiAbstract {
 
   thing(id, params) {
     return this._request(`things/${id}`, {params});
+  }
+
+  thingDeviceConfidence(thingId, params) {
+    return this._request(`things/${thingId}/device/confidence`, {params});
   }
 
   // /statistics

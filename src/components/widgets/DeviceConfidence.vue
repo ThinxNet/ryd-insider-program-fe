@@ -47,25 +47,25 @@
 
   export default {
     name: 'widget-device-confidence',
-    props: {deviceId: String},
+    props: {thingId: String},
     data: () => ({api: null, loading: true, payload: []}),
     mixins: [Widget],
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
     mounted() {
-      this.fetchData(this.deviceId);
+      this.fetchData(this.thingId);
     },
     watch: {
-      deviceId(currentId) {
+      thingId(currentId) {
         this.fetchData(currentId);
       }
     },
     methods: {
-      async fetchData(deviceId) {
+      async fetchData(thingId) {
         this.loading = true;
         try {
-          const response = await this.api.deviceConfidence(deviceId);
+          const response = await this.api.thingDeviceConfidence(thingId);
           this.payload = response.data;
         } catch (e) {
           console.error(e);
