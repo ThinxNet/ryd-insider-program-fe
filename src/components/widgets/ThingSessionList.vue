@@ -2,7 +2,8 @@
   <article class="tile is-child">
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
-      <div class="card-image" style="height: 450px;">
+      <div class="card-image"
+        :style="[{height: '450px'}, {width: parentElementWidth(this.$el) + 'px'}]">
         <session-map v-if="paginationEntry._id" style="height: 440px"
           :map-highlights="segmentsHighlighted"
           :map-locations-source="source"
@@ -19,9 +20,12 @@
       <div class="card-content">
         <div class="content">
           <transition name="fade">
-            <div v-if="uiSpeedDetails"
-              style="position: absolute; z-index: 1000; left: 0; top: 210px; width: 423px">
-              <article class="message is-info">
+            <div v-if="uiSpeedDetails" class="has-background-white"
+              :style="[
+                {position: 'absolute', zIndex: 1000, left: 0, top: '210px'},
+                {width: (parentElementWidth(this.$el) + 1) + 'px'}
+              ]">
+              <article class="message is-info is-radiusless">
                 <div class="message-header is-radiusless">
                   Speed details
                   <button class="delete" @click.prevent="uiSpeedDetailsClose"></button>
@@ -226,6 +230,9 @@
       },
       segmentHighlight(segmentId) {
         this.segmentsHighlighted = [segmentId];
+      },
+      parentElementWidth(elem, modifier = 26) {
+        return elem.parentElement.clientWidth - modifier;
       }
     },
     computed: {
