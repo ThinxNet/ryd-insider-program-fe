@@ -20,14 +20,13 @@
       <div class="card-content">
         <div class="content">
           <transition name="fade">
-            <div v-if="uiSpeedDetails" class="has-background-white"
-              :style="[
-                {position: 'absolute', zIndex: 1000, left: 0, top: '210px'},
-                {width: (parentElementWidth(this.$el) + 1) + 'px'}
-              ]">
+            <div v-if="uiSpeedDetails" :style="[
+              {left: 0, position: 'absolute', top: '210px', zIndex: 1000},
+              {width: (parentElementWidth(this.$el) + 1) + 'px'}
+            ]">
               <article class="message is-info is-radiusless">
                 <div class="message-header is-radiusless">
-                  Speed details
+                  movement overview
                   <button class="delete" @click.prevent="uiSpeedDetailsClose"></button>
                 </div>
                 <div class="message-body is-paddingless" style="height: 200px;">
