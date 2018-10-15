@@ -6,7 +6,7 @@
     </div>
 
     <div v-else class="columns is-radiusless is-flex is-gapless">
-      <div class="column is-11 has-text-centered">
+      <div class="column is-10 has-text-centered">
         <div class="media" v-if="currentThing">
           <div class="media-content">
             <b class="is-size-4 has-text-white">{{currentThing.nickName}}</b>
@@ -23,22 +23,61 @@
           @click.prevent="previousThing">
           <span class="icon"><i class="ion-ios-arrow-back"></i></span>
         </button>
+        <button class="button is-primary" @click.prevent="thingOverviewToggle">
+          <span class="icon"><i class="ion-ios-wifi"></i></span>
+        </button>
         <button class="button is-white" :disabled="!hasNextThing" @click.prevent="nextThing">
           <span class="icon"><i class="ion-ios-arrow-forward"></i></span>
         </button>
+      </div>
+    </div>
+
+    <div class="modal is-active" style="z-index: 1001"
+      v-if="uiThingOverview" ref="modal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head is-radiusless">
+          <p class="modal-card-title">overview</p>
+          <button class="delete" aria-label="close" @click.prevent="thingOverviewToggle"></button>
+        </header>
+        <section class="modal-card-body">
+          <thing-details-overview :thing-id="currentThing._id"/>
+        </section>
+        <footer class="modal-card-foot is-radiusless">
+          <div class="columns is-flex">
+            <div class="column is-2">
+              <span class="tag is-size-7 has-background-white"
+                title="Version"><small>v</small>{{ widgetVersion }}</span>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   </article>
 </template>
 
 <script>
+  import thingDetailsOverview from './thing-details/Overview';
+
+  import Widget from '../../lib/mixins/widget';
+
   export default {
     name: 'widget-things',
-    data: () => ({entries: [], loading: true, selectedIdx: null}),
+    data: () => ({
+      api: null,
+      entries: [],
+      loading: true,
+      selectedIdx: null,
+      uiThingOverview: false
+    }),
+    mixins: [Widget],
+    components: {thingDetailsOverview},
+    created() {
+      this.api = this.$store.getters['common/apiInsiderProgram'];
+    },
     async mounted() {
       try {
-        const response = await this.$store.getters['common/apiInsiderProgram']
-          .things({page: {size: 1}});
+        const response = await this.api.things({page: {size: 1}});
         this.entries = response.data.filter(e => e.device);
         if (this.entries.length > 0) {
           this.selectedIdx = 0;
@@ -66,6 +105,9 @@
           this.selectedIdx++;
         }
         return false;
+      },
+      thingOverviewToggle() {
+        this.uiThingOverview = !this.uiThingOverview;
       }
     },
     computed: {
