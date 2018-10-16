@@ -94,7 +94,28 @@
         </tr>
         <tr>
           <td>V-bus</td>
-          <td><span class="tag">{{ device.dongleStatus.vbusState }}</span></td>
+          <td>
+            <span class="tag">{{ device.dongleStatus.vbusState }}</span>
+
+            <table v-if="device.VBUSFW" class="table is-fullwidth is-narrow">
+              <tr>
+                <td>OBD Disabled</td>
+                <td><span class="tag">{{ device.obdDisabled ? 'Yes' : 'No' }}</span></td>
+              </tr>
+              <tr>
+                <td>Firmware version</td>
+                <td><span class="tag">{{ device.VBUSFW }}</span></td>
+              </tr>
+              <tr>
+                <td>Database version</td>
+                <td><span class="tag">{{ device.VBUSDB }}</span></td>
+              </tr>
+              <tr>
+                <td>Conflicts</td>
+                <td><span class="tag">{{ device.obdBusConflictCounter }}</span></td>
+              </tr>
+            </table>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -102,6 +123,20 @@
     <hr>
 
     <h4 class="subtitle">compatibility list</h4>
+
+    <table v-if="$_.get(device, 'obdFeatures.protocol.description')"
+      class="table is-fullwidth is-striped is-narrow">
+      <tbody>
+        <tr>
+          <td>Protocol</td>
+          <td><span class="tag">{{ device.obdFeatures.protocol.description }}</span></td>
+        </tr>
+        <tr class="is-size-7" v-for="(flag, param) of device.obdFeatures.params">
+          <td>{{ param }}</td>
+          <td>{{ flag ? 'Yes' : 'No' }}</td>
+        </tr>
+      </tbody>
+    </table>
 
   </article>
 </template>
