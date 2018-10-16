@@ -7,6 +7,12 @@
       <div ref="timeline"></div>
     </div>
     <p v-else class="notification">Not enough data to build the timeline.</p>
+
+    <div class="columns is-flex">
+      <div class="column is-2">
+        <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
+      </div>
+    </div>
   </article>
 </template>
 
@@ -97,7 +103,7 @@
 
         const options = {
           avoidOverlappingGridLines: false,
-          chartArea: {width: '100%', height: '100%'},
+          chartArea: {width: '100%'},
           height: 215,
           timeline: {showRowLabels: false}
         };

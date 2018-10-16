@@ -11,9 +11,16 @@
       <div v-if="!sessionId" class="has-text-centered">
         <span class="icon is-large"><i class="ion-ios-time"></i></span>
       </div>
+
       <transition v-else name="fade" mode="out-in" :duration="100">
         <component :is='component' :sessionId='sessionId'/>
       </transition>
+
+      <div class="columns is-flex">
+        <div class="column is-2">
+          <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
+        </div>
+      </div>
     </div>
   </article>
 </template>

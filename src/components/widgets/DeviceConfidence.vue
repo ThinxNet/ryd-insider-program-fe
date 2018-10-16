@@ -39,11 +39,19 @@
         </div>
       </nav>
     </div>
+
+    <div class="columns is-flex">
+      <div class="column is-2">
+        <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
+      </div>
+    </div>
   </article>
 </template>
 
 <script>
   import Widget from '../../lib/mixins/widget';
+
+  // @todo #12:2h move the widget functionality to a new component
 
   export default {
     name: 'widget-device-confidence',

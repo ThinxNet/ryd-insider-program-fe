@@ -3,8 +3,8 @@
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
-        :style="[{height: '450px'}, {width: parentElementWidth(this.$el) + 'px'}]">
-        <session-map v-if="paginationEntry._id" style="height: 440px"
+        :style="[{height: '470px'}, {width: parentElementWidth(this.$el) + 'px'}]">
+        <session-map v-if="paginationEntry._id" style="height: 460px"
           :map-highlights="segmentsHighlighted"
           :map-locations-source="source"
           :session-id="paginationEntry._id"
@@ -21,7 +21,7 @@
         <div class="content">
           <transition name="fade">
             <div v-if="uiSpeedDetails" :style="[
-              {left: 0, position: 'absolute', top: '210px', zIndex: 1000},
+              {left: 0, position: 'absolute', top: '230px', zIndex: 1000},
               {width: (parentElementWidth(this.$el) + 1) + 'px'}
             ]">
               <article class="message is-info is-radiusless">

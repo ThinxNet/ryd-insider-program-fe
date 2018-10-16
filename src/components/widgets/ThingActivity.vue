@@ -55,10 +55,16 @@
       </span>
     </div>
 
-    <p v-if="payload.length">
+    <div v-if="payload.length" class="content">
       You've spent <span class="tag">{{ timeDrive }}</span> in the car
       and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
-    </p>
+    </div>
+
+    <div class="columns is-flex">
+      <div class="column is-2">
+        <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
+      </div>
+    </div>
   </article>
 </template>
 
@@ -66,9 +72,12 @@
   import _ from 'lodash';
   import moment from 'moment';
 
+  import Widget from '../../lib/mixins/widget';
+
   export default {
     name: 'widget-thing-charts',
     props: {entity: Object},
+    mixins: [Widget],
     data() {
       return {api: null, loading: true, payload: [], source: 'geo'};
     },
