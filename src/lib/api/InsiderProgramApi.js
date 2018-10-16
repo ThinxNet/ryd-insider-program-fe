@@ -26,6 +26,10 @@ export default class InsiderProgramApi extends ApiAbstract {
     return this._request(`things/${id}`, {params});
   }
 
+  thingDevice(id, params) {
+    return this._request(`things/${id}/device`, {params});
+  }
+
   thingDeviceConfidence(thingId, params) {
     return this._request(`things/${thingId}/device/confidence`, {params});
   }

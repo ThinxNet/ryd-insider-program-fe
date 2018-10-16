@@ -7,14 +7,14 @@
 
       <div class="tile" v-if="thing">
         <!-- last session -->
-        <div class="tile is-parent is-4">
+        <div class="tile is-parent is-4" style="background-color: #14ADDD">
           <widget-thing-session-list :entity="thing" @onSessionChange="thingSessionListChange"/>
         </div>
 
         <div class="tile is-vertical">
           <div class="tile">
             <!-- session details -->
-            <div class="tile is-parent">
+            <div class="tile is-parent" style="background-color: #14ADDD">
               <widget-thing-session-details :session-id="selectedSessionId"/>
             </div>
 
@@ -26,7 +26,7 @@
 
           <div class="tile">
             <!-- timeline -->
-            <div class="tile is-parent" v-if="selectedSessionId">
+            <div v-if="selectedSessionId" class="tile is-parent" style="background-color: #14ADDD">
               <widget-thing-session-timeline :session-id="selectedSessionId"/>
             </div>
 
