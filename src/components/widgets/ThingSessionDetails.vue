@@ -44,6 +44,11 @@
       ]
     }),
     mixins: [Widget],
+    methods: {
+      widgetDebugPayload() {
+        return {sessionId: this.sessionId};
+      }
+    },
     computed: {
       component() {
         return this.componentList[this.componentIdx].component;

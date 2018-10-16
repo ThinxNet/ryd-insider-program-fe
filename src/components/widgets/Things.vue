@@ -18,15 +18,15 @@
         </div>
       </div>
       <div class="column has-text-right">
-        <button class="button is-white"
+        <button class="button is-white is-radiusless"
           :disabled="!hasPreviousThing"
           @click.prevent="previousThing">
           <span class="icon"><i class="ion-ios-arrow-back"></i></span>
         </button>
-        <button class="button is-primary" @click.prevent="thingOverviewToggle">
+        <button class="button is-primary is-radiusless" @click.prevent="thingOverviewToggle">
           <span class="icon"><i class="ion-ios-wifi"></i></span>
         </button>
-        <button class="button is-white" :disabled="!hasNextThing" @click.prevent="nextThing">
+        <button class="button is-white is-radiusless" :disabled="!hasNextThing" @click.prevent="nextThing">
           <span class="icon"><i class="ion-ios-arrow-forward"></i></span>
         </button>
       </div>

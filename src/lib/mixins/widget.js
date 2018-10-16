@@ -16,6 +16,16 @@
 
 export default {
   data: () => ({widgetVersion: '1.0'}),
+  methods: {
+    widgetDebugPayload() {
+      return {};
+    },
+    widgetFeedbackFormOpen() {
+      this.$store.dispatch(
+        'widget/feedbackFormActivate', this.widgetId, JSON.stringify(this.widgetDebugPayload())
+      );
+    }
+  },
   computed: {
     widgetId() {
       return this.$options.name;

@@ -38,6 +38,49 @@
         </div>
       </div>
     </div>
+
+    <div class="modal is-active" v-if="uiFeedbackFormActive" style="z-index: 9999">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+          <div class="box is-radiusless">
+            <div class="field">
+              <strong>Reference:</strong>
+              <span class="tag">{{ $store.getters['widget/feedbackFormReference'] }}</span>
+            </div>
+
+            <div class="field">
+              <label class="label">Category</label>
+              <div class="control">
+                <div class="select">
+                  <select class="is-radiusless">
+                    <option>No category</option>
+                    <option>Issue</option>
+                    <option>Suggestion</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <textarea class="textarea is-radiusless" placeholder="Message"></textarea>
+              </div>
+            </div>
+
+            <div class="field is-grouped">
+              <div class="control">
+                <button class="button is-link is-radiusless">Submit</button>
+              </div>
+              <div class="control">
+                <button class="button is-text is-radiusless" @click.prevent="uiFeedbackFormClose()">Cancel</button>
+              </div>
+            </div>
+          </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"
+        @click.prevent="uiFeedbackFormClose()"></button>
+    </div>
+
   </div>
 </template>
 
@@ -59,15 +102,20 @@
     computed: {
       identity() {
         return JSON.stringify(this.$store.state.authentication.identity);
+      },
+      uiFeedbackFormActive() {
+        return this.$store.getters['widget/isFeedbackFormActive'];
       }
     },
     methods: {
       thingChange(thing) {
         this.thing = thing;
       },
-
       thingSessionListChange(sessionId) {
         this.selectedSessionId = sessionId;
+      },
+      uiFeedbackFormClose() {
+        this.$store.dispatch('widget/feedbackFormDiscard');
       }
     }
   }

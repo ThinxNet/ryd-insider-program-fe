@@ -43,17 +43,17 @@
           <div class="columns">
             <div class="column is-paddingless">
               <div class="buttons has-addons is-centered">
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
                   :title="mapMatchingConfidenceHint">MAP</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
               </div>
             </div>
@@ -96,29 +96,28 @@
           </div>
 
           <div class="columns is-flex">
-            <div class="column is-2">
-              <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
-            </div>
-
-            <!--
-            <div class="column is-3">
-              <div class="buttons has-addons">
-                <router-link :to="{name: 'widget-feedback', params: {direction: 'up'}}"
-                  class="button is-size-7"><i class="ion-thumbsup"></i></router-link>
-                <router-link :to="{name: 'widget-feedback', params: {direction: 'down'}}"
-                  class="button is-size-7"><i class="ion-thumbsdown"></i></router-link>
+            <div class="column is-4">
+              <div class="field has-addons">
+                <p class="control">
+                  <span class="button is-size-7 is-radiusless" title="Version">{{ widgetVersion }}</span>
+                </p>
+                <p class="control">
+                  <a class="button is-radiusless is-size-7 is-success" title="Feedback"
+                    @click.prevent="widgetFeedbackFormOpen()">
+                    <i class="icon ion-ios-megaphone"></i>
+                  </a>
+                </p>
               </div>
             </div>
-            -->
 
-            <div class="column has-text-right is-10 is-unselectable">
+            <div class="column has-text-right is-8 is-unselectable">
               <button @click="paginationGoBackwards"
-                :class="['button', 'is-small', {'is-loading': !isMapReady}]"
+                :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasPrevious">
                   <i class="ion-ios-arrow-back"></i>
               </button>
               <button @click="paginationGoForward"
-                :class="['button', 'is-small', {'is-loading': !isMapReady}]"
+                :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasNext">
                 <i class="ion-ios-arrow-forward"></i>
               </button>

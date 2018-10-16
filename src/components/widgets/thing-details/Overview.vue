@@ -5,6 +5,7 @@
   <article v-else>
     <h1 class="title">{{ thing.nickName }} ({{ thing.type.toLowerCase() }})</h1>
     <h2 class="subtitle">identification information</h2>
+    <hr>
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
@@ -40,10 +41,9 @@
       Please let us know if that is not true.
     </div>
 
-    <hr>
-
     <h3 class="title">Device</h3>
     <h4 class="subtitle">hardware and software overview</h4>
+    <hr>
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
@@ -74,9 +74,8 @@
       </tbody>
     </table>
 
-    <hr>
-
     <h4 class="subtitle">hardware status</h4>
+    <hr>
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
@@ -120,9 +119,8 @@
       </tbody>
     </table>
 
-    <hr>
-
     <h4 class="subtitle">compatibility list</h4>
+    <hr>
 
     <table v-if="$_.get(device, 'obdFeatures.protocol.description')"
       class="table is-fullwidth is-striped is-narrow">
