@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-child is-radiusless box">
+  <article class="tile is-child is-radiusless box" style="position: relative;">
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
 
     <div v-else class="columns is-gapless">
@@ -60,11 +60,10 @@
       and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
     </div>
 
-    <div class="columns is-flex">
-      <div class="column is-2">
-        <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
-      </div>
-    </div>
+    <feedback style="position: absolute; bottom: 0; left: 0;"
+      :widget-version="widgetVersion"
+      :widget-id="widgetId"
+      :debug-payload="widgetDebugPayload()"/>
   </article>
 </template>
 
@@ -73,10 +72,12 @@
   import moment from 'moment';
 
   import Widget from '../../lib/mixins/widget';
+  import Feedback from './shared/Feedback';
 
   export default {
-    name: 'widget-thing-charts',
+    name: 'widget-thing-activity',
     props: {entity: Object},
+    components: {Feedback},
     mixins: [Widget],
     data() {
       return {api: null, loading: true, payload: [], source: 'geo'};
@@ -135,6 +136,9 @@
       }
     },
     computed: {
+      widgetDebugData() {
+        return _.omit(this.$data, ['api']);
+      },
       calendarEntries() {
         const start = moment().startOf('day').subtract(28, 'd'),
           output = {results: [], top: _(this.payload).map('count').max()};

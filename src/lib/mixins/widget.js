@@ -18,17 +18,15 @@ export default {
   data: () => ({widgetVersion: '1.0'}),
   methods: {
     widgetDebugPayload() {
-      return {};
-    },
-    widgetFeedbackFormOpen() {
-      this.$store.dispatch(
-        'widget/feedbackFormActivate', this.widgetId, JSON.stringify(this.widgetDebugPayload())
-      );
+      return JSON.stringify(this.widgetDebugData);
     }
   },
   computed: {
     widgetId() {
       return this.$options.name;
+    },
+    widgetDebugData() {
+      throw new Error('Please, re-define me');
     }
   }
 }

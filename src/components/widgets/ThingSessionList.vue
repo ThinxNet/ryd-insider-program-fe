@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-child">
+  <article class="tile is-child" style="position: relative;">
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
@@ -96,21 +96,7 @@
           </div>
 
           <div class="columns is-flex">
-            <div class="column is-4">
-              <div class="field has-addons">
-                <p class="control">
-                  <span class="button is-size-7 is-radiusless" title="Version">{{ widgetVersion }}</span>
-                </p>
-                <p class="control">
-                  <a class="button is-radiusless is-size-7 is-success" title="Feedback"
-                    @click.prevent="widgetFeedbackFormOpen()">
-                    <i class="icon ion-ios-megaphone"></i>
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div class="column has-text-right is-8 is-unselectable">
+            <div class="column has-text-right is-unselectable">
               <button @click="paginationGoBackwards"
                 :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasPrevious">
@@ -126,23 +112,30 @@
         </div>
       </div>
     </div>
+
+    <feedback style="position: absolute; bottom: 0; left: 0;"
+      :widget-version="widgetVersion"
+      :widget-id="widgetId"
+      :debug-payload="widgetDebugPayload()"/>
   </article>
 </template>
 
 <script>
   import _ from 'lodash';
 
+  import Feedback from './shared/Feedback';
   import SessionMap from './shared/SessionMap';
-  import ThingSessionDetailsSpeed from './thing-session-details/Speed';
 
   import Pagination from '../../lib/mixins/pagination';
   import Widget from '../../lib/mixins/widget';
 
+  import ThingSessionDetailsSpeed from './thing-session-details/Speed';
+
   export default {
     name: 'widget-thing-session-list',
-    components: {SessionMap, ThingSessionDetailsSpeed},
+    components: {Feedback, SessionMap, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
-    props: {entity: Object},
+    props: {deviceId: String},
     data() {
       return {
         api: null,
@@ -168,18 +161,18 @@
           this.sourceSwitchTo('gps');
         }
       });
-      this.fetchData(this.entity);
+      this.fetchData(this.deviceId);
     },
     watch: {
-      entity(current) {
-        this.fetchData(current);
+      entity(currentId) {
+        this.fetchData(currentId);
       }
     },
     methods: {
-      async fetchData(entity) {
+      async fetchData(deviceId) {
         this.loading = true;
         try {
-          const payload = {filter: {device: entity.device}, page: {size: 10}},
+          const payload = {filter: {device: deviceId}, page: {size: 10}},
             response = await this.api.sessions(payload);
           this.sessions = response.data;
           this.paginationResetEntries(this.sessions);
@@ -234,6 +227,9 @@
       }
     },
     computed: {
+      widgetDebugData() {
+        return _.omit(this.$data, ['sessions', 'locations', 'paginationEntries', 'api']);
+      },
       sessionStatistics() {
         const fields = {
           distanceM: this.paginationEntry.statistics.geoDistanceM,

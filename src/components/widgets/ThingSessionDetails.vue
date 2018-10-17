@@ -7,7 +7,7 @@
         </li>
       </ul>
     </div>
-    <div class="box is-radiusless" style="min-height: 16.95rem;">
+    <div class="box is-radiusless" style="min-height: 16.95rem;position: relative;">
       <div v-if="!sessionId" class="has-text-centered">
         <span class="icon is-large"><i class="ion-ios-time"></i></span>
       </div>
@@ -16,17 +16,17 @@
         <component :is='component' :sessionId='sessionId'/>
       </transition>
 
-      <div class="columns is-flex">
-        <div class="column is-2">
-          <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
-        </div>
-      </div>
+      <feedback style="position: absolute; bottom: 0; left: 0;"
+        :widget-version="widgetVersion"
+        :widget-id="widgetId"
+        :debug-payload="widgetDebugPayload()"/>
     </div>
   </article>
 </template>
 
 <script>
   import Widget from '../../lib/mixins/widget';
+  import Feedback from './shared/Feedback';
 
   import SessionDetailsContext from './thing-session-details/Context';
   import SessionDetailsRelations from './thing-session-details/Relations';
@@ -43,13 +43,12 @@
         {title: 'Context', component: SessionDetailsContext}
       ]
     }),
+    components: {Feedback},
     mixins: [Widget],
-    methods: {
-      widgetDebugPayload() {
-        return {sessionId: this.sessionId};
-      }
-    },
     computed: {
+      widgetDebugData() {
+        return _.omit(this.$data, ['api', 'componentList']);
+      },
       component() {
         return this.componentList[this.componentIdx].component;
       }

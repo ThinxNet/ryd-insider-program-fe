@@ -8,7 +8,8 @@
       <div class="tile" v-if="thing">
         <!-- last session -->
         <div class="tile is-parent is-4" style="background-color: #14ADDD">
-          <widget-thing-session-list :entity="thing" @onSessionChange="thingSessionListChange"/>
+          <widget-thing-session-list :device-id="thing.device"
+            @onSessionChange="thingSessionListChange"/>
         </div>
 
         <div class="tile is-vertical">
@@ -42,6 +43,9 @@
     <div class="modal is-active" v-if="uiFeedbackFormActive" style="z-index: 9999">
       <div class="modal-background"></div>
       <div class="modal-content">
+          <header class="modal-card-head is-radiusless">
+            <p class="modal-card-title">feedback</p>
+          </header>
           <div class="box is-radiusless">
             <div class="field">
               <strong>Reference:</strong>
@@ -67,12 +71,13 @@
               </div>
             </div>
 
-            <div class="field is-grouped">
-              <div class="control">
-                <button class="button is-link is-radiusless">Submit</button>
+            <div class="is-clearfix">
+              <div class="is-pulled-left">
+                <button class="button is-primary is-radiusless">send</button>
               </div>
-              <div class="control">
-                <button class="button is-text is-radiusless" @click.prevent="uiFeedbackFormClose()">Cancel</button>
+              <div class="is-pulled-right">
+                <button class="button is-white is-radiusless"
+                  @click.prevent="uiFeedbackFormClose()">cancel</button>
               </div>
             </div>
           </div>
@@ -90,7 +95,7 @@
   import WidgetThings from './widgets/Things';
   import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
   import WidgetThingSessionList from './widgets/ThingSessionList';
-  import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline';
+  import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline'
 
   export default {
     name: 'dashboard',
