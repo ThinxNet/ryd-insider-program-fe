@@ -47,7 +47,7 @@
     mixins: [Widget],
     computed: {
       widgetDebugData() {
-        return _.omit(this.$data, ['api', 'componentList']);
+        return _(this.$data).omit(['api', 'componentList']).merge(this.$props).value();
       },
       component() {
         return this.componentList[this.componentIdx].component;

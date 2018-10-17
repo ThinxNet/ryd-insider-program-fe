@@ -21,8 +21,8 @@ export default class ApiAbstract {
   }
 
   /** @access protected */
-  _request(path, payload, method = 'GET') {
-    return this.client[method.toLowerCase()]([this.url, path].join('/'), payload)
+  _request(path, payload, method = 'GET', config = {}) {
+    return this.client[method.toLowerCase()]([this.url, path].join('/'), payload, config)
       .then(r => r.body);
   }
 }

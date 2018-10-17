@@ -117,7 +117,7 @@
     },
     computed: {
       widgetDebugData() {
-        return _.omit(this.$data, ['api', 'entries']);
+        return _(this.$data).omit(['api', 'entries']).merge(this.$props).value();
       }
     }
   }

@@ -89,7 +89,7 @@
     },
     computed: {
       widgetDebugData() {
-        return _.omit(this.$data, ['api']);
+        return _(this.$data).omit(['api']).merge(this.$props).value();
       }
     }
   }

@@ -85,9 +85,9 @@ export default new Vuex.Store({
         isFeedbackFormActive: state => state.uiFeedbackForm
       },
       mutations: {
-        feedbackFormActivate: (state, widgetId, payload) => {
-          state.feedbackFormPayload = payload;
-          state.feedbackFormReference = widgetId;
+        feedbackFormActivate: (state, params) => {
+          state.feedbackFormPayload = params.payload;
+          state.feedbackFormReference = params.widgetId;
           state.uiFeedbackForm = true;
         },
         feedbackFormDiscard: state => {
@@ -97,8 +97,8 @@ export default new Vuex.Store({
         }
       },
       actions: {
-        feedbackFormActivate: (ctx, widgetId, payload) => {
-          ctx.commit("feedbackFormActivate", widgetId, payload);
+        feedbackFormActivate: (ctx, params) => {
+          ctx.commit("feedbackFormActivate", params);
         },
         feedbackFormDiscard: ctx => {
           ctx.commit("feedbackFormDiscard", null);

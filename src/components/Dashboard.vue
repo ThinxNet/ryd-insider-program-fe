@@ -21,7 +21,7 @@
 
             <!-- activity -->
             <div class="tile is-parent">
-              <widget-thing-activity :entity="thing"/>
+              <widget-thing-activity :thing-id="thing._id"/>
             </div>
           </div>
 
@@ -40,56 +40,13 @@
       </div>
     </div>
 
-    <div class="modal is-active" v-if="uiFeedbackFormActive" style="z-index: 9999">
-      <div class="modal-background"></div>
-      <div class="modal-content">
-          <header class="modal-card-head is-radiusless">
-            <p class="modal-card-title">feedback</p>
-          </header>
-          <div class="box is-radiusless">
-            <div class="field">
-              <strong>Reference:</strong>
-              <span class="tag">{{ $store.getters['widget/feedbackFormReference'] }}</span>
-            </div>
-
-            <div class="field">
-              <label class="label">Category</label>
-              <div class="control">
-                <div class="select">
-                  <select class="is-radiusless">
-                    <option>No category</option>
-                    <option>Issue</option>
-                    <option>Suggestion</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <textarea class="textarea is-radiusless" placeholder="Message"></textarea>
-              </div>
-            </div>
-
-            <div class="is-clearfix">
-              <div class="is-pulled-left">
-                <button class="button is-primary is-radiusless">send</button>
-              </div>
-              <div class="is-pulled-right">
-                <button class="button is-white is-radiusless"
-                  @click.prevent="uiFeedbackFormClose()">cancel</button>
-              </div>
-            </div>
-          </div>
-      </div>
-      <button class="modal-close is-large" aria-label="close"
-        @click.prevent="uiFeedbackFormClose()"></button>
-    </div>
-
+    <feedback-form style="z-index: 9999"
+      v-if="$store.getters['widget/isFeedbackFormActive']"/>
   </div>
 </template>
 
 <script>
+  import FeedbackForm from './FeedbackForm';
   import WidgetDeviceConfidence from './widgets/DeviceConfidence';
   import WidgetThingActivity from './widgets/ThingActivity';
   import WidgetThings from './widgets/Things';
@@ -101,15 +58,12 @@
     name: 'dashboard',
     data: () => ({thing: null, selectedSessionId: null}),
     components: {
-      WidgetDeviceConfidence, WidgetThingActivity, WidgetThings, WidgetThingSessionDetails,
-      WidgetThingSessionList, WidgetThingSessionTimeline
+      FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThings,
+      WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionTimeline
     },
     computed: {
       identity() {
         return JSON.stringify(this.$store.state.authentication.identity);
-      },
-      uiFeedbackFormActive() {
-        return this.$store.getters['widget/isFeedbackFormActive'];
       }
     },
     methods: {
@@ -118,9 +72,6 @@
       },
       thingSessionListChange(sessionId) {
         this.selectedSessionId = sessionId;
-      },
-      uiFeedbackFormClose() {
-        this.$store.dispatch('widget/feedbackFormDiscard');
       }
     }
   }

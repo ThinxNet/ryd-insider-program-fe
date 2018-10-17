@@ -76,7 +76,7 @@
 
   export default {
     name: 'widget-thing-activity',
-    props: {entity: Object},
+    props: {thingId: String},
     components: {Feedback},
     mixins: [Widget],
     data() {
@@ -86,18 +86,18 @@
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
     mounted() {
-      this.entityChange(this.entity)
+      this.fetchData(this.thingId)
     },
     watch: {
-      entity(current) {
-        this.entityChange(current);
+      thingId(current) {
+        this.fetchData(current);
       }
     },
     methods: {
-      async entityChange(entity) {
+      async fetchData(thingId) {
         this.loading = true;
         try {
-          const response = await this.api.statisticsActivity(entity._id);
+          const response = await this.api.statisticsActivity(thingId);
           this.payload = response.data;
         } catch (e) {
           console.error(e);
@@ -137,7 +137,7 @@
     },
     computed: {
       widgetDebugData() {
-        return _.omit(this.$data, ['api']);
+        return _(this.$data).omit(['api']).merge(this.$props).value();
       },
       calendarEntries() {
         const start = moment().startOf('day').subtract(28, 'd'),

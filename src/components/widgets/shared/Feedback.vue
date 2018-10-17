@@ -21,7 +21,7 @@
       feedbackFormOpen() {
         this.$store.dispatch(
           'widget/feedbackFormActivate',
-          this.widgetId, JSON.stringify(this.debugPayload)
+          {widgetId: this.widgetId, payload: this.debugPayload}
         );
       }
     }

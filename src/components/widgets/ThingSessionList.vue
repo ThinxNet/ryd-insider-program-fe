@@ -228,7 +228,9 @@
     },
     computed: {
       widgetDebugData() {
-        return _.omit(this.$data, ['sessions', 'locations', 'paginationEntries', 'api']);
+        return _(this.$data)
+          .omit(['sessions', 'locations', 'paginationEntries', 'api'])
+          .merge(this.$props).value();
       },
       sessionStatistics() {
         const fields = {
