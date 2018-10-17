@@ -56,7 +56,7 @@ export default {
         baseURL: 'https://tt4.thinxcloud.de'
       },
       insiderProgram: {
-        baseURL: 'http://insider-api.thinxcloud.de'
+        baseURL: 'https://insider-api.thinxcloud.de'
       }
     }
   }, defaults)
