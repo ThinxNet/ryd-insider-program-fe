@@ -13,10 +13,6 @@
   export default {
     name: 'feedback',
     props: {debugPayload: String, widgetId: String, widgetVersion: String},
-    data: () => ({loading: true}),
-    created() {
-      this.api = this.$store.getters['common/apiInsiderProgram'];
-    },
     methods: {
       feedbackFormOpen() {
         this.$store.dispatch(

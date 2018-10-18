@@ -40,17 +40,10 @@
           <p class="modal-card-title">overview</p>
           <button class="delete" aria-label="close" @click.prevent="thingOverviewToggle"></button>
         </header>
+
         <section class="modal-card-body">
           <thing-details-overview :thing-id="currentThing._id"/>
         </section>
-        <footer class="modal-card-foot is-radiusless">
-          <div class="columns is-flex">
-            <div class="column is-2">
-              <span class="tag is-size-7 has-background-white"
-                title="Version"><small>v</small>{{ widgetVersion }}</span>
-            </div>
-          </div>
-        </footer>
       </div>
     </div>
   </article>
@@ -58,8 +51,6 @@
 
 <script>
   import thingDetailsOverview from './thing-details/Overview';
-
-  import Widget from '../../lib/mixins/widget';
 
   export default {
     name: 'widget-things',
@@ -70,7 +61,6 @@
       selectedIdx: null,
       uiThingOverview: false
     }),
-    mixins: [Widget],
     components: {thingDetailsOverview},
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];

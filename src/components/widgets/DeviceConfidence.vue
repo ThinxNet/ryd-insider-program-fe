@@ -51,8 +51,6 @@
   import Widget from '../../lib/mixins/widget';
   import Feedback from './shared/Feedback';
 
-  // @todo #12:2h move the widget functionality to a new component
-
   export default {
     name: 'widget-device-confidence',
     props: {thingId: String},
