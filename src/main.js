@@ -17,9 +17,17 @@
 import './assets/styles.css';
 
 import Vue from 'vue';
-
 import Store from './store';
 import Router from './router';
+import ComponentsApp from './components/App.vue';
+
+import lodash from 'lodash';
+import moment from 'moment';
+import pluralize from 'pluralize';
+
+Vue.prototype.$_ = lodash;
+Vue.prototype.$moment = moment;
+Vue.prototype.$plural = pluralize;
 
 Vue.http.interceptors.push((request, next) => {
   const token = Store.getters['authentication/authToken'];
@@ -36,22 +44,13 @@ Router.beforeEach((to, from, next) => {
     : next();
 });
 
-import ComponentsApp from './components/App.vue';
-
-import lodash from 'lodash';
-import moment from 'moment';
-import pluralize from 'pluralize';
-
-Vue.prototype.$_ = lodash;
-Vue.prototype.$moment = moment;
-Vue.prototype.$plural = pluralize;
-moment.locale('de');
-
-L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
-
 new Vue({
   el: '#app',
   render: h => h(ComponentsApp),
   router: Router,
-  store: Store
+  store: Store,
+  beforeCreate() {
+    L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
+    this.$moment.locale(this.$store.getters['common/locale']);
+  }
 });
