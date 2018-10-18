@@ -8,7 +8,8 @@
       <div class="tile" v-if="thing">
         <!-- last session -->
         <div class="tile is-parent is-4" style="background-color: #14ADDD">
-          <widget-thing-session-list :entity="thing" @onSessionChange="thingSessionListChange"/>
+          <widget-thing-session-list :device-id="thing.device"
+            @onSessionChange="thingSessionListChange"/>
         </div>
 
         <div class="tile is-vertical">
@@ -20,7 +21,7 @@
 
             <!-- activity -->
             <div class="tile is-parent">
-              <widget-thing-activity :entity="thing"/>
+              <widget-thing-activity :thing-id="thing._id"/>
             </div>
           </div>
 
@@ -38,23 +39,27 @@
         </div>
       </div>
     </div>
+
+    <feedback-form style="z-index: 9999"
+      v-if="$store.getters['widget/isFeedbackFormActive']"/>
   </div>
 </template>
 
 <script>
+  import FeedbackForm from './FeedbackForm';
   import WidgetDeviceConfidence from './widgets/DeviceConfidence';
   import WidgetThingActivity from './widgets/ThingActivity';
   import WidgetThings from './widgets/Things';
   import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
   import WidgetThingSessionList from './widgets/ThingSessionList';
-  import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline';
+  import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline'
 
   export default {
     name: 'dashboard',
     data: () => ({thing: null, selectedSessionId: null}),
     components: {
-      WidgetDeviceConfidence, WidgetThingActivity, WidgetThings, WidgetThingSessionDetails,
-      WidgetThingSessionList, WidgetThingSessionTimeline
+      FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThings,
+      WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionTimeline
     },
     computed: {
       identity() {
@@ -65,7 +70,6 @@
       thingChange(thing) {
         this.thing = thing;
       },
-
       thingSessionListChange(sessionId) {
         this.selectedSessionId = sessionId;
       }

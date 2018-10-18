@@ -5,6 +5,7 @@
   <article v-else>
     <h1 class="title">{{ thing.nickName }} ({{ thing.type.toLowerCase() }})</h1>
     <h2 class="subtitle">identification information</h2>
+    <hr>
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
@@ -37,13 +38,12 @@
 
     <div class="notification is-radiusless is-success has-text-centered">
       <strong>Ryd.one</strong> thinks is that your car is identified properly.
-      Please let us know if that is not true.
+      <a href="#" @click.prevent="feedbackFormOpen">Please let us know if that is not true</a>.
     </div>
-
-    <hr>
 
     <h3 class="title">Device</h3>
     <h4 class="subtitle">hardware and software overview</h4>
+    <hr>
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
@@ -74,9 +74,8 @@
       </tbody>
     </table>
 
-    <hr>
-
     <h4 class="subtitle">hardware status</h4>
+    <hr>
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
@@ -120,9 +119,8 @@
       </tbody>
     </table>
 
-    <hr>
-
     <h4 class="subtitle">compatibility list</h4>
+    <hr>
 
     <table v-if="$_.get(device, 'obdFeatures.protocol.description')"
       class="table is-fullwidth is-striped is-narrow">
@@ -142,10 +140,15 @@
 </template>
 
 <script>
+  import Widget from '../../../lib/mixins/widget';
+  import Feedback from '../shared/Feedback';
+
   export default {
     name: 'thing-details-overview',
     props: {thingId: String},
     data: () => ({api: null, device: null, loading: true, thing: null}),
+    components: {Feedback},
+    mixins: [Widget],
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
@@ -172,6 +175,17 @@
         } finally {
           this.loading = false;
         }
+      },
+      feedbackFormOpen() {
+        this.$store.dispatch(
+          'widget/feedbackFormActivate',
+          {widgetId: this.widgetId, payload: this.widgetDebugPayload()}
+        );
+      }
+    },
+    computed: {
+      widgetDebugData() {
+        return _(this.$data).omit(['api']).merge(this.$props).value();
       }
     }
   }

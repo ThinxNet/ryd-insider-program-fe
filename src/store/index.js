@@ -25,54 +25,85 @@ import RydApi from '../lib/api/RydApi';
 Vue.use(VueResource);
 Vue.use(Vuex);
 
-export default new Vuex.Store(
-  {
-    modules: {
-      common: {
-        namespaced: true,
-        state: {
-          apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
-          apiRyd: new RydApi(Vue.http, Config.api.ryd.baseURL),
-          locale: null
+export default new Vuex.Store({
+  modules: {
+    common: {
+      namespaced: true,
+      state: {
+        apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
+        apiRyd: new RydApi(Vue.http, Config.api.ryd.baseURL),
+        locale: null
+      },
+      getters: {
+        apiInsiderProgram: state => state.apiInsiderProgram,
+        apiRyd: state => state.apiRyd,
+        locale: state => state.locale || Config.ui.defaultLocale
+      }
+    },
+    authentication: {
+      namespaced: true,
+      state: {
+        authToken: localStorage.getItem('authToken'),
+        identity: null
+      },
+      getters: {
+        authToken: state => state.authToken,
+        isAuthenticated: state => state.authToken && state.identity !== null
+      },
+      mutations: {
+        tokenUpdate: (state, token) => {
+          try {
+            if (token === null) {
+              localStorage.removeItem("authToken");
+            } else {
+              localStorage.setItem('authToken', token);
+            }
+            state.authToken = token;
+          } catch (e) { console.error(e); }
         },
-        getters: {
-          apiInsiderProgram: state => state.apiInsiderProgram,
-          apiRyd: state => state.apiRyd,
-          locale: state => state.locale || Config.ui.defaultLocale
+        identityUpdate: (state, identity) => {
+          state.identity = identity;
         }
       },
-      authentication: {
-        namespaced: true,
-        state: {
-          authToken: localStorage.getItem('authToken'),
-          identity: null
+      actions: {
+        logout: ctx => {
+          ctx.commit("tokenUpdate", null);
+          ctx.commit("identityUpdate", null);
+        }
+      }
+    },
+    widget: {
+      namespaced: true,
+      state: {
+        feedbackFormPayload: null,
+        feedbackFormReference: null,
+        uiFeedbackForm: false
+      },
+      getters: {
+        feedbackFormPayload: state => state.feedbackFormPayload,
+        feedbackFormReference: state => state.feedbackFormReference,
+        isFeedbackFormActive: state => state.uiFeedbackForm
+      },
+      mutations: {
+        feedbackFormActivate: (state, params) => {
+          state.feedbackFormPayload = params.payload;
+          state.feedbackFormReference = params.widgetId;
+          state.uiFeedbackForm = true;
         },
-        getters: {
-          authToken: state => state.authToken,
-          isAuthenticated: state => state.authToken && state.identity !== null
+        feedbackFormDiscard: state => {
+          state.feedbackFormPayload = null;
+          state.feedbackFormReference = null;
+          state.uiFeedbackForm = false;
+        }
+      },
+      actions: {
+        feedbackFormActivate: (ctx, params) => {
+          ctx.commit("feedbackFormActivate", params);
         },
-        mutations: {
-          tokenUpdate: (state, token) => {
-            try {
-              if (token === null) {
-                localStorage.removeItem("authToken");
-              } else {
-                localStorage.setItem('authToken', token);
-              }
-              state.authToken = token;
-            } catch (e) { console.error(e); }
-          },
-          identityUpdate: (state, identity) => {
-            state.identity = identity;
-          }
-        },
-        actions: {
-          logout: ctx => {
-            ctx.commit("tokenUpdate", null);
-            ctx.commit("identityUpdate", null);
-          }
+        feedbackFormDiscard: ctx => {
+          ctx.commit("feedbackFormDiscard", null);
         }
       }
     }
   }
-);
+});

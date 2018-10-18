@@ -71,4 +71,9 @@ export default class InsiderProgramApi extends ApiAbstract {
   sessionAlike(id, params) {
     return this._request(`sessions/${id}/alike`, {params});
   }
+
+  // feedback
+  feedbackWidgetEntryNew(id, data) {
+    return this._request(`feedback/widget/${id}`, data, 'POST');
+  }
 };

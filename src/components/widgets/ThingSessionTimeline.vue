@@ -1,18 +1,19 @@
 <template>
-  <article class="tile is-child is-radiusless box">
+  <article class="tile is-child is-radiusless box" style="position: relative">
     <div v-if="loading" class="has-text-centered">
       <span class="icon is-large"><i class="ion-ios-time"></i></span>
     </div>
+
     <div v-else-if="entries.length">
       <div ref="timeline"></div>
     </div>
+
     <p v-else class="notification">Not enough data to build the timeline.</p>
 
-    <div class="columns is-flex">
-      <div class="column is-2">
-        <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
-      </div>
-    </div>
+    <feedback style="position: absolute; bottom: 0; left: 0;"
+      :widget-version="widgetVersion"
+      :widget-id="widgetId"
+      :debug-payload="widgetDebugPayload()"/>
   </article>
 </template>
 
@@ -20,12 +21,15 @@
   import _ from 'lodash';
   import moment from 'moment';
 
+  import Feedback from './shared/Feedback';
+
   import Widget from '../../lib/mixins/widget';
 
   export default {
     name: 'widget-thing-session-timeline',
-    props: {sessionId: String},
+    components: {Feedback},
     mixins: [Widget],
+    props: {sessionId: String},
     data: () => ({api: null, loading: true, entries: []}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
@@ -37,7 +41,7 @@
       google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
     },
     watch: {
-      loading(current, previous) {
+      loading(current) {
         if (current) { return; }
         setTimeout(this.chartRepaint);
       },
@@ -111,5 +115,10 @@
         (new google.visualization.Timeline(this.$refs.timeline)).draw(dataTable, options);
       }
     },
+    computed: {
+      widgetDebugData() {
+        return _(this.$data).omit(['api', 'entries']).merge(this.$props).value();
+      }
+    }
   }
 </script>

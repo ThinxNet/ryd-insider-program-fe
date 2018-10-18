@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-child">
+  <article class="tile is-child" style="position: relative;">
     <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
@@ -43,17 +43,17 @@
           <div class="columns">
             <div class="column is-paddingless">
               <div class="buttons has-addons is-centered">
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
                   @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
                   :title="mapMatchingConfidenceHint">MAP</span>
-                <span class="button is-small"
+                <span class="button is-small is-radiusless"
                   @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
               </div>
             </div>
@@ -96,29 +96,14 @@
           </div>
 
           <div class="columns is-flex">
-            <div class="column is-2">
-              <span class="tag is-size-7" title="Version"><small>v</small>{{ widgetVersion }}</span>
-            </div>
-
-            <!--
-            <div class="column is-3">
-              <div class="buttons has-addons">
-                <router-link :to="{name: 'widget-feedback', params: {direction: 'up'}}"
-                  class="button is-size-7"><i class="ion-thumbsup"></i></router-link>
-                <router-link :to="{name: 'widget-feedback', params: {direction: 'down'}}"
-                  class="button is-size-7"><i class="ion-thumbsdown"></i></router-link>
-              </div>
-            </div>
-            -->
-
-            <div class="column has-text-right is-10 is-unselectable">
+            <div class="column has-text-right is-unselectable">
               <button @click="paginationGoBackwards"
-                :class="['button', 'is-small', {'is-loading': !isMapReady}]"
+                :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasPrevious">
                   <i class="ion-ios-arrow-back"></i>
               </button>
               <button @click="paginationGoForward"
-                :class="['button', 'is-small', {'is-loading': !isMapReady}]"
+                :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasNext">
                 <i class="ion-ios-arrow-forward"></i>
               </button>
@@ -127,23 +112,30 @@
         </div>
       </div>
     </div>
+
+    <feedback style="position: absolute; bottom: 0; left: 0;"
+      :widget-version="widgetVersion"
+      :widget-id="widgetId"
+      :debug-payload="widgetDebugPayload()"/>
   </article>
 </template>
 
 <script>
   import _ from 'lodash';
 
+  import Feedback from './shared/Feedback';
   import SessionMap from './shared/SessionMap';
-  import ThingSessionDetailsSpeed from './thing-session-details/Speed';
 
   import Pagination from '../../lib/mixins/pagination';
   import Widget from '../../lib/mixins/widget';
 
+  import ThingSessionDetailsSpeed from './thing-session-details/Speed';
+
   export default {
     name: 'widget-thing-session-list',
-    components: {SessionMap, ThingSessionDetailsSpeed},
+    components: {Feedback, SessionMap, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
-    props: {entity: Object},
+    props: {deviceId: String},
     data() {
       return {
         api: null,
@@ -169,18 +161,18 @@
           this.sourceSwitchTo('gps');
         }
       });
-      this.fetchData(this.entity);
+      this.fetchData(this.deviceId);
     },
     watch: {
-      entity(current) {
-        this.fetchData(current);
+      entity(currentId) {
+        this.fetchData(currentId);
       }
     },
     methods: {
-      async fetchData(entity) {
+      async fetchData(deviceId) {
         this.loading = true;
         try {
-          const payload = {filter: {device: entity.device}, page: {size: 10}},
+          const payload = {filter: {device: deviceId}, page: {size: 10}},
             response = await this.api.sessions(payload);
           this.sessions = response.data;
           this.paginationResetEntries(this.sessions);
@@ -235,6 +227,11 @@
       }
     },
     computed: {
+      widgetDebugData() {
+        return _(this.$data)
+          .omit(['sessions', 'locations', 'paginationEntries', 'api'])
+          .merge(this.$props).value();
+      },
       sessionStatistics() {
         const fields = {
           distanceM: this.paginationEntry.statistics.geoDistanceM,
