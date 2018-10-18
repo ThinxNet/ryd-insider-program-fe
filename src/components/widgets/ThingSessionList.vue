@@ -164,7 +164,7 @@
       this.fetchData(this.deviceId);
     },
     watch: {
-      entity(currentId) {
+      deviceId(currentId) {
         this.fetchData(currentId);
       }
     },
