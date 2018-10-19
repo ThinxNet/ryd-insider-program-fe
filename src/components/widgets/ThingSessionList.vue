@@ -230,7 +230,9 @@
       widgetDebugData() {
         return _(this.$data)
           .omit(['sessions', 'locations', 'paginationEntries', 'api'])
-          .merge(this.$props).value();
+          .merge(this.$props)
+          .extend({sessionId: this.paginationEntry._id})
+          .value();
       },
       sessionStatistics() {
         const fields = {
