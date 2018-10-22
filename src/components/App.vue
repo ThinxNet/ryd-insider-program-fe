@@ -9,15 +9,24 @@
                 src="https://ryd.one/wp-content/uploads/ryd_logo_ehem-tanktaler.png"
                 alt="Ryd">
             </a>
-            <span class="navbar-burger burger" data-target="navbar-menu">
+            <span
+              data-target="navbar-menu"
+              @click.prevent="uiIsMenuActive = !uiIsMenuActive"
+              :class="[
+                'navbar-burger burger',
+                {'has-background-primary': !uiIsMenuActive, 'has-background-white': uiIsMenuActive}
+              ]">
               <span></span>
               <span></span>
               <span></span>
             </span>
           </div>
-          <div id="navbar-menu" class="navbar-menu">
+          <div id="navbar-menu"
+            v-if="isAuthenticated"
+            :class="['navbar-menu', {'is-active': uiIsMenuActive}]">
             <div class="navbar-end">
-              <a @click.prevent="logout" v-if="isAuthenticated" class="navbar-item">Log-out</a>
+              <a @click.prevent="feedbackFormOpen" class="navbar-item">Feedback</a>
+              <a @click.prevent="logout" class="navbar-item">Log-out</a>
             </div>
           </div>
         </div>
@@ -50,6 +59,7 @@
 <script>
   export default {
     name: 'app',
+    data: () => ({uiIsMenuActive: false}),
     computed: {
       isAuthenticated() {
         return this.$store.getters['authentication/isAuthenticated'];
@@ -62,6 +72,12 @@
           this.$store.dispatch('authentication/logout');
           this.$router.push({name: 'login'});
         } catch (e) { console.error(e); }
+      },
+      feedbackFormOpen() {
+        this.$store.dispatch(
+          'widget/feedbackFormActivate',
+          {widgetId: 'ryd.one insider program', payload: "{}"}
+        );
       }
     }
   };

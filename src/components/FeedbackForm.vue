@@ -37,7 +37,7 @@
 
         <div class="is-clearfix">
           <div class="is-pulled-left">
-            <button :disabled="loading"
+            <button :disabled="loading || !message.length"
               :class="['button is-primary is-radiusless', {'is-loading': loading}]"
               @click.prevent="uiFeedbackFormSend()">send</button>
           </div>
@@ -72,14 +72,12 @@
       category: 'none',
       exception: null,
       loading: false,
-      message: null,
+      message: '',
       uiFeedbackFormActive: false,
       uiSuccess: false
     }),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
-    },
-    computed: {
     },
     methods: {
       uiFeedbackFormClose() {
@@ -94,7 +92,7 @@
         try {
           await this.api.feedbackWidgetEntryNew(
             reference,
-            {payload, category: this.category, message: this.message}
+            {payload, category: this.category, message: this.message.trim()}
           );
         } catch (e) {
           if (e.body && e.body.errors) {

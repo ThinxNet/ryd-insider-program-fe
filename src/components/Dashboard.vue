@@ -1,6 +1,10 @@
 <template>
   <div class="tile is-ancestor">
     <div class="tile is-parent is-vertical">
+      <div class="tile is-parent is-vertical" v-if="notification">
+        <div class="notification is-warning is-radiusless">{{ notification }}</div>
+      </div>
+
       <div class="tile is-parent">
         <widget-things @onEntrySelected="thingChange"></widget-things>
       </div>
@@ -61,17 +65,24 @@
       FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThings,
       WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionTimeline
     },
-    computed: {
-      identity() {
-        return JSON.stringify(this.$store.state.authentication.identity);
-      }
-    },
     methods: {
       thingChange(thing) {
         this.thing = thing;
       },
       thingSessionListChange(sessionId) {
         this.selectedSessionId = sessionId;
+      }
+    },
+    computed: {
+      notification() {
+        return (process.env.NODE_ENV === 'production')
+          ? `The map information comes from unreliable machines. Some trips might have less than ` +
+            `50% of real data. Having mentioned limitations, please consider these results only ` +
+            `for concept-demonstration purposes.`
+          : null;
+      },
+      identity() {
+        return JSON.stringify(this.$store.state.authentication.identity);
       }
     }
   }
