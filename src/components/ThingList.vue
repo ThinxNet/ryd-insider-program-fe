@@ -51,10 +51,10 @@
 </template>
 
 <script>
-  import thingDetailsOverview from './thing-details/Overview';
+  import thingDetailsOverview from './widgets/thing-details/Overview';
 
   export default {
-    name: 'widget-things',
+    name: 'thing-list',
     data: () => ({
       api: null,
       entries: [],

@@ -6,7 +6,7 @@
       </div>
 
       <div class="tile is-parent">
-        <widget-things @onEntrySelected="thingChange"></widget-things>
+        <widget-thing-list @onEntrySelected="thingChange"/>
       </div>
 
       <div class="tile" v-if="thing">
@@ -53,7 +53,7 @@
   import FeedbackForm from './FeedbackForm';
   import WidgetDeviceConfidence from './widgets/DeviceConfidence';
   import WidgetThingActivity from './widgets/ThingActivity';
-  import WidgetThings from './widgets/Things';
+  import WidgetThingList from './widgets/ThingList';
   import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
   import WidgetThingSessionList from './widgets/ThingSessionList';
   import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline'
@@ -62,7 +62,7 @@
     name: 'dashboard',
     data: () => ({thing: null, selectedSessionId: null}),
     components: {
-      FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThings,
+      FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThingList,
       WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionTimeline
     },
     methods: {
