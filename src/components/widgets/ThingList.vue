@@ -55,7 +55,7 @@
 
   import ThingDetailsOverview from './thing-details/Overview';
 
-  const LOCAL_STORAGE_IDX_KEY = 'widgetThingList_selectedIdx';
+  const LOCAL_STORAGE_IDX_KEY = 'widgetThingList_SelectedIdx';
 
   export default {
     name: 'widget-thing-list',
@@ -109,7 +109,7 @@
       },
       thingAutoSelect() {
         if (!this.entries.length) { return false; }
-        const selectedIdx = _.toSafeInteger(localStorage.getItem('widgetThingList_SelectedIdx'));
+        const selectedIdx = _.toSafeInteger(localStorage.getItem(LOCAL_STORAGE_IDX_KEY));
         this.selectedIdx = _.inRange(selectedIdx, 0, this.entries.length) ? selectedIdx : 0;
       }
     },
