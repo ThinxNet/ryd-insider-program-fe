@@ -4,6 +4,11 @@
 Ryd.one Insider Program
 =========================
 
+## Install
+```js
+npm install
+```
+
 ## Build
 ```js
 // local development
