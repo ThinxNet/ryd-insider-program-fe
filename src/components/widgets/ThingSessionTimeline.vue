@@ -8,7 +8,7 @@
       <div ref="timeline"></div>
     </div>
 
-    <p v-else class="notification">Not enough data to build the timeline.</p>
+    <p v-else class="notification has-text-centered">Not enough data to build the timeline.</p>
 
     <feedback style="position: absolute; bottom: 0; left: 0;"
       :widget-version="widgetVersion"

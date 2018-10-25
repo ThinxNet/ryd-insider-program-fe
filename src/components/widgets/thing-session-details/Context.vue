@@ -20,7 +20,9 @@
       </div>
     </div>
   </div>
-  <div v-else class="notification">No environmental information is available.</div>
+  <div v-else class="notification has-text-centered">
+    No environmental information is available.
+  </div>
 </template>
 
 <script>

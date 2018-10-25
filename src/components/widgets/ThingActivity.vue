@@ -18,33 +18,33 @@
           </div>
         </div>
       </div>
-        <div class="column is-8">
-          <table class="table is-narrow is-striped is-fullwidth">
-            <tr class="is-size-7">
-              <td class="has-text-grey-light">Mon</td>
-              <td class="has-text-grey-light">Tue</td>
-              <td class="has-text-grey-light">Wed</td>
-              <td class="has-text-grey-light">Thu</td>
-              <td class="has-text-grey-light">Fri</td>
-              <td class="has-text-grey-light">Sat</td>
-              <td class="has-text-grey-light">Sun</td>
-            </tr>
-            <tr v-for="subset in calendarEntries.results">
-              <td v-for="entry in subset"
-                class="is-paddingless has-text-centered"
-                style="border-bottom-width: 0;">
-                <span
-                  :title="calendarEntryTitle(entry)"
-                  :style="{
-                    height: '10px',
-                    width: '10px',
-                    display: 'inline-block',
-                    backgroundColor: calendarEntryBgColor(entry, calendarEntries.top)
-                  }"></span>
-              </td>
-            </tr>
-          </table>
-        </div>
+      <div class="column is-8">
+        <table class="table is-narrow is-striped is-fullwidth">
+          <tr class="is-size-7">
+            <td class="has-text-grey-light">Mon</td>
+            <td class="has-text-grey-light">Tue</td>
+            <td class="has-text-grey-light">Wed</td>
+            <td class="has-text-grey-light">Thu</td>
+            <td class="has-text-grey-light">Fri</td>
+            <td class="has-text-grey-light">Sat</td>
+            <td class="has-text-grey-light">Sun</td>
+          </tr>
+          <tr v-for="subset in calendarEntries.results">
+            <td v-for="entry in subset"
+              class="is-paddingless has-text-centered"
+              style="border-bottom-width: 0;">
+              <span
+                :title="calendarEntryTitle(entry)"
+                :style="{
+                  height: '10px',
+                  width: '10px',
+                  display: 'inline-block',
+                  backgroundColor: calendarEntryBgColor(entry, calendarEntries.top)
+                }"></span>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
 
     <div class="buttons has-addons is-centered">

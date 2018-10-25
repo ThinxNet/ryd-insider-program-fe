@@ -7,7 +7,9 @@
     <div ref="chart"></div>
   </article>
 
-  <div v-else class="notification">No speed information available.</div>
+  <div v-else class="notification has-text-centered">
+    No speed information available.
+  </div>
 </template>
 
 <script>
