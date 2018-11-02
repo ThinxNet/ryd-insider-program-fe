@@ -76,9 +76,9 @@
     computed: {
       notification() {
         return (process.env.NODE_ENV === 'production')
-          ? `The map information comes from unreliable machines. Some trips might have less than ` +
-            `50% of real data. Having mentioned limitations, please consider these results only ` +
-            `for concept-demonstration purposes.`
+          ? `The information comes from unreliable server infrastructure. Some trips might be ` +
+            `missing or have less than 50% of real data. Having mentioned limitations, please ` +
+            `consider these results only for concept-demonstration purposes.`
           : null;
       },
       identity() {
