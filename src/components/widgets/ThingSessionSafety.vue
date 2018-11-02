@@ -5,12 +5,9 @@
     </div>
 
     <div v-else class="columns is-gapless">
-      <div class="column is-4" style="margin-top: 8px">
-        1
-      </div>
-      <div class="column is-8">
-        2
-      </div>
+      <!--<div class="column is-4" style="margin-top: 8px"></div>
+      <div class="column is-8"></div>-->
+      <div ref="chart"></div>
     </div>
 
     <feedback style="position: absolute; bottom: 0; left: 0;"
@@ -49,14 +46,39 @@
       async fetchData(sessionId) {
         this.loading = true;
         try {
-          const response = await this.api.statisticsActivity(sessionId);
-          this.payload = response.data;
+          //const response = await this.api.statisticsActivity(sessionId);
+          //this.payload = response.data;
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
-      }},
+
+        this.chartRepaint();
+      },
+      chartRepaint() {
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(() => {
+          var data = google.visualization.arrayToDataTable([
+            ['Group', 'Segments'],
+            ['< 40 km/h',     3],
+            ['< 70 km/h',     5],
+            ['> 70 km/h',     2]
+          ]);
+
+          var options = {
+            pieHole: 0.3,
+            legend: 'none',
+            width: 300,
+            chartArea:{left: '30%',top:0,width:'100%',height:'100%'}
+          };
+
+          var chart = new google.visualization.PieChart(this.$refs.chart);
+          chart.draw(data, options);
+        });
+      }
+    },
     computed: {
       widgetDebugData() {
         return _(this.$data).omit(['api']).merge(this.$props).value();

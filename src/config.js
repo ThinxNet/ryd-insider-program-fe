@@ -16,9 +16,9 @@
 
 import configs from '../config.js';
 
-const config = configs[process.env.NODE_ENV];
-if (!config) {
-  throw new Error(`Configuration file is not found (${process.env.NODE_ENV}).`);
+const env = process.env.NODE_ENV.toLowerCase();
+if (!configs[env]) {
+  throw new Error(`Configuration file is not found (${env}).`);
 }
 
-export default config;
+export default configs[env];
