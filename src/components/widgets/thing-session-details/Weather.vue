@@ -20,7 +20,7 @@
     pressure <span class="tag">{{ weather.main.pressure }} hPa</span>.
   </article>
 
-  <div v-else class="notification">No weather information available.</div>
+  <div v-else class="notification has-text-centered">No weather information available.</div>
 </template>
 
 <script>

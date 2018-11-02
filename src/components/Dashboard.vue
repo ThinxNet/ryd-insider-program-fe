@@ -32,7 +32,7 @@
           <div class="tile">
             <!-- timeline -->
             <div v-if="selectedSessionId" class="tile is-parent" style="background-color: #14ADDD">
-              <widget-thing-session-timeline :session-id="selectedSessionId"/>
+              <widget-thing-session-safety :session-id="selectedSessionId"/>
             </div>
 
             <!-- device confidence -->
@@ -42,6 +42,16 @@
           </div>
         </div>
       </div>
+
+      <div class="tile">
+          <div v-if="selectedSessionId" class="tile is-parent is-8" style="background-color: #14ADDD">
+            <widget-thing-session-timeline :session-id="selectedSessionId"/>
+          </div>
+        <div class="tile is-4">
+
+        </div>
+      </div>
+
     </div>
 
     <feedback-form style="z-index: 9999"
@@ -56,6 +66,7 @@
   import WidgetThingList from './widgets/ThingList';
   import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
   import WidgetThingSessionList from './widgets/ThingSessionList';
+  import WidgetThingSessionSafety from './widgets/ThingSessionSafety'
   import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline'
 
   export default {
@@ -63,7 +74,8 @@
     data: () => ({thing: null, selectedSessionId: null}),
     components: {
       FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThingList,
-      WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionTimeline
+      WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionSafety,
+      WidgetThingSessionTimeline
     },
     methods: {
       thingChange(thing) {

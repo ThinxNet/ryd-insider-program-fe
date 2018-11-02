@@ -17,7 +17,7 @@
       You have <span class="tag">{{ alikeSimilar.length }}</span> identical
       {{ $plural('trip', alikeSimilar.length) }}.
     </p>
-    <p v-else class="notification">
+    <p v-else class="notification has-text-centered">
       Neither identical nor partially similar trips have been found.
     </p>
 
