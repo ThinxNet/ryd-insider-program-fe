@@ -68,10 +68,10 @@
           ]);
 
           var options = {
-            pieHole: 0.3,
-            legend: 'none',
-            width: 300,
-            chartArea:{left: '30%',top:0,width:'100%',height:'100%'}
+            pieHole: 0.8,
+            width: 200,
+            height: 130,
+            chartArea: {width: '100%', height: '90%'}
           };
 
           var chart = new google.visualization.PieChart(this.$refs.chart);

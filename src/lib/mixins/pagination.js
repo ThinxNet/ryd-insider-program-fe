@@ -16,7 +16,12 @@
 
 // @onPaginationChanged
 export default {
-  data: () => ({paginationIdx: 0, paginationEntries: []}),
+  data: () => ({paginationIdx: -1, paginationEntries: []}),
+  watch: {
+    paginationIdx(idx) {
+      this.$emit('onPaginationChanged', idx);
+    }
+  },
   methods: {
     paginationGoForward() {
       this.paginationJumpBy(1);
@@ -26,7 +31,6 @@ export default {
     },
     paginationJumpBy(num) {
       this.paginationIdx += num;
-      this.$emit('onPaginationChanged');
     },
     paginationResetEntries(entries) {
       this.paginationIdx = 0;
