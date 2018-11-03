@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import {VueRouter} from './instance';
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+import VueRouter from 'vue-router';
+import Vuex from 'vuex';
 
-import ComponentsDashboard from './components/Dashboard';
-import ComponentsLogin from './components/Login';
+Vue.use(VueResource);
+Vue.use(VueRouter);
+Vue.use(Vuex);
 
-export default new VueRouter({
-  routes: [
-    {component: ComponentsDashboard, name: 'dashboard', path: '/'},
-    {component: ComponentsLogin, name: 'login', path: '/login'}
-  ]
-});
+export {Vue, VueResource, VueRouter, Vuex};
