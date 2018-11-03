@@ -75,7 +75,7 @@
       },
       feedbackFormOpen() {
         this.$store.dispatch(
-          'widget/feedbackFormActivate',
+          'componentWidgetMixin/feedbackFormActivate',
           {widgetId: 'ryd.one insider program', payload: "{}"}
         );
       }

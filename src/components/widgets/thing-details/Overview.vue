@@ -178,7 +178,7 @@
       },
       feedbackFormOpen() {
         this.$store.dispatch(
-          'widget/feedbackFormActivate',
+          'componentWidgetMixin/feedbackFormActivate',
           {widgetId: this.widgetId, payload: this.widgetDebugPayload()}
         );
       }

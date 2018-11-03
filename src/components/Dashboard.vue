@@ -55,7 +55,7 @@
     </div>
 
     <feedback-form style="z-index: 9999"
-      v-if="$store.getters['widget/isFeedbackFormActive']"/>
+      v-if="$store.getters['componentWidgetMixin/isFeedbackFormActive']"/>
   </div>
 </template>
 

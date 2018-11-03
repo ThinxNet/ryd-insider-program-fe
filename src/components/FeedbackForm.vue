@@ -8,7 +8,7 @@
       <div class="box is-radiusless">
         <div class="field">
           <strong>Reference:</strong>
-          <span class="tag">{{ $store.getters['widget/feedbackFormReference'] }}</span>
+          <span class="tag">{{ $store.getters['componentWidgetMixin/feedbackFormReference'] }}</span>
         </div>
 
         <div class="field">
@@ -81,13 +81,13 @@
     },
     methods: {
       uiFeedbackFormClose() {
-        this.$store.dispatch('widget/feedbackFormDiscard');
+        this.$store.dispatch('componentWidgetMixin/feedbackFormDiscard');
       },
       async uiFeedbackFormSend() {
         this.loading = true;
 
-        const reference = this.$store.getters['widget/feedbackFormReference'],
-          payload = this.$store.getters['widget/feedbackFormPayload'];
+        const reference = this.$store.getters['componentWidgetMixin/feedbackFormReference'],
+          payload = this.$store.getters['componentWidgetMixin/feedbackFormPayload'];
 
         try {
           await this.api.feedbackWidgetEntryNew(

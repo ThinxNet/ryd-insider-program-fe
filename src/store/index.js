@@ -16,14 +16,18 @@
 
 import {Vuex} from '../instance';
 
-import ModuleAuthentication from './authentication';
-import ModuleCommon from './common';
-import ModuleWidget from './widget';
+import ModuleAuthentication from './Authentication';
+import ModuleCommon from './Common';
+
+import WidgetMixin from './component/WidgetMixin';
 
 export default new Vuex.Store({
   modules: {
+    // domain independent
     common: ModuleCommon,
     authentication: ModuleAuthentication,
-    widget: ModuleWidget
+
+    // components
+    componentWidgetMixin: WidgetMixin
   }
 });
