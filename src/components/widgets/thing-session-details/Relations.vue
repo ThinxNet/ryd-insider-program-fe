@@ -41,7 +41,7 @@
           </span>
         </div>
         <div class="column has-text-centered is-7" v-if="session">
-          <button class="button is-white is-small is-radiusless"
+          <button class="button is-text is-small is-radiusless"
             @click="sessionDetails(paginationEntry.session)">
             <span class="icon is-small">
               <i class="ion-ios-search"></i>
