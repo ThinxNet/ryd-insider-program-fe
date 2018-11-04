@@ -1,6 +1,8 @@
 <template>
   <article class="tile is-child" style="position: relative;">
-    <span v-if="loading" class="icon is-large"><i class="ion-ios-time"></i></span>
+    <span v-if="loading" class="icon is-large" style="min-height: 672px;">
+      <i class="ion-ios-time"></i>
+    </span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
         :style="[{height: '470px'}, {width: parentElementWidth(this.$el) + 'px'}]">
