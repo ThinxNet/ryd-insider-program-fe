@@ -135,7 +135,7 @@
     name: 'widget-thing-session-list',
     components: {Feedback, SessionMap, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
-    props: {deviceId: String},
+    props: {deviceId: String, sessionId: String},
     data() {
       return {
         api: null,
@@ -166,6 +166,12 @@
     watch: {
       deviceId(currentId) {
         this.fetchData(currentId);
+      },
+      sessionId(currentId) {
+        const idx = this.paginationEntries.findIndex(entry => entry._id === currentId);
+        if (idx) {
+          this.paginationJumpTo(idx);
+        }
       }
     },
     methods: {

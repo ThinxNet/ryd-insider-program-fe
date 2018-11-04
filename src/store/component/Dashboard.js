@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-import {Vuex} from '../instance';
-
-import ModuleAuthentication from './Authentication';
-import ModuleCommon from './Common';
-
-import ComponentWidgetMixin from './component/WidgetMixin';
-import ComponentDashboard from './component/Dashboard';
-
-export default new Vuex.Store({
-  strict: true,
-  modules: {
-    // domain independent
-    common: ModuleCommon,
-    authentication: ModuleAuthentication,
-
-    // components
-    componentWidgetMixin: ComponentWidgetMixin,
-    componentDashboard: ComponentDashboard
+export default {
+  namespaced: true,
+  state: {
+    sessionId: null
+  },
+  getters: {
+    sessionId: state => state.sessionId
+  },
+  mutations: {
+    sessionIdChange: (state, params) => {
+      state.sessionId = params.sessionId;
+    }
+  },
+  actions: {
+    sessionIdChange: (ctx, params) => {
+      if (!params.sessionId) {
+        throw new Error(`Attribute 'sessionId' is required`);
+      }
+      ctx.commit("sessionIdChange", params);
+    }
   }
-});
+};

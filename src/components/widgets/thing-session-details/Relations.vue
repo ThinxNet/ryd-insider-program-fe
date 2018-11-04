@@ -36,15 +36,23 @@
 
       <div class="columns is-flex">
         <div class="column is-2">
-          <span class="tag" title="Confidence">{{ paginationEntry.confidence }}%</span>
+          <span class="tag is-radiusless" title="Confidence">
+            {{ paginationEntry.confidence }}%
+          </span>
         </div>
         <div class="column has-text-centered is-7" v-if="session">
-          <time :datetime="$moment(session.start).format()" class="tag is-white">
-            {{ $moment(session.start).format('L LT') }}
-          </time> -
-          <time :datetime="$moment(session.end).format()" class="tag is-white">
-            {{ $moment(session.end).format('LT') }}
-          </time>
+          <button class="button is-white is-small is-radiusless"
+            @click="sessionDetails(paginationEntry.session)">
+            <span class="icon is-small">
+              <i class="ion-ios-search"></i>
+            </span>
+            <time :datetime="$moment(session.start).format()">
+              {{ $moment(session.start).format('L LT') }}
+            </time> -
+            <time :datetime="$moment(session.end).format()">
+              {{ $moment(session.end).format('LT') }}
+            </time>
+          </button>
         </div>
         <div class="column has-text-right is-unselectable" v-if="relations.length > 1">
           <button @click="paginationGoBackwards"
@@ -118,7 +126,10 @@
       mapInit(map) {
         map._handlers.forEach(h => h.disable());
         map.zoomControl.remove();
-      }
+      },
+      sessionDetails(sessionId) {
+        this.$store.dispatch('componentDashboard/sessionIdChange', {sessionId})
+      },
     },
     computed: {
       isMapReady() {
