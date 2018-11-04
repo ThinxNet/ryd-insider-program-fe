@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-import {VueRouter} from './instance';
+import {Vue} from '../instance';
 
-import ComponentsDashboard from './components/Dashboard';
-import ComponentsLogin from './components/Login';
+import Config from "../config";
+import InsiderProgramApi from "../lib/api/InsiderProgramApi";
+import RydApi from "../lib/api/RydApi";
 
-export default new VueRouter({
-  routes: [
-    {component: ComponentsDashboard, name: 'dashboard', path: '/'},
-    {component: ComponentsLogin, name: 'login', path: '/login'}
-  ]
-});
+export default {
+  namespaced: true,
+  state: {
+    apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
+    apiRyd: new RydApi(Vue.http, Config.api.ryd.baseURL),
+    locale: null
+  },
+  getters: {
+    apiInsiderProgram: state => state.apiInsiderProgram,
+    apiRyd: state => state.apiRyd,
+    locale: state => state.locale || Config.ui.defaultLocale
+  }
+};

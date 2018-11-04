@@ -12,7 +12,9 @@
       <div class="tile" v-if="thing">
         <!-- last session -->
         <div class="tile is-parent is-4" style="background-color: #14ADDD">
-          <widget-thing-session-list :device-id="thing.device"
+          <widget-thing-session-list
+            :session-id="sessionId"
+            :device-id="thing.device"
             @onSessionChange="thingSessionListChange"/>
         </div>
 
@@ -20,7 +22,7 @@
           <div class="tile">
             <!-- session details -->
             <div class="tile is-parent" style="background-color: #14ADDD">
-              <widget-thing-session-details :session-id="selectedSessionId"/>
+              <widget-thing-session-details :session-id="sessionId"/>
             </div>
 
             <!-- activity -->
@@ -31,8 +33,8 @@
 
           <div class="tile">
             <!-- timeline -->
-            <div v-if="selectedSessionId" class="tile is-parent" style="background-color: #14ADDD">
-              <widget-thing-session-safety :session-id="selectedSessionId"/>
+            <div v-if="sessionId" class="tile is-parent" style="background-color: #14ADDD">
+              <widget-thing-session-safety :session-id="sessionId"/>
             </div>
 
             <!-- device confidence -->
@@ -44,8 +46,8 @@
       </div>
 
       <div class="tile">
-          <div v-if="selectedSessionId" class="tile is-parent is-8" style="background-color: #14ADDD">
-            <widget-thing-session-timeline :session-id="selectedSessionId"/>
+          <div v-if="sessionId" class="tile is-parent is-8" style="background-color: #14ADDD">
+            <widget-thing-session-timeline :session-id="sessionId"/>
           </div>
         <div class="tile is-4">
 
@@ -55,7 +57,7 @@
     </div>
 
     <feedback-form style="z-index: 9999"
-      v-if="$store.getters['widget/isFeedbackFormActive']"/>
+      v-if="$store.getters['componentWidgetMixin/isFeedbackFormActive']"/>
   </div>
 </template>
 
@@ -71,18 +73,24 @@
 
   export default {
     name: 'dashboard',
-    data: () => ({thing: null, selectedSessionId: null}),
+    data: () => ({thing: null, sessionId: null}),
     components: {
       FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThingList,
       WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionSafety,
       WidgetThingSessionTimeline
+    },
+    created() {
+      this.$watch(
+        () => this.$store.getters["componentDashboard/sessionId"],
+        newId => this.sessionId = newId
+      );
     },
     methods: {
       thingChange(thing) {
         this.thing = thing;
       },
       thingSessionListChange(sessionId) {
-        this.selectedSessionId = sessionId;
+        this.$store.dispatch('componentDashboard/sessionIdChange', {sessionId});
       }
     },
     computed: {

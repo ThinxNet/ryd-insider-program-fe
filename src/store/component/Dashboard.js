@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-import {VueRouter} from './instance';
-
-import ComponentsDashboard from './components/Dashboard';
-import ComponentsLogin from './components/Login';
-
-export default new VueRouter({
-  routes: [
-    {component: ComponentsDashboard, name: 'dashboard', path: '/'},
-    {component: ComponentsLogin, name: 'login', path: '/login'}
-  ]
-});
+export default {
+  namespaced: true,
+  state: {
+    sessionId: null
+  },
+  getters: {
+    sessionId: state => state.sessionId
+  },
+  mutations: {
+    sessionIdChange: (state, params) => {
+      state.sessionId = params.sessionId;
+    }
+  },
+  actions: {
+    sessionIdChange: (ctx, params) => {
+      if (!params.sessionId) {
+        throw new Error(`Attribute 'sessionId' is required`);
+      }
+      ctx.commit("sessionIdChange", params);
+    }
+  }
+};

@@ -16,9 +16,10 @@
 
 import './assets/styles.css';
 
-import Vue from 'vue';
-import Store from './store';
 import Router from './router';
+import Store from './store';
+import Vue from 'vue';
+
 import ComponentsApp from './components/App.vue';
 
 import lodash from 'lodash';

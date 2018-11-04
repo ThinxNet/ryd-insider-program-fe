@@ -16,7 +16,12 @@
 
 // @onPaginationChanged
 export default {
-  data: () => ({paginationIdx: 0, paginationEntries: []}),
+  data: () => ({paginationCount: 0, paginationEntries: [], paginationIdx: -1}),
+  watch: {
+    paginationIdx(idx) {
+      this.$emit('onPaginationChanged', idx);
+    }
+  },
   methods: {
     paginationGoForward() {
       this.paginationJumpBy(1);
@@ -26,11 +31,17 @@ export default {
     },
     paginationJumpBy(num) {
       this.paginationIdx += num;
-      this.$emit('onPaginationChanged');
+    },
+    paginationJumpTo(idx) {
+      if (idx < 0 || idx > this.paginationCount) {
+        throw new RangeError('Invalid range for the pagination');
+      }
+      this.paginationIdx = idx;
     },
     paginationResetEntries(entries) {
       this.paginationIdx = 0;
       this.paginationEntries = entries;
+      this.paginationCount = entries.length;
       this.paginationJumpBy(0);
     }
   },
@@ -39,7 +50,7 @@ export default {
       return this.paginationEntries[this.paginationIdx] || null;
     },
     paginationHasNext() {
-      return (this.paginationIdx < this.paginationEntries.length - 1);
+      return (this.paginationIdx < this.paginationCount - 1);
     },
     paginationHasPrevious() {
       return this.paginationIdx > 0;
