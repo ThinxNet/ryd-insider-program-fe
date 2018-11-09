@@ -7,6 +7,7 @@ Ryd.one Insider Program
 ## Install
 ```js
 npm install
+mv config.js.dist config.js
 ```
 
 ## Build

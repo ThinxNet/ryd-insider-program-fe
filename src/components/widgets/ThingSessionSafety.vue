@@ -5,8 +5,6 @@
     </div>
 
     <div v-else class="columns is-gapless">
-      <!--<div class="column is-4" style="margin-top: 8px"></div>
-      <div class="column is-8"></div>-->
       <div ref="chart"></div>
     </div>
 
@@ -28,14 +26,15 @@
     props: {sessionId: String},
     components: {Feedback},
     mixins: [Widget],
-    data() {
-      return {api: null, loading: true};
-    },
+    data: () => ({api: null, loading: true, payload: null}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
+    beforeMount() {
+      google.charts.load('current', {packages: ['corechart']});
+    },
     mounted() {
-      this.fetchData(this.sessionId)
+      google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
     },
     watch: {
       sessionId(current) {
@@ -46,8 +45,7 @@
       async fetchData(sessionId) {
         this.loading = true;
         try {
-          //const response = await this.api.statisticsActivity(sessionId);
-          //this.payload = response.data;
+          this.payload = (await this.api.sessionSafety(sessionId)).data;
         } catch (e) {
           console.error(e);
           return;
@@ -55,28 +53,37 @@
           this.loading = false;
         }
 
-        this.chartRepaint();
+        setTimeout(this.chartRepaint);
       },
       chartRepaint() {
-        google.charts.load("current", {packages:["corechart"]});
-        google.charts.setOnLoadCallback(() => {
-          var data = google.visualization.arrayToDataTable([
-            ['Group', 'Segments'],
-            ['< 40 km/h',     3],
-            ['< 70 km/h',     5],
-            ['> 70 km/h',     2]
-          ]);
+        const dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({type: 'string', label: 'Risk'});
+        dataTable.addColumn({type: 'number', label: 'Percent'});
+        dataTable.addColumn({type: 'string', role: 'tooltip'});
 
-          var options = {
-            pieHole: 0.8,
-            width: 200,
-            height: 130,
-            chartArea: {width: '100%', height: '90%'}
+        _.keys(this.payload).forEach(key => {
+          const entry = this.payload[key];
+          dataTable.addRow([
+            key,
+            entry.count,
+            `Risk: ${key}\nDistance: ${_.round(entry.distanceM / 1000, 1)} km`
+          ]);
+        });
+
+        const chart = new google.visualization.PieChart(this.$refs.chart),
+          options = {
+            pieHole: 0.5,
+            legend: 'none',
+            slices: {
+              0: {color: '#00b89c'},
+              1: {color: '#f46036'},
+              2: {color: '#ff3860'}
+            },
+            width: 300,
+            chartArea:{left: '30%', top: '5%', width: '100%', height: '90%'}
           };
 
-          var chart = new google.visualization.PieChart(this.$refs.chart);
-          chart.draw(data, options);
-        });
+        chart.draw(dataTable, options);
       }
     },
     computed: {
