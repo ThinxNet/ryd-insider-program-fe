@@ -84,7 +84,6 @@
             legend: {position: 'labeled', textStyle: {color: '#363636'}},
             pieHole: 0.4,
             pieSliceText: 'none',
-            slices: {0: {}, 1: {}, 2: {offset: 0.1}},
             title: 'none'
           };
 
