@@ -85,7 +85,7 @@
             pieHole: 0.4,
             pieSliceText: 'none',
             pieStartAngle: 100,
-            slices: {0: {}, 1: {offset: 0.1}, 2: {offset: 0.1}},
+            slices: {0: {}, 1: {}, 2: {offset: 0.1}},
             title: 'none'
           };
 
