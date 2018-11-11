@@ -77,20 +77,16 @@
 
         const chart = new google.visualization.PieChart(this.$refs.chart),
           options = {
-            pieHole: 0.4,
-            legend: {position: 'labeled', textStyle: {color: '#363636'}},
-            pieStartAngle: 100,
-            enableInteractivity: false,
-            pieSliceText: 'none',
-            title: 'none',
+            chartArea: {left: '10', top: '8', width: '100%', height: '90%'},
             colors: ['#00b89c', '#f46036', '#ff3860'],
-            slices: {
-              0: {},
-              1: {offset: 0.1},
-              2: {offset: 0.3}
-            },
+            enableInteractivity: false,
             height: 160,
-            chartArea:{left: '10', top: '8', width: '100%', height: '90%'}
+            legend: {position: 'labeled', textStyle: {color: '#363636'}},
+            pieHole: 0.4,
+            pieSliceText: 'none',
+            pieStartAngle: 100,
+            slices: {0: {}, 1: {offset: 0.1}, 2: {offset: 0.3}},
+            title: 'none'
           };
 
         chart.draw(dataTable, options);
