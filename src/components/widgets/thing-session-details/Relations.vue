@@ -4,7 +4,7 @@
   </div>
 
   <article v-else class="content">
-    <p v-if="alikeSimilar.length && alikeClose.length">
+    <p v-if="alikeSimilar.length && alikeClose.length" class="is-size-7">
       You have <span class="tag">{{ alikeSimilar.length }}</span> identical
       {{ $plural('trip', alikeSimilar.length) }}
       and <span class="tag">{{ alikeClose.length }}</span> partially similar

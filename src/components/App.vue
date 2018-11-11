@@ -6,7 +6,7 @@
           <div class="navbar-brand">
             <a class="navbar-item">
               <img
-                src="https://ryd.one/wp-content/uploads/ryd_logo_ehem-tanktaler.png"
+                src="https://ryd.one/wp-content/uploads/ryd_logo.png"
                 alt="Ryd">
             </a>
             <span
