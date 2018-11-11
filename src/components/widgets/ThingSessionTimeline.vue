@@ -87,6 +87,7 @@
               .mapValues(v => _.map(v, a => _.pick(a, fields))).value();
           _.keys(data).forEach(key => {
             const distance = _.round(_.sumBy(data[key], 'distanceM') / 1000, 1),
+              duration = _.sumBy(data[key], 'durationS'),
               tooltip = `<div class="notification">
                 <b>${key}</b><br>
                 <b>Distance:</b> ${distance} km.
