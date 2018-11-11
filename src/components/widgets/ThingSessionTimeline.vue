@@ -87,13 +87,9 @@
               .mapValues(v => _.map(v, a => _.pick(a, fields))).value();
           _.keys(data).forEach(key => {
             const distance = _.round(_.sumBy(data[key], 'distanceM') / 1000, 1),
-              speed = _.round(_.meanBy(data[key], 'speedMs') * 3.6, 1),
-              duration = _.sumBy(data[key], 'durationS'),
               tooltip = `<div class="notification">
                 <b>${key}</b><br>
-                <b>Duration:</b> ${moment.duration(duration, 's').humanize()}<br>
-                <b>Distance:</b> ${distance} km.<br>
-                <b>Avg. speed:</b> ${speed} km/h
+                <b>Distance:</b> ${distance} km.
                </div>`;
             dataTable.addRow([
               title,
