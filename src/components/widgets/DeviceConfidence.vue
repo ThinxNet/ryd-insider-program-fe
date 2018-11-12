@@ -6,20 +6,29 @@
       <nav class="level">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading" title="Fuel level percent">Fuel (%)</p>
-            <p class="title">{{ confidencePercent('obdFuelLevelPercent') || 'N/A' }}</p>
+            <p class="heading" title="Fuel level (in percent)">Fuel (%)</p>
+            <p v-if="confidencePercent('obdFuelLevelPercent')" class="title">
+              {{ confidencePercent('obdFuelLevelPercent') }}
+            </p>
+            <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading" title="Fuel level liters">Fuel (L)</p>
-            <p class="title">{{ confidencePercent('obdFuelLevelL') || 'N/A' }}</p>
+            <p class="heading" title="Fuel level (in liters)">Fuel (L)</p>
+            <p v-if='confidencePercent("obdFuelLevelL")' class='title'>
+              {{ confidencePercent('obdFuelLevelL') }}
+            </p>
+            <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading" title="Fuel consumption liters">Cons. (L)</p>
-            <p class="title">{{ confidencePercent('fuelConsumptionL') || 'N/A' }}</p>
+            <p class="heading" title="Fuel consumption (in liters)">Cons. (L)</p>
+            <p v-if="confidencePercent('fuelConsumptionL')" class="title">
+              {{ confidencePercent('fuelConsumptionL') }}
+            </p>
+            <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
         </div>
       </nav>
@@ -28,13 +37,19 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Odometer quality">Odometer</p>
-            <p class="title">{{ confidencePercent('obdCarOdometer') || 'N/A' }}</p>
+            <p v-if="confidencePercent('obdCarOdometer')" class="title">
+              {{ confidencePercent('obdCarOdometer') }}
+            </p>
+            <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="GPS quality">GPS</p>
-            <p class="title">{{ confidencePercent('gpsDistanceM') || 'N/A' }}</p>
+            <p v-if="confidencePercent('gpsDistanceM')" class="title">
+              {{ confidencePercent('gpsDistanceM') }}
+            </p>
+            <p class="title has-text-grey-lighter" v-else>N/A</p>
           </div>
         </div>
       </nav>
@@ -76,6 +91,7 @@
           this.payload = response.data;
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
