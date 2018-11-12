@@ -64,15 +64,10 @@
         const dataTable = new google.visualization.DataTable();
         dataTable.addColumn({type: 'string', label: 'Risk'});
         dataTable.addColumn({type: 'number', label: 'Percent'});
-        dataTable.addColumn({type: 'string', role: 'tooltip'});
 
         _.keys(this.payload).forEach(key => {
           const entry = this.payload[key];
-          dataTable.addRow([
-            key,
-            entry.count,
-            `Risk: ${key}\nDistance: ${_.round(entry.distanceM / 1000, 1)} km`
-          ]);
+          dataTable.addRow([`${key} (${_.round(entry.distanceM / 1000, 1)} km)`, entry.count]);
         });
 
         const chart = new google.visualization.PieChart(this.$refs.chart),
