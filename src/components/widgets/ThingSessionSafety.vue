@@ -42,6 +42,10 @@
       google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
     },
     watch: {
+      loading(current) {
+        if (current || this.isPayloadEmpty) { return; }
+        setTimeout(this.chartRepaint);
+      },
       sessionId(current) {
         this.fetchData(current);
       }
@@ -57,8 +61,6 @@
         } finally {
           this.loading = false;
         }
-
-        setTimeout(this.chartRepaint);
       },
       chartRepaint() {
         const dataTable = new google.visualization.DataTable();
