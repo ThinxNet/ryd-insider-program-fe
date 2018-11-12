@@ -65,8 +65,10 @@
           field = source + 'SpeedKmH',
           avg = _.ceil(segmentsWrapped.meanBy(`attributes.${field}`));
 
-        const obdRpmValues = segmentsWrapped.map('attributes.obdMaxRpm').reject(_.lte),
-          obdRpmMax = obdRpmValues.max(),
+        const obdRpmValues = segmentsWrapped
+          .map(v => _.max([v.attributes.obdEngineRpm, v.attributes.obdMaxRpm]))
+          .reject(_.lte);
+        const obdRpmMax = obdRpmValues.max(),
           obdRpmMin = obdRpmValues.min();
 
         dataTable.addColumn({type: 'datetime', label: 'Time'});
@@ -81,16 +83,15 @@
         this.session.segments.forEach(segment => {
           const date = moment(segment.timestamp),
             timestamp = date.format('LTS'),
-            obdMaxRpm = segment.attributes.obdMaxRpm
-              ? ((segment.attributes.obdMaxRpm - obdRpmMin) / (obdRpmMax - obdRpmMin)) * avg
-              : null;
+            obdRpm = _.max([segment.attributes.obdEngineRpm, segment.attributes.obdMaxRpm]),
+            obdRpmNormal = obdRpm ? ((obdRpm - obdRpmMin) / (obdRpmMax - obdRpmMin)) * avg : null;
           dataTable.addRow([
             date.toDate(),
             segment._id,
             segment.attributes[field],
             `${timestamp}\n${segment.attributes[field]} km/h`,
-            obdMaxRpm,
-            `${timestamp}\n${segment.attributes.obdMaxRpm} rpm`,
+            obdRpmNormal,
+            `${timestamp}\n${obdRpm} rpm`,
             avg,
             `${avg} km/h`
           ]);
