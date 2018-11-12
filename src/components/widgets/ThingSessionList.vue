@@ -158,14 +158,17 @@
         this.locations = [];
         if (!this.paginationEntry) { return; }
         this.$emit('onSessionChange', this.paginationEntry._id);
-        if (['map', 'mixed'].includes(this.source)
-          && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
-          this.sourceSwitchTo('gps');
+        if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
+          this.sourceSwitchTo('mixed');
         }
       });
       this.fetchData(this.deviceId);
     },
     watch: {
+      loading(current) {
+        if (current) { return; }
+        this.sourceSwitchTo('mixed');
+      },
       deviceId(currentId) {
         this.fetchData(currentId);
       },
@@ -185,11 +188,11 @@
           this.sessions = response.data;
           this.paginationResetEntries(this.sessions);
         } catch (e) {
-          return console.error(e);
+          console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
-        this.sourceSwitchTo('gps');
       },
       sourceSwitchTo(source) {
         this.source = source.toLowerCase();
