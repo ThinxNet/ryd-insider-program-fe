@@ -62,7 +62,7 @@
 
         const dataTable = new google.visualization.DataTable(),
           segmentsWrapped = _(this.session.segments),
-          field = source + (source === 'obd' ? 'MaxSpeedKmH': 'SpeedKmH'),
+          field = source + 'SpeedKmH',
           avg = _.ceil(segmentsWrapped.meanBy(`attributes.${field}`));
 
         const obdRpmValues = segmentsWrapped.map('attributes.obdMaxRpm').reject(_.lte),
