@@ -36,9 +36,20 @@
       </tbody>
     </table>
 
-    <div class="notification is-radiusless is-success has-text-centered">
+    <div if="flagYmmeNeedsReview === null"
+      class="notification is-radiusless is-warning has-text-centered">
+      <strong>Ryd.one</strong> hasn't tried to do identify your car yet.
+    </div>
+    <div v-else-if="flagYmmeNeedsReview === false"
+      class="notification is-radiusless is-success has-text-centered">
       <strong>Ryd.one</strong> thinks is that your car is identified properly.
       <a href="#" @click.prevent="feedbackFormOpen">Please let us know if that is not true</a>.
+    </div>
+    <div v-else="flagYmmeNeedsReview === true"
+      class="notification is-radiusless is-danger has-text-centered">
+      <strong>Ryd.one</strong> needs some time to manually identify your car.
+      <a href="#" @click.prevent="feedbackFormOpen">Please help us to do that
+      by providing additional details (VIN/Make/Model/Year)</a>.
     </div>
 
     <h3 class="title">Device</h3>
@@ -140,6 +151,8 @@
 </template>
 
 <script>
+  import _ from 'lodash';
+
   import Widget from '../../../lib/mixins/widget';
   import Feedback from '../shared/Feedback';
 
@@ -172,6 +185,7 @@
           this.device = results[1].data;
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
@@ -186,6 +200,9 @@
     computed: {
       widgetDebugData() {
         return _(this.$data).omit(['api']).merge(this.$props).value();
+      },
+      flagYmmeNeedsReview() {
+        return _.get(this.thing, 'ymme.needsReview', null);
       }
     }
   }
