@@ -45,8 +45,7 @@
       <strong>Ryd.one</strong> thinks is that your car is identified properly.
       <a href="#" @click.prevent="feedbackFormOpen">Please let us know if that is not true</a>.
     </div>
-    <div v-else="flagYmmeNeedsReview === true"
-      class="notification is-radiusless is-danger has-text-centered">
+    <div v-else class="notification is-radiusless is-danger has-text-centered">
       <strong>Ryd.one</strong> needs some time to manually identify your car.
       <a href="#" @click.prevent="feedbackFormOpen">Please help us to do that
       by providing additional details (VIN/Make/Model/Year)</a>.
