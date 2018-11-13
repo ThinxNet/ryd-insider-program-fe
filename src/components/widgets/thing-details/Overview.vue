@@ -36,7 +36,7 @@
       </tbody>
     </table>
 
-    <div if="flagYmmeNeedsReview === null"
+    <div v-if="flagYmmeNeedsReview === null"
       class="notification is-radiusless is-warning has-text-centered">
       <strong>Ryd.one</strong> hasn't tried to do identify your car yet.
     </div>
