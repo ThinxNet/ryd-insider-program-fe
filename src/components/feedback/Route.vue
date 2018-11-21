@@ -37,7 +37,7 @@
         </div>
 
         <div v-if="!entries.length" class="notification has-text-centered">
-          Not feedback entries found.
+          No feedback entries found.
           <a @click.prevent="feedbackFormOpen">The right time to submit one!</a>
         </div>
       </div>
