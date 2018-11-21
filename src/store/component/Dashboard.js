@@ -33,6 +33,9 @@ export default {
         throw new Error(`Attribute 'sessionId' is required`);
       }
       ctx.commit("sessionIdChange", params);
+    },
+    sessionIdReset: ctx => {
+      ctx.commit("sessionIdChange", {sessionId: null});
     }
   }
 };

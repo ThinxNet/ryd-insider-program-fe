@@ -55,35 +55,33 @@
       </div>
 
     </div>
-
-    <feedback-form style="z-index: 9999"
-      v-if="$store.getters['componentWidgetMixin/isFeedbackFormActive']"/>
   </div>
 </template>
 
 <script>
-  import FeedbackForm from './FeedbackForm';
-  import WidgetDeviceConfidence from './widgets/DeviceConfidence';
-  import WidgetThingActivity from './widgets/ThingActivity';
-  import WidgetThingList from './widgets/ThingList';
-  import WidgetThingSessionDetails from './widgets/ThingSessionDetails';
-  import WidgetThingSessionList from './widgets/ThingSessionList';
-  import WidgetThingSessionSafety from './widgets/ThingSessionSafety'
-  import WidgetThingSessionTimeline from './widgets/ThingSessionTimeline'
+  import WidgetDeviceConfidence from '../widgets/DeviceConfidence';
+  import WidgetThingActivity from '../widgets/ThingActivity';
+  import WidgetThingList from '../widgets/ThingList';
+  import WidgetThingSessionDetails from '../widgets/ThingSessionDetails';
+  import WidgetThingSessionList from '../widgets/ThingSessionList';
+  import WidgetThingSessionSafety from '../widgets/ThingSessionSafety'
+  import WidgetThingSessionTimeline from '../widgets/ThingSessionTimeline'
 
   export default {
     name: 'dashboard',
     data: () => ({thing: null, sessionId: null}),
     components: {
-      FeedbackForm, WidgetDeviceConfidence, WidgetThingActivity, WidgetThingList,
-      WidgetThingSessionDetails, WidgetThingSessionList, WidgetThingSessionSafety,
-      WidgetThingSessionTimeline
+      WidgetDeviceConfidence, WidgetThingActivity, WidgetThingList, WidgetThingSessionDetails,
+      WidgetThingSessionList, WidgetThingSessionSafety, WidgetThingSessionTimeline
     },
     created() {
       this.$watch(
         () => this.$store.getters["componentDashboard/sessionId"],
         newId => this.sessionId = newId
       );
+    },
+    beforeDestroy() {
+      this.$store.dispatch('componentDashboard/sessionIdReset');
     },
     methods: {
       thingChange(thing) {

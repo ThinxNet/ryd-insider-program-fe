@@ -88,7 +88,7 @@
           _.keys(data).forEach(key => {
             const distance = _.round(_.sumBy(data[key], 'distanceM') / 1000, 1),
               duration = _.sumBy(data[key], 'durationS'),
-              tooltip = `<div class="notification">
+              tooltip = `<div class="notification" style="white-space: nowrap">
                 <b>${key}</b><br>
                 <b>Distance:</b> ${distance} km.
                </div>`;

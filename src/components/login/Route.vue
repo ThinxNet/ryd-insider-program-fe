@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import Store from '../store';
+  import Store from '../../store';
 
   export default {
     name: 'login',

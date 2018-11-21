@@ -21,14 +21,8 @@
               <span></span>
             </span>
           </div>
-          <div id="navbar-menu"
-            v-if="isAuthenticated"
-            :class="['navbar-menu', {'is-active': uiIsMenuActive}]">
-            <div class="navbar-end">
-              <a @click.prevent="feedbackFormOpen" class="navbar-item">Feedback</a>
-              <a @click.prevent="logout" class="navbar-item">Log-out</a>
-            </div>
-          </div>
+
+          <navbar-menu v-if="isAuthenticated" :is-active="uiIsMenuActive"/>
         </div>
       </header>
     </div>
@@ -39,6 +33,9 @@
           <router-view></router-view>
         </transition>
       </div>
+
+      <feedback-form style="z-index: 9999"
+        v-if="$store.getters['componentWidgetMixin/isFeedbackFormActive']"/>
     </div>
 
     <div class="hero-foot">
@@ -57,28 +54,25 @@
 </template>
 
 <script>
+  import FeedbackForm from './feedback/Form';
+  import NavbarMenu from './NavbarMenu';
+
   export default {
     name: 'app',
     data: () => ({uiIsMenuActive: false}),
+    components: {NavbarMenu, FeedbackForm},
     computed: {
       isAuthenticated() {
         return this.$store.getters['authentication/isAuthenticated'];
       }
     },
-    methods: {
-      async logout() {
-        try {
-          await this.$store.getters['common/apiRyd'].authLogout();
-          this.$store.dispatch('authentication/logout');
-          this.$router.push({name: 'login'});
-        } catch (e) { console.error(e); }
-      },
-      feedbackFormOpen() {
-        this.$store.dispatch(
-          'componentWidgetMixin/feedbackFormActivate',
-          {widgetId: 'ryd.one insider program', payload: "{}"}
-        );
-      }
+    mounted() {
+      this.$store.subscribeAction(action => {
+        if (action.type !== 'authentication/logout') { return; }
+        this.$store.getters['common/apiRyd'].authLogout()
+          .then(() => this.$router.push({name: 'login'}))
+          .catch(console.error);
+      });
     }
   };
 </script>

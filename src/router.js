@@ -16,12 +16,14 @@
 
 import {VueRouter} from './instance';
 
-import ComponentsDashboard from './components/Dashboard';
-import ComponentsLogin from './components/Login';
+import ComponentsDashboard from './components/dashboard/Route';
+import ComponentsFeedback from './components/feedback/Route';
+import ComponentsLogin from './components/login/Route';
 
 export default new VueRouter({
   routes: [
     {component: ComponentsDashboard, name: 'dashboard', path: '/'},
-    {component: ComponentsLogin, name: 'login', path: '/login'}
+    {component: ComponentsLogin, name: 'login', path: '/login'},
+    {component: ComponentsFeedback, name: 'feedback', path: '/feedback'}
   ]
 });

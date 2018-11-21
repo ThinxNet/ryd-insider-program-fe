@@ -79,9 +79,7 @@
     props: {thingId: String},
     components: {Feedback},
     mixins: [Widget],
-    data() {
-      return {api: null, loading: true, payload: [], source: 'geo'};
-    },
+    data: () => ({api: null, loading: true, payload: [], source: 'geo'}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
@@ -101,6 +99,7 @@
           this.payload = response.data;
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
