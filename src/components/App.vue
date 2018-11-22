@@ -1,30 +1,25 @@
 <template>
   <section id="app" class="hero is-fullheight">
     <div class="hero-head">
-      <header class="navbar">
+      <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="container">
           <div class="navbar-brand">
             <a class="navbar-item">
-              <img
-                src="https://ryd.one/wp-content/uploads/ryd_logo.png"
-                alt="Ryd">
+              <img src="https://ryd.one/wp-content/uploads/ryd_logo.png" alt="Ryd">
             </a>
-            <span data-target="navbar-menu"
-              v-if="isAuthenticated"
+            <a v-if="isAuthenticated"
               @click.prevent="uiIsMenuActive = !uiIsMenuActive"
-              :class="[
-                'navbar-burger burger',
-                {'has-background-primary': !uiIsMenuActive, 'has-background-white': uiIsMenuActive}
-              ]">
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
+              :class="['navbar-burger burger', {'is-active': uiIsMenuActive}]"
+              role="button" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
           </div>
 
           <navbar-menu :is-active="uiIsMenuActive"/>
         </div>
-      </header>
+      </nav>
     </div>
 
     <div class="hero-body">
