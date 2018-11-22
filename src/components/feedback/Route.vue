@@ -52,7 +52,7 @@
           <div class="card-content">
             <small>{{ $moment(entry.timestamp).format('L LT') }} / {{ entry.reference }}</small>
             <hr>
-            <pre>{{ $_.truncate(entry.message, {length: 100}) }}</pre>
+            <pre style="white-space: inherit">{{ $_.truncate(entry.message, {length: 100}) }}</pre>
           </div>
           <footer class="card-footer">
             <p class="card-footer-item">
