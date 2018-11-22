@@ -9,8 +9,8 @@
                 src="https://ryd.one/wp-content/uploads/ryd_logo.png"
                 alt="Ryd">
             </a>
-            <span
-              data-target="navbar-menu"
+            <span data-target="navbar-menu"
+              v-if="isAuthenticated"
               @click.prevent="uiIsMenuActive = !uiIsMenuActive"
               :class="[
                 'navbar-burger burger',
@@ -22,7 +22,7 @@
             </span>
           </div>
 
-          <navbar-menu v-if="isAuthenticated" :is-active="uiIsMenuActive"/>
+          <navbar-menu :is-active="uiIsMenuActive"/>
         </div>
       </header>
     </div>
