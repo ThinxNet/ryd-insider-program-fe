@@ -3,7 +3,7 @@
     <div class="navbar-end">
       <router-link
         :class="['navbar-item', {'is-active': isEntryActive(name)}]"
-        :to="{name}" v-for="name in ['dashboard', 'feedback']">
+        :to="{name}" v-for="(name, idx) in ['dashboard', 'feedback']" :key="idx">
         {{ $_.upperFirst(name) }}
       </router-link>
 

@@ -139,7 +139,7 @@
           <td>Protocol</td>
           <td><span class="tag">{{ device.obdFeatures.protocol.description }}</span></td>
         </tr>
-        <tr class="is-size-7" v-for="(flag, param) of device.obdFeatures.params">
+        <tr class="is-size-7" v-for="(flag, param) in device.obdFeatures.params">
           <td>{{ param }}</td>
           <td>{{ flag ? 'Yes' : 'No' }}</td>
         </tr>
