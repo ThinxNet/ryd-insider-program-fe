@@ -75,7 +75,7 @@
           <p><b>No feedback entries found.</b></p>
           <p>
             <a @click.prevent="feedbackFormOpen">
-              Please let us know if there’s anything else we can do!
+              Please let us know if there’s anything we can improve!
             </a>
           </p>
         </div>
