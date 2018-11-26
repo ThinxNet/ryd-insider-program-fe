@@ -2,7 +2,7 @@
   <div class="tile is-ancestor">
     <div class="tile is-parent is-vertical">
       <div class="tile is-parent is-vertical" v-if="notification">
-        <div class="notification is-warning is-radiusless">{{ notification }}</div>
+        <div class="notification is-danger is-radiusless">{{ notification }}</div>
       </div>
 
       <div class="tile is-parent">
@@ -94,9 +94,7 @@
     computed: {
       notification() {
         return (process.env.NODE_ENV === 'production')
-          ? `The information comes from unreliable server infrastructure. Some trips might be ` +
-            `missing or have less than 50% of real data. Having the mentioned limitations, ` +
-            `please consider these results only for concept-demonstration purposes.`
+          ? `Temporary unmaintained. Please use the staging environment.`
           : null;
       },
       identity() {
