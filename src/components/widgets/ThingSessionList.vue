@@ -19,7 +19,7 @@
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"/>
       </div>
-      <div class="card-content is-paddingless">
+      <div class="card-content" style="padding: 0 0 1.5rem 0;">
         <div class="columns">
           <div class="column is-full has-text-right">
             <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
