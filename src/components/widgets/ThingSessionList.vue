@@ -43,7 +43,9 @@
             <small class="is-size-7 has-text-grey-light">|</small>
 
             <span class="tag" style="margin-right: 1rem;">
-              <span class="icon is-small has-text-success"><i class="ion-ios-wifi"></i></span>
+              <span title="Trip quality" :class="[
+                'icon is-small', 'has-text-' + (paginationEntry.incomplete ? 'danger' : 'primary')
+              ]"><i class="ion-ios-wifi"></i></span>
             </span>
           </div>
         </div>
