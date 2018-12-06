@@ -101,6 +101,7 @@
       },
       sessionId(current) {
         this.mapElements = [];
+        this.mapLocations = [];
         this.fetchData(current);
       }
     },
@@ -176,29 +177,33 @@
           }
         );
 
-        const entries = [
-          {element: iconParking, title: 'Parking', type: 'parking'},
-          {element: polyline, title: 'Trip', type: 'layer'}
-        ];
+        const fitBounds = !this.mapLocations.length,
+          entries = [
+            {element: iconParking, title: 'Parking', type: 'parking'},
+            {element: polyline, title: 'Trip', type: 'layer'}
+          ];
 
         this.mapElements = _(this.mapElements)
           .reject(v => _.map(entries, 'type').includes(v.type))
           .concat(entries).value();
         this.mapLocations = locations;
-        this.mapInstance.fitBounds(polyline.getBounds());
+
+        if (fitBounds) {
+          this.mapInstance.fitBounds(polyline.getBounds());
+        }
 
         this.$emit('onLocationsChanged', locations);
       },
       eventTypeIcon(type) {
         return {
           ACCELERATION:
-            {bg: 'red', fg: '#FFF', id: 'ios-speedometer', title: 'Acceleration'},
+            {bg: 'orange', fg: '#FFF', id: 'ios-speedometer', title: 'Acceleration'},
           ACC_HARD_CURVE_LEFT:
             {bg: 'cadetblue', fg: '#FFF', id: 'ios-undo', title: 'Hard curve (left)'},
           ACC_HARD_CURVE_RIGHT:
             {bg: 'cadetblue', fg: '#FFF', id: 'ios-redo', title: 'Hard curve (right)'},
           HARD_BRAKING:
-            {id: 'ios-warning', bg: 'darkred', fg: '#FFF', title: 'Hard braking'},
+            {bg: 'darkred', fg: '#FFF', id: 'ios-warning', title: 'Hard braking'},
         }[type] || {id: 'ios-help-circle', bg: 'white', fg: 'black', title: 'Unknown'};
       }
     },
