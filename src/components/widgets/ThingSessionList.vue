@@ -5,8 +5,8 @@
     </span>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
-        :style="[{height: '470px'}, {width: parentElementWidth(this.$el) + 'px'}]">
-        <session-map v-if="paginationEntry._id" style="height: 460px"
+        :style="[{height: '500px'}, {width: parentElementWidth(this.$el) + 'px'}]">
+        <session-map v-if="paginationEntry._id" style="height: 490px"
           :map-highlights="segmentsHighlighted"
           :map-locations-source="source"
           :session-id="paginationEntry._id"
@@ -19,11 +19,58 @@
           @onLocationsChanged="mapLocationsChange"
           @onReadyStateChanged="mapReadyStateChange"/>
       </div>
-      <div class="card-content">
+      <div class="card-content is-paddingless">
+        <div class="columns">
+          <div class="column is-full has-text-right">
+            <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
+
+            <small class="is-size-7 has-text-grey-light">|</small>
+
+            <span class="tag">
+              {{ $moment.utc($moment.duration(sessionStatistics.durationS, 's')
+                  .asMilliseconds()).format('HH:mm') }} h
+            </span>
+
+            <small class="is-size-7 has-text-grey-light">|</small>
+
+            <template v-if="sessionStatistics.speedKmHAvg">
+              <span class="tag">
+                &empty; {{ sessionStatistics.speedKmHAvg }} km/h
+                (max: {{ sessionStatistics.speedKmHMax }} km/h)
+              </span>
+            </template>
+
+            <small class="is-size-7 has-text-grey-light">|</small>
+
+            <span class="tag" style="margin-right: 1rem;">
+              <span class="icon is-small has-text-success"><i class="ion-ios-wifi"></i></span>
+            </span>
+          </div>
+        </div>
+
+        <div class="columns" v-if="sourceMode === 'advanced'">
+          <div class="column is-full is-paddingless">
+            <div class="buttons has-addons is-centered">
+              <span class="button is-small is-radiusless"
+                @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
+              <span class="button is-small is-radiusless"
+                @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
+              <span class="button is-small is-radiusless"
+                @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
+              <span class="button is-small is-radiusless"
+                v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
+                @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
+                :title="mapMatchingConfidenceHint">MAP</span>
+              <span class="button is-small is-radiusless"
+                @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
+            </div>
+          </div>
+        </div>
+
         <div class="content">
           <transition name="fade">
             <div v-if="uiSpeedDetails" :style="[
-              {left: 0, position: 'absolute', top: '230px', zIndex: 1000},
+              {left: 0, position: 'absolute', top: '250px', zIndex: 1000},
               {width: (parentElementWidth(this.$el) + 1) + 'px'}
             ]">
               <article class="message is-info is-radiusless">
@@ -33,7 +80,7 @@
                 </div>
                 <div class="message-body is-paddingless" style="height: 200px;">
                   <thing-session-details-speed
-                    :source="['mixed', 'map'].includes(source) ? 'geo' : source"
+                    :source="['map'].includes(source) ? 'geo' : source"
                     :session-id="paginationEntry._id"
                     @onSegmentHighlighted="segmentHighlight"
                     @onSegmentSelected=""/>
@@ -43,26 +90,9 @@
           </transition>
 
           <div class="columns">
-            <div class="column is-paddingless">
-              <div class="buttons has-addons is-centered">
-                <span class="button is-small is-radiusless"
-                  @click="sourceSwitchTo('obd')" :class="sourceBtnClass('obd')">OBD</span>
-                <span class="button is-small is-radiusless"
-                  @click="sourceSwitchTo('gps')" :class="sourceBtnClass('gps')">GPS</span>
-                <span class="button is-small is-radiusless"
-                  @click="sourceSwitchTo('geo')" :class="sourceBtnClass('geo')">GEO</span>
-                <span class="button is-small is-radiusless"
-                  v-if="paginationEntry.statistics.mapConfidenceAvg > 10"
-                  @click="sourceSwitchTo('map')" :class="sourceBtnClass('map')"
-                  :title="mapMatchingConfidenceHint">MAP</span>
-                <span class="button is-small is-radiusless"
-                  @click="sourceSwitchTo('mixed')" :class="sourceBtnClass('mixed')">MIXED</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="columns">
-            <div class="column">
+            <div class="column is-full" style="padding: 0 2rem; min-height: 4.55rem">
+              <small>{{ $moment(paginationEntry.start).format('dddd') }}</small>
+              <br>
               <time :datetime="$moment(paginationEntry.start).format()">
                 {{ $moment(paginationEntry.start).format('L LT') }}
               </time>
@@ -71,34 +101,16 @@
                 {{ $moment(paginationEntry.end).format('L LT') }}
               </time>
 
-              <template v-if="['mixed', 'map'].includes(source) && viaStreets.length">
-                <br><small>{{ viaStreets.join(', ') }}</small>
-              </template>
+              <hr class="is-marginless">
 
-              <br>
-              <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-
-              <template v-if="source !== 'map'">
-                for
-              </template>
-              <template v-else>
-                ideally doable within
-              </template>
-
-              <span class="tag">
-                ~{{ $moment.duration(sessionStatistics.durationS, 's').humanize() }}
-              </span>
-
-              <template v-if="sessionStatistics.speedKmHAvg">
-                <br>
-                Avg. speed <span class="tag">{{ sessionStatistics.speedKmHAvg }} km/h</span>
-                (max: <span class="tag">{{ sessionStatistics.speedKmHMax }} km/h</span>)
+              <template v-if="viaStreets.length && (isModeAdvanced || ['mixed', 'map'].includes(source))">
+                <small>{{ viaStreets.join(', ') }}</small>
               </template>
             </div>
           </div>
 
-          <div class="columns is-flex">
-            <div class="column has-text-right is-unselectable">
+          <div class="columns">
+            <div class="column is-four-fifths has-text-right is-unselectable">
               <button @click="paginationGoBackwards"
                 :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasPrevious">
@@ -109,6 +121,12 @@
                 :disabled="!paginationHasNext">
                 <i class="ion-ios-arrow-forward"></i>
               </button>
+            </div>
+            <div class="column">
+              <dropdown v-once @onEntryChange="sourceModeSwitch" :active-idx="0" :entry-list="[
+                {title: 'Simple mode', value: 'simple'},
+                {title: 'Advanced mode', value: 'advanced'}
+              ]"/>
             </div>
           </div>
         </div>
@@ -125,6 +143,7 @@
 <script>
   import _ from 'lodash';
 
+  import Dropdown from './shared/Dropdown'
   import Feedback from './shared/Feedback';
   import SessionMap from './shared/SessionMap';
 
@@ -135,7 +154,7 @@
 
   export default {
     name: 'widget-thing-session-list',
-    components: {Feedback, SessionMap, ThingSessionDetailsSpeed},
+    components: {Dropdown, Feedback, SessionMap, ThingSessionDetailsSpeed},
     mixins: [Pagination, Widget],
     props: {deviceId: String, sessionId: String},
     data() {
@@ -147,6 +166,7 @@
         segmentsHighlighted: [],
         sessions: [],
         source: null,
+        sourceMode: 'simple',
         uiSpeedDetails: false
       };
     },
@@ -192,6 +212,12 @@
           return;
         } finally {
           this.loading = false;
+        }
+      },
+      sourceModeSwitch(mode) {
+        this.sourceMode = mode;
+        if (!this.isModeAdvanced) {
+          this.sourceSwitchTo('mixed');
         }
       },
       sourceSwitchTo(source) {
@@ -246,32 +272,30 @@
           .value();
       },
       sessionStatistics() {
-        const fields = {
-          distanceM: this.paginationEntry.statistics.geoDistanceM,
-          durationS: this.paginationEntry.statistics.durationS,
-          speedKmHAvg: this.paginationEntry.statistics.geoSpeedKmHAvg,
-          speedKmHMax: this.paginationEntry.statistics.geoSpeedKmHMax
-        };
+        const stats = this.paginationEntry.statistics,
+          fields = {
+            distanceM: stats.geoDistanceM,
+            durationS: stats.durationS,
+            speedKmHAvg: stats.geoSpeedKmHAvg,
+            speedKmHMax: stats.geoSpeedKmHMax
+          };
 
         switch (this.source) {
           case 'mixed':
-            if (this.paginationEntry.statistics.mapConfidenceAvg > 90
-              && !this.paginationEntry.statistics.mapHasGaps) {
-              fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
-            }
+            fields.distanceM = stats.distanceM;
+            fields.speedKmHAvg = stats.speedKmHAvg;
+            fields.speedKmHMax = stats.speedKmHMax;
             break;
           case 'map':
-            fields.distanceM = this.paginationEntry.statistics.mapDistanceM;
-            fields.durationS = this.paginationEntry.statistics.mapDurationS;
-            fields.speedKmHAvg = this.paginationEntry.statistics.mapSpeedKmHAvg;
-            fields.speedKmHMax = this.paginationEntry.statistics.mapSpeedKmHMax;
+            fields.distanceM = stats.mapDistanceM;
+            fields.durationS = stats.mapDurationS;
+            fields.speedKmHAvg = stats.mapSpeedKmHAvg;
+            fields.speedKmHMax = stats.mapSpeedKmHMax;
             break;
           default:
             Object.keys(fields)
               .filter(key => key !== 'durationS')
-              .forEach(key =>
-                fields[key] = this.paginationEntry.statistics[this.source + _.upperFirst(key)]
-              );
+              .forEach(key => fields[key] = stats[this.source + _.upperFirst(key)]);
             break;
         }
 
@@ -279,6 +303,9 @@
       },
       isMapReady() {
         return !this.isMapBlocked;
+      },
+      isModeAdvanced() {
+        return this.sourceMode === 'advanced';
       },
       viaStreets() {
         const streets = _(this.locations).map('name').reject(_.isEmpty).uniq().value();

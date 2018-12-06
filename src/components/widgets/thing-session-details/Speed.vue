@@ -19,9 +19,7 @@
   export default {
     name: 'thing-session-details-speed',
     props: {sessionId: String, source: {default: 'gps', type: String}},
-    data() {
-      return {api: null, loading: true, session: null};
-    },
+    data: () => ({api: null, loading: true, session: null}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
@@ -41,9 +39,7 @@
     },
     methods: {
       async fetchData(id, source) {
-        if (!['geo', 'gps', 'obd'].includes(source)) {
-          return;
-        }
+        if (!['geo', 'gps', 'obd', 'mixed'].includes(source)) { return; }
 
         this.loading = true;
         try {
@@ -62,7 +58,7 @@
 
         const dataTable = new google.visualization.DataTable(),
           segmentsWrapped = _(this.session.segments),
-          field = source + 'SpeedKmH',
+          field = source === 'mixed' ? 'speedKmH' : (source + 'SpeedKmH'),
           avg = _.ceil(segmentsWrapped.meanBy(`attributes.${field}`));
 
         const obdRpmValues = segmentsWrapped
