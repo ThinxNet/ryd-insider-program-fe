@@ -138,7 +138,6 @@
         const standstill = moment
           .duration(entry.durationS - entry[this.keyDriveDuration], 's')
           .humanize();
-          debugger;
         return `${moment().dayOfYear(entry.dayOfYear).format("L")}\n`
           + `Trips: ${entry.count}\n`
           + `Distance: ${_.round(entry[this.keyDistance] / 1000, 1)} km.\n`
