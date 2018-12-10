@@ -105,7 +105,8 @@
 
               <hr class="is-marginless">
 
-              <template v-if="viaStreets.length && (isModeAdvanced || ['mixed', 'map'].includes(source))">
+              <template v-if="viaStreets.length
+                && (isSourceModeAdvanced || ['mixed', 'map'].includes(source))">
                 <small>{{ viaStreets.join(', ') }}</small>
               </template>
             </div>
@@ -218,7 +219,7 @@
       },
       sourceModeSwitch(mode) {
         this.sourceMode = mode;
-        if (!this.isModeAdvanced) {
+        if (!this.isSourceModeAdvanced) {
           this.sourceSwitchTo('mixed');
         }
       },
@@ -306,7 +307,7 @@
       isMapReady() {
         return !this.isMapBlocked;
       },
-      isModeAdvanced() {
+      isSourceModeAdvanced() {
         return this.sourceMode === 'advanced';
       },
       viaStreets() {

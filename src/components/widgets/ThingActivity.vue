@@ -47,17 +47,28 @@
       </div>
     </div>
 
-    <div class="buttons has-addons is-centered">
-      <span v-for="type in ['obd', 'geo', 'gps']"
+    <div class="buttons has-addons is-centered" v-if="isSourceModeAdvanced">
+      <span v-for="type in ['obd', 'geo', 'gps', 'mixed']"
         @click="sourceSwitchTo(type)"
         :class="['button', 'is-small', source === type ? 'is-primary is-active' : '']">
           {{ type.toUpperCase() }}
       </span>
     </div>
+    <hr v-else>
 
-    <div v-if="payload.length" class="content">
-      You've spent <span class="tag">{{ timeDrive }}</span> in the car
-      and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
+    <div class="columns">
+      <div class="column is-four-fifths is-paddingless has-text-right">
+        <div v-if="payload.length" class="content">
+          You've spent <span class="tag">{{ timeDrive }}</span> in the car
+          and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
+        </div>
+      </div>
+      <div class="column has-text-right">
+        <dropdown v-once @onEntryChange="sourceModeSwitch" :active-idx="0" :entry-list="[
+          {title: 'Simple mode', value: 'simple'},
+          {title: 'Advanced mode', value: 'advanced'}
+        ]"/>
+      </div>
     </div>
 
     <feedback style="position: absolute; bottom: 0; left: 0;"
@@ -71,15 +82,16 @@
   import _ from 'lodash';
   import moment from 'moment';
 
-  import Widget from '../../lib/mixins/widget';
+  import Dropdown from './shared/Dropdown';
   import Feedback from './shared/Feedback';
+  import Widget from '../../lib/mixins/widget'
 
   export default {
     name: 'widget-thing-activity',
     props: {thingId: String},
-    components: {Feedback},
+    components: {Dropdown, Feedback},
     mixins: [Widget],
-    data: () => ({api: null, loading: true, payload: [], source: 'geo'}),
+    data: () => ({api: null, loading: true, payload: [], source: 'mixed', sourceMode: 'simple'}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
@@ -107,6 +119,12 @@
       sourceSwitchTo(type) {
         this.source = type;
       },
+      sourceModeSwitch(mode) {
+        this.sourceMode = mode;
+        if (!this.isSourceModeAdvanced) {
+          this.sourceSwitchTo('mixed');
+        }
+      },
       colorIncreaseBrightness(hex, percent) {
         return '#' + _(hex.replace('#', '')).chunk(2)
           .map(v => parseInt(v.join(''), 16))
@@ -117,11 +135,15 @@
         if (!entry) {
           return _.isUndefined(entry) ? '' : 'No trips';
         }
+        const standstill = moment
+          .duration(entry.durationS - entry[this.keyDriveDuration], 's')
+          .humanize();
+          debugger;
         return `${moment().dayOfYear(entry.dayOfYear).format("L")}\n`
           + `Trips: ${entry.count}\n`
           + `Distance: ${_.round(entry[this.keyDistance] / 1000, 1)} km.\n`
           + `Moving: ${moment.duration(entry[this.keyDriveDuration], 's').humanize()}\n`
-          + `Stay: ${moment.duration(entry[this.keyStayDuration], 's').humanize()}`;
+          + `Stay: ${standstill}`;
       },
       calendarEntryBgColor(entry, top) {
         const count = _.isUndefined(entry) ? -1 : _.get(entry, 'count', 0),
@@ -156,6 +178,9 @@
 
         return output;
       },
+      isSourceModeAdvanced() {
+        return this.sourceMode === 'advanced';
+      },
       summaryCountRides() {
         return _.sumBy(this.payload, 'count');
       },
@@ -163,19 +188,18 @@
         return _.round(_.sumBy(this.payload, this.keyDistance) / 1000, 1);
       },
       timeStandstill() {
-        return moment.duration(_.sumBy(this.payload, this.keyStayDuration), 's').humanize();
+        return moment
+          .duration(this.payload.durationS - _.sumBy(this.payload, this.keyDriveDuration), 's')
+          .humanize();
       },
       timeDrive() {
         return moment.duration(_.sumBy(this.payload, this.keyDriveDuration), 's').humanize();
       },
-      keyStayDuration() {
-        return `${this.source}StayDurationS`;
-      },
       keyDriveDuration() {
-        return `${this.source}DriveDurationS`;
+        return this.source === 'mixed' ? 'driveDurationS' : `${this.source}DriveDurationS`;
       },
       keyDistance() {
-        return `${this.source}DistanceM`;
+        return this.source === 'mixed' ? 'distanceM' : `${this.source}DistanceM`;
       }
     }
   }
