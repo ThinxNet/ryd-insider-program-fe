@@ -59,7 +59,7 @@
     <div class="columns">
       <div class="column is-four-fifths is-paddingless has-text-right">
         <div v-if="payload.length" class="content">
-          You've spent <span class="tag">{{ timeDrive }}</span> in the car
+          You've spent <span class="tag">{{ timeDrive }}</span> in the car <br>
           and <span class="tag">{{ timeStandstill }}</span> at lights and in traffic jams.
         </div>
       </div>
