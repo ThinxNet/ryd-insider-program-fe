@@ -188,7 +188,9 @@
       },
       timeStandstill() {
         return moment
-          .duration(this.payload.durationS - _.sumBy(this.payload, this.keyDriveDuration), 's')
+          .duration(
+            _.sumBy(this.payload, 'durationS') - _.sumBy(this.payload, this.keyDriveDuration), 's'
+          )
           .humanize();
       },
       timeDrive() {
