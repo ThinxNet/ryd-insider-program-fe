@@ -86,7 +86,7 @@
             segment._id,
             segment.attributes[field],
             `${timestamp}\n${segment.attributes[field]} km/h`,
-            obdRpmNormal,
+            Math.max(0, obdRpmNormal),
             `${timestamp}\n${obdRpm} rpm`,
             avg,
             `${avg} km/h`
