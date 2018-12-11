@@ -40,13 +40,16 @@
               </span>
             </template>
 
-            <small class="is-size-7 has-text-grey-light">|</small>
+            <template v-if="paginationEntry.quality">
+              <small class="is-size-7 has-text-grey-light">|</small>
 
-            <span class="tag" style="margin-right: 1rem;">
-              <span title="Trip quality" :class="[
-                'icon is-small', 'has-text-' + (paginationEntry.incomplete ? 'danger' : 'primary')
-              ]"><i class="ion-ios-wifi"></i></span>
-            </span>
+              <span class="tag" style="margin-right: 1rem;">
+                <span :title="`Trip quality (rank: ${paginationEntry.quality})`"
+                  :class="['icon is-small', 'has-text-' + (qualityClassName)]">
+                  <i class="ion-ios-wifi"></i>
+                </span>
+              </span>
+            </template>
           </div>
         </div>
 
@@ -333,6 +336,11 @@
           this.paginationEntry.statistics.mapHasGaps ? 'with' : 'without',
           'gaps'
         ].join(' ');
+      },
+      qualityClassName() {
+        return {
+          A: 'primary', B: 'primary', C: 'warning', D: 'danger', E: 'danger', F: 'danger'
+        }[this.paginationEntry.quality];
       }
     }
   }
