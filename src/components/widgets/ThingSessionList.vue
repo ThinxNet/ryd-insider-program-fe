@@ -339,7 +339,7 @@
       },
       qualityClassName() {
         return {
-          A: 'primary', B: 'primary', C: 'warning', D: 'danger', E: 'danger', F: 'danger'
+          A: 'primary', B: 'grey-light', C: 'warning', D: 'danger', E: 'danger', F: 'danger'
         }[this.paginationEntry.quality];
       }
     }
