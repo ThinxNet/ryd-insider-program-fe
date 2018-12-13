@@ -96,10 +96,12 @@
         const chart = new google.visualization.SteppedAreaChart(this.$refs.chart),
           options = {
             chartArea: {width: '85%'},
+            colors: ['#3273dc', '#ff3860', '#209cee'],
             hAxis: {format: 'mm'},
             legend: {position: 'top'},
             series: {1: {type: 'line'}, 2: {type: 'line'}},
-            seriesType: 'steppedArea'
+            seriesType: 'steppedArea',
+            vAxis: {gridlines: {count: 10}}
           };
 
         google.visualization.events
