@@ -138,6 +138,11 @@
         </div>
       </div>
     </div>
+    <div v-else class="box is-radiusless" style="height: 100%">
+      <div class="notification has-text-centered">
+        No trips available.
+      </div>
+    </div>
 
     <feedback style="position: absolute; bottom: 0; left: 0;"
       :widget-version="widgetVersion"
@@ -179,6 +184,9 @@
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
+    destroyed() {
+      console.log(1)
+    },
     mounted() {
       this.$on('onPaginationChanged', () => {
         this.locations = [];
@@ -199,6 +207,8 @@
         this.fetchData(currentId);
       },
       sessionId(currentId) {
+        if (!currentId) { return; }
+
         const idx = this.paginationEntries.findIndex(entry => entry._id === currentId);
         if (idx) {
           this.paginationJumpTo(idx);
@@ -208,15 +218,16 @@
     methods: {
       async fetchData(deviceId) {
         this.loading = true;
+        let sessions = [];
         try {
           const payload = {filter: {device: deviceId}, page: {size: 10}},
             response = await this.api.sessions(payload);
-          this.sessions = response.data;
-          this.paginationResetEntries(this.sessions);
+          sessions = response.data;
         } catch (e) {
           console.error(e);
           return;
         } finally {
+          this.paginationResetEntries(sessions);
           this.loading = false;
         }
       },
