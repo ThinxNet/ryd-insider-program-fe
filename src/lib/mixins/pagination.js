@@ -39,10 +39,13 @@ export default {
       this.paginationIdx = idx;
     },
     paginationResetEntries(entries) {
-      this.paginationIdx = 0;
+      if (!Array.isArray(entries)) {
+        throw new TypeError('An array is expected');
+      }
+      this.paginationIdx = -1;
       this.paginationEntries = entries;
       this.paginationCount = entries.length;
-      this.paginationJumpBy(0);
+      setTimeout(() => this.paginationJumpTo(0));
     }
   },
   computed: {

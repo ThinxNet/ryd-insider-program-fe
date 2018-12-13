@@ -21,7 +21,7 @@
         <div class="tile is-vertical">
           <div class="tile">
             <!-- session details -->
-            <div class="tile is-parent" style="background-color: #14ADDD">
+            <div class="tile is-parent" v-if="sessionId" style="background-color: #14ADDD">
               <widget-thing-session-details :session-id="sessionId"/>
             </div>
 
@@ -86,6 +86,7 @@
     methods: {
       thingChange(thing) {
         this.thing = thing;
+        this.$store.dispatch('componentDashboard/sessionIdReset');
       },
       thingSessionListChange(sessionId) {
         this.$store.dispatch('componentDashboard/sessionIdChange', {sessionId});
