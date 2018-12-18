@@ -95,7 +95,7 @@
     computed: {
       notification() {
         return (process.env.NODE_ENV === 'production')
-          ? `Temporary unmaintained. Please use the staging environment.`
+          ? `Unstable backend infrastructure. Please use the staging environment instead.`
           : null;
       },
       identity() {
