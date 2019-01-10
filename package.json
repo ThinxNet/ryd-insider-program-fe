@@ -1,7 +1,7 @@
 {
   "name": "ryd-insider-program-fe",
   "description": "Ryd Insider Program",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
+    "moment": "^2.23.0",
     "pluralize": "^7.0.0",
-    "vue": "^2.5.17",
+    "vue": "^2.5.21",
     "vue-resource": "^1.5.1",
-    "vue-router": "^3.0.1",
+    "vue-router": "^3.0.2",
     "vuex": "^3.0.1"
   },
   "browserslist": [
@@ -30,10 +30,10 @@
     "babel-preset-stage-3": "^6.24.1",
     "css-loader": "^1.0.1",
     "file-loader": "^2.0.0",
-    "vue-loader": "^15.4.2",
-    "vue-template-compiler": "^2.5.17",
-    "webpack": "^4.26.0",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "vue-loader": "^15.5.1",
+    "vue-template-compiler": "^2.5.21",
+    "webpack": "^4.28.1",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
   }
 }
