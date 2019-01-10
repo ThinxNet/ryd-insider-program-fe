@@ -5,10 +5,12 @@
         <h6 class="subtitle">Trip safety</h6>
       </div>
       <div class="column has-text-right is-unselectable">
-        <button class="button is-radiusless is-small">
+        <button class="button is-radiusless is-small"
+          @click="chartIndexModify(-1)">
             <i class="ion-ios-arrow-back"></i>
         </button>
-        <button class="button is-radiusless is-small">
+        <button class="button is-radiusless is-small"
+          @click="chartIndexModify(1)">
           <i class="ion-ios-arrow-forward"></i>
         </button>
       </div>
@@ -46,7 +48,7 @@
     components: {Feedback},
     mixins: [Widget],
     data: () => ({
-      api: null, loading: true, payload: null, chartIndex: 1
+      api: null, loading: true, payload: null, chartIndex: 0
     }),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
@@ -61,6 +63,9 @@
       loading(current) {
         if (current || this.isPayloadEmpty) { return; }
         setTimeout(() => this.chartRepaint(this.chartIndex));
+      },
+      chartIndex(currentIdx) {
+        this.chartRepaint(currentIdx);
       },
       sessionId(current) {
         this.fetchData(current);
@@ -84,6 +89,13 @@
           case 1: return _chartSpeed(this.payload, this.$refs.chart);
           default: throw new RangeError('Unknown chart');
         }
+      },
+      chartIndexModify(position) {
+        const idxNew = this.chartIndex + position;
+        console.log(idxNew);
+        if (idxNew > -1 && idxNew < 2) {
+          this.chartIndex = idxNew;
+        }
       }
     },
     computed: {
@@ -96,6 +108,7 @@
     }
   }
 
+  /** @private */
   function _chartSafety(payload, element) {
     const dataTable = new google.visualization.DataTable();
     dataTable.addColumn({type: 'string', label: 'Risk'});
@@ -121,6 +134,7 @@
     chart.draw(dataTable, options);
   }
 
+  /** @private */
   function _chartSpeed(payload, element) {
     const dataTable = new google.visualization.DataTable(),
       percentile = (total, current) => current / (total * 0.01);
@@ -195,9 +209,10 @@
       dataTable.addRow([
         '' + (entry.step + 10),
         percentile(totalDurationS, entry.durationS),
-        moment.duration(entry.durationS, 's').humanize(),
+        `Duration: ${moment
+          .utc(moment.duration(entry.durationS, 's').asMilliseconds()).format('HH:mm:ss')} h`,
         percentile(totaldistanceM, entry.distanceM),
-        _.round(entry.distanceM / 1000) + ' km'
+        `Distance: ${_.round(entry.distanceM / 1000)} km`
       ]);
     });
 
