@@ -2,7 +2,7 @@
   <div v-if="loading" class="has-text-centered">
     <span class="icon is-large"><i class="ion-ios-time"></i></span>
   </div>
-  <div v-else-if="Object.keys(entries).length"
+  <div v-else-if="Object.keys(entries).length" class="ip-scrollbar"
     style="max-height: 12.5rem; overflow-y: scroll; overflow-x: hidden;">
     <div class="columns" v-for="key in Object.keys(entries)">
       <div class="column is-4">
@@ -24,6 +24,23 @@
     No environmental information is available.
   </div>
 </template>
+
+<style>
+  .ip-scrollbar::-webkit-scrollbar {
+	  width: 10px;
+  }
+  .ip-scrollbar::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+  .ip-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #ffffff;
+    border: 1px solid #dbdbdb;
+  }
+  .ip-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #14addd;
+    border: 1px solid #039be5;
+  }
+</style>
 
 <script>
   import _ from 'lodash';
