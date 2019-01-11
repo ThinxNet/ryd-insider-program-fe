@@ -6,11 +6,11 @@
       </div>
       <div class="column has-text-right is-unselectable">
         <button class="button is-radiusless is-small"
-          @click="chartIndexModify(-1)">
+          @click="chartIndexModify(-1)" :disabled="!hasPreviousChart">
             <i class="ion-ios-arrow-back"></i>
         </button>
         <button class="button is-radiusless is-small"
-          @click="chartIndexModify(1)">
+          @click="chartIndexModify(1)" :disabled="!hasNextChart">
           <i class="ion-ios-arrow-forward"></i>
         </button>
       </div>
@@ -20,7 +20,7 @@
       <span class="icon is-large"><i class="ion-ios-time"></i></span>
     </div>
 
-    <div v-else-if="entity" class="columns is-gapless">
+    <div v-else-if="chartData.length" class="columns is-gapless">
       <div class="column">
         <div ref="chart"></div>
       </div>
@@ -48,7 +48,8 @@
     components: {Feedback},
     mixins: [Widget],
     data: () => ({
-      api: null, loading: true, entity: null, chartIndex: 0
+      api: null, loading: true, entity: null, chartIndex: 0,
+      charts: [{title: 'Trip complexity'}, {title: 'Speed distribution'}]
     }),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
@@ -87,14 +88,14 @@
       },
       chartRepaint(index) {
         switch (index) {
-          case 0: return _chartSafety(this.entity.statistics.speedBucketsKmH, this.$refs.chart);
-          case 1: return _chartSpeed(this.entity.statistics.speedBucketsKmH, this.$refs.chart);
+          case 0: return _chartSafety(this.chartData, this.$refs.chart);
+          case 1: return _chartSpeed(this.chartData, this.$refs.chart);
           default: throw new RangeError('Unknown chart');
         }
       },
       chartIndexModify(position) {
         const idxNew = this.chartIndex + position;
-        if (idxNew > -1 && idxNew < 2) {
+        if (idxNew > -1 && idxNew < this.charts.length) {
           this.chartIndex = idxNew;
         }
       }
@@ -103,8 +104,17 @@
       widgetDebugData() {
         return _(this.$data).omit(['api']).merge(this.$props).value();
       },
+      chartData() {
+        return _.get(this.entity, 'statistics.speedBucketsKmH', []);
+      },
       chartTitle() {
-        return ['Trip complexity', 'Speed distribution'][this.chartIndex] || 'Unknown';
+        return this.charts[this.chartIndex].title;
+      },
+      hasPreviousChart() {
+        return this.chartIndex - 1 >= 0;
+      },
+      hasNextChart() {
+        return this.chartIndex + 1 < this.charts.length;
       }
     }
   }
@@ -155,7 +165,7 @@
 
     payload.forEach(entry => {
       dataTable.addRow([
-        '' + (entry.step + 10),
+        '~' + (entry.step + 10),
         percentile(totalDurationS, entry.durationS),
         `Duration: ${moment
           .utc(moment.duration(entry.durationS, 's').asMilliseconds()).format('HH:mm:ss')} h`,
@@ -168,7 +178,7 @@
       options = {
         chartArea: {left: 0, top: 0, width: '100%', height: '80%'},
         colors: ['#14addd', '#00b89c'],
-        height: 170,
+        height: 165,
         isStacked: true,
         legend: 'none',
         vAxis: {gridlines: {count: 0}, baselineColor: '#FFF', textStyle: {color: '#FFFFFF'}}
