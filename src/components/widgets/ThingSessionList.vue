@@ -22,18 +22,18 @@
       <div class="card-content" style="padding: 0 0 1.5rem 0;">
         <div class="columns">
           <div class="column is-full has-text-right">
-            <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-
-            <small class="is-size-7 has-text-grey-light">|</small>
+            <template v-if="sessionStatistics.distanceM > 0">
+              <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
+              <small class="is-size-7 has-text-grey-light">|</small>
+            </template>
 
             <span class="tag">
               {{ $moment.utc($moment.duration(sessionStatistics.durationS, 's')
                   .asMilliseconds()).format('HH:mm') }} h
             </span>
 
-            <small class="is-size-7 has-text-grey-light">|</small>
-
             <template v-if="sessionStatistics.speedKmHAvg">
+              <small class="is-size-7 has-text-grey-light">|</small>
               <span class="tag">
                 &empty; {{ sessionStatistics.speedKmHAvg }} km/h
                 (max: {{ sessionStatistics.speedKmHMax }} km/h)
@@ -42,7 +42,6 @@
 
             <template v-if="paginationEntry.quality">
               <small class="is-size-7 has-text-grey-light">|</small>
-
               <span class="tag" style="margin-right: 1rem;">
                 <span :title="`Trip quality (rank: ${paginationEntry.quality})`"
                   :class="['icon is-small', 'has-text-' + (qualityClassName)]">
