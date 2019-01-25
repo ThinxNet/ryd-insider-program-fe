@@ -7,8 +7,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Fuel level (in percent)">Fuel (%)</p>
-            <p v-if="confidencePercent('obdFuelLevelPercent')" class="title">
-              {{ confidencePercent('obdFuelLevelPercent') }}
+            <p v-if="confidencePercent('REGRESSION_DEVICE_FUEL_LEVEL_PERCENT')" class="title">
+              {{ confidencePercent('REGRESSION_DEVICE_FUEL_LEVEL_PERCENT') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -16,8 +16,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Fuel level (in liters)">Fuel (L)</p>
-            <p v-if='confidencePercent("obdFuelLevelL")' class='title'>
-              {{ confidencePercent('obdFuelLevelL') }}
+            <p v-if='confidencePercent("REGRESSION_DEVICE_FUEL_LEVEL_LITERS")' class='title'>
+              {{ confidencePercent('REGRESSION_DEVICE_FUEL_LEVEL_LITERS') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -25,8 +25,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Fuel consumption (in liters)">Cons. (L)</p>
-            <p v-if="confidencePercent('fuelConsumptionL')" class="title">
-              {{ confidencePercent('fuelConsumptionL') }}
+            <p v-if="confidencePercent('REGRESSION_DEVICE_FUEL_CONSUMPTION')" class="title">
+              {{ confidencePercent('REGRESSION_DEVICE_FUEL_CONSUMPTION') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -37,8 +37,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Odometer quality">Odometer</p>
-            <p v-if="confidencePercent('obdCarOdometer')" class="title">
-              {{ confidencePercent('obdCarOdometer') }}
+            <p v-if="confidencePercent('DEVICE_OBD_CAR_ODOMETER')" class="title">
+              {{ confidencePercent('DEVICE_OBD_CAR_ODOMETER') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -46,8 +46,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="GPS quality">GPS</p>
-            <p v-if="confidencePercent('gpsDistanceM')" class="title">
-              {{ confidencePercent('gpsDistanceM') }}
+            <p v-if="confidencePercent('DEVICE_GPS_DISTANCE')" class="title">
+              {{ confidencePercent('DEVICE_GPS_DISTANCE') }}
             </p>
             <p class="title has-text-grey-lighter" v-else>N/A</p>
           </div>
@@ -96,8 +96,8 @@
           this.loading = false;
         }
       },
-      confidencePercent(target) {
-        const value = (_.find(this.payload, {target}) || {}).confidence;
+      confidencePercent(origin) {
+        const value = (_.find(this.payload, {origin}) || {}).confidence;
         return value ? value + '%' : null;
       }
     },
