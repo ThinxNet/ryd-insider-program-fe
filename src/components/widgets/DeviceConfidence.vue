@@ -98,7 +98,7 @@
       },
       confidencePercent(origin) {
         const value = (_.find(this.payload, {origin}) || {}).confidence;
-        return value ? value + '%' : null;
+        return value ? _.round(value) + '%' : null;
       }
     },
     computed: {
