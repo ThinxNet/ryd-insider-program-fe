@@ -6,6 +6,14 @@
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
         :style="[{height: '500px'}, {width: parentElementWidth(this.$el) + 'px'}]">
+        <div v-if="paginationEntry.incomplete" class="tags has-addons"
+          style="position: absolute; z-index: 401; left: 40%; top: 1%;"
+          title="This trip is incomplete and will be replaced with a new one as soon as we receive all the data.">
+          <span class="tag is-danger">INCOMPLETE</span>
+          <span class="tag is-white">
+            <span class="icon is-small"><i class="ion-md-cut"></i> </span>
+          </span>
+        </div>
         <session-map v-if="paginationEntry._id" style="height: 490px"
           :map-highlights="segmentsHighlighted"
           :map-locations-source="source"
