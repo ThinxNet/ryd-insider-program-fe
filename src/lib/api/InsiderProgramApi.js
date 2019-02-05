@@ -48,6 +48,10 @@ export default class InsiderProgramApi extends ApiAbstract {
     return this._request(`sessions/${id}`, {params});
   }
 
+  sessionConsumption(id) {
+    return this._request(`sessions/${id}/consumption`);
+  }
+
   sessionLocations(id, params) {
     return this._request(`sessions/${id}/locations`, {params});
   }
@@ -70,10 +74,6 @@ export default class InsiderProgramApi extends ApiAbstract {
 
   sessionAlike(id, params) {
     return this._request(`sessions/${id}/alike`, {params});
-  }
-
-  sessionSafety(id, params) {
-    return this._request(`sessions/${id}/safety`, {params});
   }
 
   // feedback

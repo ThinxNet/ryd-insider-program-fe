@@ -29,34 +29,36 @@
       </div>
       <div class="card-content" style="padding: 0 0 1.5rem 0;">
         <div class="columns">
-          <div class="column is-full has-text-right">
-            <template v-if="sessionStatistics.distanceM > 0">
-              <span class="tag">{{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km</span>
-              <small class="is-size-7 has-text-grey-light">|</small>
-            </template>
-
-            <span class="tag">
-              {{ $moment.utc($moment.duration(sessionStatistics.durationS, 's')
-                  .asMilliseconds()).format('HH:mm') }} h
-            </span>
-
-            <template v-if="sessionStatistics.speedKmHAvg">
-              <small class="is-size-7 has-text-grey-light">|</small>
-              <span class="tag">
-                &empty; {{ sessionStatistics.speedKmHAvg }} km/h
-                (max: {{ sessionStatistics.speedKmHMax }} km/h)
+          <div class="column is-full">
+            <div class="tags has-addons">
+              <span class="tag" v-if="sessionStatistics.distanceM > 0">
+                {{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km
               </span>
-            </template>
-
-            <template v-if="paginationEntry.quality">
-              <small class="is-size-7 has-text-grey-light">|</small>
-              <span class="tag" style="margin-right: 1rem;">
+              <span class="tag">
+                {{ $moment.utc($moment.duration(sessionStatistics.durationS, 's')
+                    .asMilliseconds()).format('HH:mm') }} h
+              </span>
+              <template v-if="sessionStatistics.speedKmHAvg">
+                <span class="tag">
+                  <span class="icon is-small"><i class="ion-md-radio-button-off"></i></span>
+                  &nbsp;{{ sessionStatistics.speedKmHAvg }} km/h
+                </span>
+                <span class="tag">
+                  <span class="icon is-small"><i class="ion-md-arrow-round-up"></i></span>
+                  &nbsp;{{ sessionStatistics.speedKmHMax }} km/h
+                </span>
+              </template>
+              <span class="tag" v-if="currentConsumption && currentConsumption.amountPerM">
+                <span class="icon is-small"><i class="ion-ios-water"></i></span>
+                &nbsp;{{ $_.round(currentConsumption.amountPerM * 100, 1) }} l
+              </span>
+              <span class="tag is-radiusless">
                 <span :title="`Trip quality (rank: ${paginationEntry.quality})`"
                   :class="['icon is-small', 'has-text-' + (qualityClassName)]">
                   <i class="ion-ios-wifi"></i>
                 </span>
               </span>
-            </template>
+            </div>
           </div>
         </div>
 
@@ -115,9 +117,9 @@
 
               <hr class="is-marginless">
 
-              <template v-if="viaStreets.length
+              <template v-if="viaStreetsLabel.length
                 && (isSourceModeAdvanced || ['mixed', 'map'].includes(source))">
-                <small>{{ viaStreets.join(', ') }}</small>
+                <small>{{ viaStreetsLabel.join(', ') }}</small>
               </template>
             </div>
           </div>
@@ -178,6 +180,7 @@
     data() {
       return {
         api: null,
+        currentConsumption: null,
         isMapBlocked: true,
         loading: true,
         locations: [],
@@ -191,16 +194,23 @@
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
-    destroyed() {
-      console.log(1)
-    },
     mounted() {
-      this.$on('onPaginationChanged', () => {
+      this.$on('onPaginationChanged', async () => {
         this.locations = [];
         if (!this.paginationEntry) { return; }
+
         this.$emit('onSessionChange', this.paginationEntry._id);
+
         if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
           this.sourceSwitchTo('mixed');
+        }
+
+        this.currentConsumption = null;
+        try {
+          this.currentConsumption = (await this.api.sessionConsumption(this.paginationEntry._id))
+            .data;
+        } catch (e) {
+          console.error(e);
         }
       });
       this.fetchData(this.deviceId);
@@ -288,6 +298,9 @@
       }
     },
     computed: {
+      isMapReady() {
+        return !this.isMapBlocked;
+      },
       widgetDebugData() {
         return _(this.$data)
           .omit(['sessions', 'locations', 'paginationEntries', 'api'])
@@ -325,13 +338,10 @@
 
         return fields;
       },
-      isMapReady() {
-        return !this.isMapBlocked;
-      },
       isSourceModeAdvanced() {
         return this.sourceMode === 'advanced';
       },
-      viaStreets() {
+      viaStreetsLabel() {
         const streets = _(this.locations).map('name').reject(_.isEmpty).uniq().value();
         if (!streets.length) {
           return [];
