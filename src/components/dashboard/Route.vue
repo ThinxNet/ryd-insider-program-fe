@@ -95,7 +95,8 @@
     computed: {
       notification() {
         return (process.env.NODE_ENV === 'production')
-          ? `Unstable backend infrastructure. Please use the staging environment instead.`
+          ? 'Unstable backend infrastructure. Please use the staging environment instead '
+              + '(it is also unstable though).'
           : null;
       },
       identity() {
