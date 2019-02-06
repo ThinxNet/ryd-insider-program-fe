@@ -31,28 +31,29 @@
         <div class="columns">
           <div class="column is-full">
             <div class="tags has-addons">
-              <span class="tag" v-if="sessionStatistics.distanceM > 0">
+              <span class="tag is-white" v-if="sessionStatistics.distanceM > 0">
                 {{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km
               </span>
-              <span class="tag">
+              <span class="tag is-white">
                 {{ $moment.utc($moment.duration(sessionStatistics.durationS, 's')
                     .asMilliseconds()).format('HH:mm') }} h
               </span>
               <template v-if="sessionStatistics.speedKmHAvg">
-                <span class="tag">
+                <span class="tag is-white">
                   <span class="icon is-small"><i class="ion-md-radio-button-off"></i></span>
                   &nbsp;{{ sessionStatistics.speedKmHAvg }} km/h
                 </span>
-                <span class="tag">
+                <span class="tag is-white">
                   <span class="icon is-small"><i class="ion-md-arrow-round-up"></i></span>
                   &nbsp;{{ sessionStatistics.speedKmHMax }} km/h
                 </span>
               </template>
-              <span class="tag" v-if="currentConsumption && currentConsumption.amountPerM">
+              <span class="tag is-white" v-if="currentConsumption && currentConsumption.amountPerM"
+                :title="`~${$_.round(currentConsumption.amountPerM * 100, 1)} l for 100 km`">
                 <span class="icon is-small"><i class="ion-ios-water"></i></span>
-                &nbsp;{{ $_.round(currentConsumption.amountPerM * 100, 1) }} l
+                &nbsp;{{ $_.round(currentConsumption.amountMl * 0.001, 1) }} l
               </span>
-              <span class="tag is-radiusless">
+              <span class="tag is-white">
                 <span :title="`Trip quality (rank: ${paginationEntry.quality})`"
                   :class="['icon is-small', 'has-text-' + (qualityClassName)]">
                   <i class="ion-ios-wifi"></i>
