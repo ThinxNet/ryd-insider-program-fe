@@ -126,10 +126,7 @@
       mapInit(map) {
         map._handlers.forEach(h => h.disable());
         map.zoomControl.remove();
-      }/*,
-      sessionDetails(sessionId) {
-        this.$store.dispatch('componentDashboard/sessionIdChange', {sessionId})
-      },*/
+      }
     },
     computed: {
       isMapReady() {

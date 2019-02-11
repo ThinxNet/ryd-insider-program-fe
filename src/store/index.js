@@ -20,7 +20,6 @@ import ModuleAuthentication from './Authentication';
 import ModuleCommon from './Common';
 
 import ComponentWidgetMixin from './component/WidgetMixin';
-import ComponentDashboard from './component/Dashboard';
 
 export default new Vuex.Store({
   strict: true,
@@ -30,7 +29,6 @@ export default new Vuex.Store({
     authentication: ModuleAuthentication,
 
     // components
-    componentWidgetMixin: ComponentWidgetMixin,
-    componentDashboard: ComponentDashboard
+    componentWidgetMixin: ComponentWidgetMixin
   }
 });
