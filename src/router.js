@@ -26,16 +26,16 @@ export default new VueRouter({
   mode: 'history',
   routes: [
     {
-      path: '',
+      path: '/',
       name: 'root',
       component: ComponentsLayout,
       redirect: {name: 'dashboard'},
       children: [
         {component: ComponentsLogin, name: 'login', path: 'login'},
         {component: ComponentsFeedback, name: 'feedback', path: 'feedback'},
-        {component: ComponentsDashboard, name: 'dashboard', path: 'dashboard/:sessionId?'},
-        {component: ComponentsRouteNotFound, path: '*'}
+        {component: ComponentsDashboard, name: 'dashboard', path: 'dashboard/:sessionId?'}
       ]
-    }
+    },
+    {component: ComponentsRouteNotFound, path: '*'}
   ]
 });
