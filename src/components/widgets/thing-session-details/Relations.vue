@@ -41,8 +41,8 @@
           </span>
         </div>
         <div class="column has-text-centered is-7" v-if="session">
-          <button class="button is-text is-small is-radiusless"
-            @click="sessionDetails(paginationEntry.session)">
+          <router-link tag="button" class="button is-text is-small is-radiusless"
+            :to="{name: 'dashboard', params: {sessionId: paginationEntry.session}}">
             <span class="icon is-small">
               <i class="ion-ios-search"></i>
             </span>
@@ -52,7 +52,7 @@
             <time :datetime="$moment(session.end).format()">
               {{ $moment(session.end).format('LT') }}
             </time>
-          </button>
+          </router-link>
         </div>
         <div class="column has-text-right is-unselectable" v-if="relations.length > 1">
           <button @click="paginationGoBackwards"
@@ -126,10 +126,10 @@
       mapInit(map) {
         map._handlers.forEach(h => h.disable());
         map.zoomControl.remove();
-      },
+      }/*,
       sessionDetails(sessionId) {
         this.$store.dispatch('componentDashboard/sessionIdChange', {sessionId})
-      },
+      },*/
     },
     computed: {
       isMapReady() {

@@ -1,8 +1,10 @@
 <template>
   <article class="tile is-child" style="position: relative;">
-    <span v-if="loading" class="icon is-large" style="min-height: 672px;">
-      <i class="ion-ios-time"></i>
-    </span>
+    <div v-if="loading" class="has-text-centered">
+      <div class="icon is-large" style="min-height: 672px;">
+        <i class="ion-ios-time box is-radiusless"></i>
+      </div>
+    </div>
     <div v-else-if="paginationEntry" class="card">
       <div class="card-image"
         :style="[{height: '500px'}, {width: parentElementWidth(this.$el) + 'px'}]">
@@ -23,29 +25,29 @@
           :ui-map-highlights="true"
           :ui-map-locations="true"
           :ui-map-overspeed="true"
-          @onMapInit="mapInit"
           @onLocationsChanged="mapLocationsChange"
+          @onMapInit="mapInit"
           @onReadyStateChanged="mapReadyStateChange"/>
       </div>
       <div class="card-content" style="padding: 0 0 1.5rem 0;">
         <div class="columns">
           <div class="column is-full">
             <div class="tags has-addons">
-              <span class="tag is-white" v-if="sessionStatistics.distanceM > 0">
-                {{ $_.ceil(sessionStatistics.distanceM / 1000, 1) }} km
+              <span class="tag is-white" v-if="entryStatistics.distanceM > 0">
+                {{ $_.ceil(entryStatistics.distanceM / 1000, 1) }} km
               </span>
               <span class="tag is-white">
-                {{ $moment.utc($moment.duration(sessionStatistics.durationS, 's')
+                {{ $moment.utc($moment.duration(entryStatistics.durationS, 's')
                     .asMilliseconds()).format('HH:mm') }} h
               </span>
-              <template v-if="sessionStatistics.speedKmHAvg">
+              <template v-if="entryStatistics.speedKmHAvg">
                 <span class="tag is-white">
                   <span class="icon is-small"><i class="ion-md-radio-button-off"></i></span>
-                  &nbsp;{{ sessionStatistics.speedKmHAvg }} km/h
+                  &nbsp;{{ entryStatistics.speedKmHAvg }} km/h
                 </span>
                 <span class="tag is-white">
                   <span class="icon is-small"><i class="ion-md-arrow-round-up"></i></span>
-                  &nbsp;{{ sessionStatistics.speedKmHMax }} km/h
+                  &nbsp;{{ entryStatistics.speedKmHMax }} km/h
                 </span>
               </template>
               <span class="tag is-white" v-if="currentConsumption && currentConsumption.amountPerM"
@@ -127,6 +129,11 @@
 
           <div class="columns">
             <div class="column is-four-fifths has-text-right is-unselectable">
+              <button @click="paginationJumpTo(0)"
+                :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
+                :disabled="!paginationHasPrevious">
+                  <i class="ion-ios-rewind"></i>
+              </button>
               <button @click="paginationGoBackwards"
                 :class="['button is-radiusless is-small', {'is-loading': !isMapReady}]"
                 :disabled="!paginationHasPrevious">
@@ -149,9 +156,7 @@
       </div>
     </div>
     <div v-else class="box is-radiusless" style="height: 100%">
-      <div class="notification has-text-centered">
-        No trips available.
-      </div>
+      <div class="notification has-text-centered">No trips available.</div>
     </div>
 
     <feedback style="position: absolute; bottom: 0; left: 0;"
@@ -164,20 +169,20 @@
 <script>
   import _ from 'lodash';
 
-  import Dropdown from './shared/Dropdown'
+  import Dropdown from './shared/Dropdown';
   import Feedback from './shared/Feedback';
   import SessionMap from './shared/SessionMap';
 
-  import Pagination from '../../lib/mixins/pagination';
-  import Widget from '../../lib/mixins/widget';
+  import MixinPagination from '../../lib/mixins/pagination';
+  import MixinWidget from '../../lib/mixins/widget';
 
   import ThingSessionDetailsSpeed from './thing-session-details/Speed';
 
   export default {
     name: 'widget-thing-session-list',
     components: {Dropdown, Feedback, SessionMap, ThingSessionDetailsSpeed},
-    mixins: [Pagination, Widget],
-    props: {deviceId: String, sessionId: String},
+    mixins: [MixinPagination, MixinWidget],
+    props: {deviceId: String, entries: Array, entrySelected: {default: null, type: String}},
     data() {
       return {
         api: null,
@@ -186,8 +191,7 @@
         loading: true,
         locations: [],
         segmentsHighlighted: [],
-        sessions: [],
-        source: null,
+        source: 'mixed',
         sourceMode: 'simple',
         uiSpeedDetails: false
       };
@@ -208,47 +212,24 @@
 
         this.currentConsumption = null;
         try {
-          this.currentConsumption = (await this.api.sessionConsumption(this.paginationEntry._id))
-            .data;
+          this.currentConsumption =
+            (await this.api.sessionConsumption(this.paginationEntry._id)).data;
         } catch (e) {
           console.error(e);
         }
       });
-      this.fetchData(this.deviceId);
     },
     watch: {
-      loading(current) {
-        if (current) { return; }
-        this.sourceSwitchTo('mixed');
+      entries(currentList) {
+        this.paginationResetEntries(currentList);
+        this.loading = false;
       },
-      deviceId(currentId) {
-        this.fetchData(currentId);
-      },
-      sessionId(currentId) {
+      entrySelected(currentId) {
         if (!currentId) { return; }
-
-        const idx = this.paginationEntries.findIndex(entry => entry._id === currentId);
-        if (idx) {
-          this.paginationJumpTo(idx);
-        }
+        this.paginationJumpTo(this.entries.findIndex(entry => entry._id === currentId));
       }
     },
     methods: {
-      async fetchData(deviceId) {
-        this.loading = true;
-        let sessions = [];
-        try {
-          const payload = {filter: {device: deviceId}, page: {size: 10}},
-            response = await this.api.sessions(payload);
-          sessions = response.data;
-        } catch (e) {
-          console.error(e);
-          return;
-        } finally {
-          this.paginationResetEntries(sessions);
-          this.loading = false;
-        }
-      },
       sourceModeSwitch(mode) {
         this.sourceMode = mode;
         if (!this.isSourceModeAdvanced) {
@@ -304,12 +285,12 @@
       },
       widgetDebugData() {
         return _(this.$data)
-          .omit(['sessions', 'locations', 'paginationEntries', 'api'])
+          .omit(['locations', 'paginationEntries', 'api'])
           .merge(this.$props)
           .extend({sessionId: _.get(this.paginationEntry, '_id')})
           .value();
       },
-      sessionStatistics() {
+      entryStatistics() {
         const stats = this.paginationEntry.statistics,
           fields = {
             distanceM: stats.geoDistanceM,

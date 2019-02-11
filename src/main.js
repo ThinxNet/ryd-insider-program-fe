@@ -20,7 +20,7 @@ import Router from './router';
 import Store from './store';
 import Vue from 'vue';
 
-import ComponentsApp from './components/App.vue';
+import ComponentsApp from './App.vue';
 
 import lodash from 'lodash';
 import moment from 'moment';
@@ -41,7 +41,7 @@ Vue.http.interceptors.push((request, next) => {
 
 Router.beforeEach((to, from, next) => {
   return (to.name !== 'login' && !Store.getters['authentication/isAuthenticated'])
-    ? next({path: '/login', query: {redirect: to.fullPath}})
+    ? next({name: 'login', query: {redirect: to.fullPath}})
     : next();
 });
 

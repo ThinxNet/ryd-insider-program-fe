@@ -8,7 +8,9 @@
       <div ref="timeline"></div>
     </div>
 
-    <p v-else class="notification has-text-centered">Not enough data to build the timeline.</p>
+    <p v-else class="notification has-text-centered">
+      Not enough data to build the timeline.
+    </p>
 
     <feedback style="position: absolute; bottom: 0; left: 0;"
       :widget-version="widgetVersion"
@@ -27,10 +29,10 @@
 
   export default {
     name: 'widget-thing-session-timeline',
+    data: () => ({api: null, loading: true, entries: []}),
     components: {Feedback},
     mixins: [Widget],
     props: {sessionId: String},
-    data: () => ({api: null, loading: true, entries: []}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
@@ -51,15 +53,18 @@
     },
     methods: {
       async fetchData(id) {
-        this.loading = true;
         this.entries = [];
+
+        this.loading = true;
         try {
           this.entries = (await this.api.sessionEnvironment(id)).data;
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }
+
         setTimeout(this.chartRepaint);
       },
       chartRepaint() {

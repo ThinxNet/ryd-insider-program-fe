@@ -18,12 +18,24 @@ import {VueRouter} from './instance';
 
 import ComponentsDashboard from './components/dashboard/Route';
 import ComponentsFeedback from './components/feedback/Route';
+import ComponentsLayout from './components/Layout';
 import ComponentsLogin from './components/login/Route';
+import ComponentsRouteNotFound from './components/RouteNotFound';
 
 export default new VueRouter({
+  mode: 'history',
   routes: [
-    {component: ComponentsDashboard, name: 'dashboard', path: '/'},
-    {component: ComponentsLogin, name: 'login', path: '/login'},
-    {component: ComponentsFeedback, name: 'feedback', path: '/feedback'}
+    {
+      path: '',
+      name: 'root',
+      component: ComponentsLayout,
+      redirect: {name: 'dashboard'},
+      children: [
+        {component: ComponentsLogin, name: 'login', path: 'login'},
+        {component: ComponentsFeedback, name: 'feedback', path: 'feedback'},
+        {component: ComponentsDashboard, name: 'dashboard', path: 'dashboard/:sessionId?'},
+        {component: ComponentsRouteNotFound, path: '*'}
+      ]
+    }
   ]
 });

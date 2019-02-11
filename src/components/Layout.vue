@@ -53,7 +53,7 @@
   import NavbarMenu from './NavbarMenu';
 
   export default {
-    name: 'app',
+    name: 'layout',
     data: () => ({uiIsMenuActive: false}),
     components: {NavbarMenu, FeedbackForm},
     computed: {

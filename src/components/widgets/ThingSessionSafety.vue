@@ -62,13 +62,13 @@
     },
     watch: {
       loading(current) {
-        if (current || this.isPayloadEmpty) { return; }
+        if (current) { return; }
         setTimeout(() => this.chartRepaint(this.chartIndex));
       },
       chartIndex(currentIdx) {
         this.chartRepaint(currentIdx);
       },
-      sessionId(current) {
+      sessionId(current, previous) {
         this.fetchData(current);
       }
     },

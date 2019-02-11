@@ -6,23 +6,22 @@
       </div>
 
       <div class="tile is-parent">
-        <widget-thing-list @onEntrySelected="thingChange"/>
+        <widget-thing-list @onEntrySelected="onThingChange"/>
       </div>
 
       <div class="tile" v-if="thing">
         <!-- last session -->
         <div class="tile is-parent is-4" style="background-color: #14ADDD">
           <widget-thing-session-list
-            :session-id="sessionId"
-            :device-id="thing.device"
-            @onSessionChange="thingSessionListChange"/>
+            :entries="sessions" :entry-selected="sessionSelectedId" :device-id="thing.device"
+            @onSessionChange="onSessionChange" />
         </div>
 
         <div class="tile is-vertical">
           <div class="tile">
             <!-- session details -->
-            <div class="tile is-parent" v-if="sessionId" style="background-color: #14ADDD">
-              <widget-thing-session-details :session-id="sessionId"/>
+            <div class="tile is-parent" v-if="sessionSelectedId" style="background-color: #14ADDD">
+              <widget-thing-session-details :session-id="sessionSelectedId"/>
             </div>
 
             <!-- activity -->
@@ -33,8 +32,8 @@
 
           <div class="tile">
             <!-- timeline -->
-            <div v-if="sessionId" class="tile is-parent" style="background-color: #14ADDD">
-              <widget-thing-session-safety :session-id="sessionId"/>
+            <div v-if="sessionSelectedId" class="tile is-parent" style="background-color: #14ADDD">
+              <widget-thing-session-safety :session-id="sessionSelectedId"/>
             </div>
 
             <!-- device confidence -->
@@ -46,14 +45,15 @@
       </div>
 
       <div class="tile">
-          <div v-if="sessionId" class="tile is-parent is-8" style="background-color: #14ADDD">
-            <widget-thing-session-timeline :session-id="sessionId"/>
-          </div>
-        <div class="tile is-4">
+        <!-- timeline -->
+        <div v-if="sessionSelectedId" class="tile is-parent is-8" style="background-color: #14ADDD">
+          <widget-thing-session-timeline :session-id="sessionSelectedId"/>
+        </div>
 
+        <div class="tile is-4">
+          <!-- nothing here yet -->
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -69,27 +69,58 @@
 
   export default {
     name: 'dashboard',
-    data: () => ({thing: null, sessionId: null}),
+    data: () => ({api: null, loading: true, sessions: [], sessionSelectedId: null, thing: null}),
     components: {
       WidgetDeviceConfidence, WidgetThingActivity, WidgetThingList, WidgetThingSessionDetails,
       WidgetThingSessionList, WidgetThingSessionSafety, WidgetThingSessionTimeline
     },
+    watch: {
+      '$route.params.sessionId'(sessionId) {
+        this.changeSessionId(sessionId);
+      },
+      thing(current) {
+        this.fetchSessions(current.device);
+      }
+    },
     created() {
-      this.$watch(
-        () => this.$store.getters["componentDashboard/sessionId"],
-        newId => this.sessionId = newId
-      );
+      this.api = this.$store.getters['common/apiInsiderProgram'];
     },
     beforeDestroy() {
-      this.$store.dispatch('componentDashboard/sessionIdReset');
+      this.changeSessionId(null);
     },
     methods: {
-      thingChange(thing) {
-        this.thing = thing;
-        this.$store.dispatch('componentDashboard/sessionIdReset');
+      async fetchSessions(deviceId) {
+        this.sessions = [];
+
+        this.loading = true;
+        try {
+          const payload = {filter: {device: deviceId}, page: {size: 10}},
+            response = await this.api.sessions(payload);
+          this.sessions = response.data;
+        } catch (e) {
+          console.error(e);
+          return;
+        } finally {
+          this.loading = false;
+        }
+
+        let selectedId = this.$route.params.sessionId;
+        if (!selectedId || !this.sessions.find(entry => entry._id === selectedId)) {
+          selectedId = this.sessions[0] ? this.sessions[0]._id : null;
+        }
+
+        this.changeSessionId(selectedId);
       },
-      thingSessionListChange(sessionId) {
-        this.$store.dispatch('componentDashboard/sessionIdChange', {sessionId});
+      changeSessionId(sessionId) {
+        this.sessionSelectedId = sessionId;
+      },
+      onSessionChange(sessionId) {
+        this.changeSessionId(sessionId);
+        this.$router.push({name: 'dashboard', params: {sessionId}});
+      },
+      onThingChange(thing) {
+        this.thing = thing;
+        this.changeSessionId(null);
       }
     },
     computed: {
