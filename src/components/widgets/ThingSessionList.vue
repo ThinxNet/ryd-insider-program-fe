@@ -200,22 +200,17 @@
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
     mounted() {
-      this.$on('onPaginationChanged', async () => {
+      this.$on('onPaginationChanged', () => {
+        this.currentConsumption = null;
         this.locations = [];
+        this.segmentsHighlighted = [];
+
         if (!this.paginationEntry) { return; }
 
         this.$emit('onSessionChange', this.paginationEntry._id);
 
         if (this.source === 'map' && this.paginationEntry.statistics.mapConfidenceAvg <= 10) {
           this.sourceSwitchTo('mixed');
-        }
-
-        this.currentConsumption = null;
-        try {
-          this.currentConsumption =
-            (await this.api.sessionConsumption(this.paginationEntry._id)).data;
-        } catch (e) {
-          console.error(e);
         }
       });
     },
@@ -224,12 +219,19 @@
         this.paginationResetEntries(currentList);
         this.loading = false;
       },
-      entrySelected(currentId) {
-        if (!currentId) { return; }
-        this.paginationJumpTo(this.entries.findIndex(entry => entry._id === currentId));
+      entrySelected(sessionId) {
+        if (!sessionId) { return; }
+        this.paginationJumpTo(this.entries.findIndex(entry => entry._id === sessionId));
+        this.fetchConsumption(sessionId);
       }
     },
     methods: {
+      fetchConsumption(sessionId) {
+        this.currentConsumption = null;
+        this.api.sessionConsumption(sessionId)
+          .then(response => this.currentConsumption = response.data)
+          .catch(console.error);
+      },
       sourceModeSwitch(mode) {
         this.sourceMode = mode;
         if (!this.isSourceModeAdvanced) {
