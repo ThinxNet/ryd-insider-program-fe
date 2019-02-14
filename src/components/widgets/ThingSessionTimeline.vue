@@ -72,10 +72,10 @@
 
         const dataTable = new google.visualization.DataTable(),
           presets = {
-            'Country': a => a.country,
-            'State': a => a.state,
-            'City': a => a.city || a.county,
-            'Suburb': a => a.suburb || a.village || a.town
+            'Country': a => a.country || 'Unknown',
+            'State': a => a.state || 'Unknown',
+            'City': a => a.city || a.county || 'Unknown',
+            'Suburb': a => a.suburb || a.village || a.town || 'Unknown'
           };
 
         dataTable.addColumn({type: 'string', id: 'Location'});
