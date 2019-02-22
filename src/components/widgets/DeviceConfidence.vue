@@ -7,8 +7,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Fuel level (in percent)">Fuel (%)</p>
-            <p v-if="confidencePercent('REGRESSION_DEVICE_FUEL_LEVEL_PERCENT')" class="title">
-              {{ confidencePercent('REGRESSION_DEVICE_FUEL_LEVEL_PERCENT') }}
+            <p v-if="confidencePercent('DEVICE_FUEL_LEVEL_PERCENT')" class="title">
+              {{ confidencePercent('DEVICE_FUEL_LEVEL_PERCENT') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -16,8 +16,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Fuel level (in liters)">Fuel (L)</p>
-            <p v-if='confidencePercent("REGRESSION_DEVICE_FUEL_LEVEL_LITERS")' class='title'>
-              {{ confidencePercent('REGRESSION_DEVICE_FUEL_LEVEL_LITERS') }}
+            <p v-if='confidencePercent("DEVICE_FUEL_LEVEL_LITERS")' class='title'>
+              {{ confidencePercent('DEVICE_FUEL_LEVEL_LITERS') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -25,8 +25,8 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading" title="Fuel consumption (in liters)">Cons. (L)</p>
-            <p v-if="confidencePercent('REGRESSION_DEVICE_FUEL_CONSUMPTION')" class="title">
-              {{ confidencePercent('REGRESSION_DEVICE_FUEL_CONSUMPTION') }}
+            <p v-if="confidencePercent('DEVICE_FUEL_CONSUMPTION')" class="title">
+              {{ confidencePercent('DEVICE_FUEL_CONSUMPTION') }}
             </p>
             <p v-else class="title has-text-grey-lighter">N/A</p>
           </div>
@@ -96,8 +96,8 @@
           this.loading = false;
         }
       },
-      confidencePercent(origin) {
-        const value = (_.find(this.payload, {origin}) || {}).confidence;
+      confidencePercent(dataSet) {
+        const value = (_.find(this.payload, {dataSet}) || {}).confidence;
         return value ? _.round(value) + '%' : null;
       }
     },
