@@ -32,6 +32,9 @@ const defaults = {
     fcm: { // Firebase Cloud Messaging
       name: 'Ryd.one Insider Program',
       gcm_sender_id: '01234567890'
+    },
+    sentry: {
+      dsn: 'https://token@sentry.io/project_id'
     }
   }
 };

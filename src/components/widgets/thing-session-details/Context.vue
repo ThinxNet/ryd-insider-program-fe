@@ -85,6 +85,7 @@
             .value();
         } catch (e) {
           console.error(e);
+          return;
         } finally {
           this.loading = false;
         }

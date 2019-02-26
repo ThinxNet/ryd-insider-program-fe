@@ -209,10 +209,12 @@
     },
     computed: {
       tileConfig() {
+        const dayDuration = this.session.statistics.durationS
+          - this.session.statistics.nightDurationS;
         return this.config ? this.config : {
           minZoom: 7,
           zoom: 7,
-          id: (this.session.statistics.nightDurationS > this.session.statistics.dayDurationS)
+          id: (this.session.statistics.nightDurationS > dayDuration)
             ? 'mapbox.dark' : 'mapbox.light'
         };
       }

@@ -18,10 +18,11 @@ import './assets/styles.css';
 
 import Router from './router';
 import Store from './store';
-import Vue from 'vue';
+import {Vue} from './instance';
 
 import ComponentsApp from './App.vue';
 
+import config from './config.js';
 import lodash from 'lodash';
 import moment from 'moment';
 import pluralize from 'pluralize';
@@ -53,5 +54,11 @@ new Vue({
   beforeCreate() {
     L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
     this.$moment.locale(this.$store.getters['common/locale']);
+
+    // sentry service
+    const sentry = this.$_.get(config, 'services.sentry');
+    if (sentry) {
+      Sentry.init({dsn: sentry.dsn});
+    }
   }
 });
