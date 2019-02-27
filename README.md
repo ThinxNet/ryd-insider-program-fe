@@ -7,18 +7,14 @@ Ryd.one Insider Program
 ## Install
 ```js
 npm install
-mv config.js.dist config.js
+cp config.js.dist config.js
 ```
 
 ## Build
 ```js
 // local development
-export NODE_ENV=development
-npm run build development
-```
+NODE_ENV=development npm run build development
 
-```js
-// minified and uglified version
-export NODE_ENV=production
-npm run build production
+// minified and uglified version for production
+NODE_ENV=production npm run build production
 ```

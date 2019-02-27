@@ -56,6 +56,10 @@ export default class InsiderProgramApi extends ApiAbstract {
     return this._request(`sessions/${id}/locations`, {params});
   }
 
+  sessionHighlights(id) {
+    return this._request(`sessions/${id}/highlights`);
+  }
+
   sessionWeather(id, params) {
     return this._request(`sessions/${id}/weather`, {params});
   }

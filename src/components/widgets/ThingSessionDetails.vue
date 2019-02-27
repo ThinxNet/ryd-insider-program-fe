@@ -3,7 +3,9 @@
     <div class="tabs box is-centered is-small is-fullwidth is-radiusless">
       <ul v-for="(entry, idx) in componentList">
         <li :class="{'is-active': componentIdx === idx}">
-          <a @click.prevent="componentIdx = idx">{{ entry.title }}</a>
+          <a @click.prevent="componentIdx = idx" :title="entry.title">
+             <span class="icon"><i :class="entry.icon"></i></span>
+          </a>
         </li>
       </ul>
     </div>
@@ -29,6 +31,7 @@
   import Feedback from './shared/Feedback';
 
   import SessionDetailsContext from './thing-session-details/Context';
+  import SessionDetailsHighlights from './thing-session-details/Highlights';
   import SessionDetailsRelations from './thing-session-details/Relations';
   import SessionDetailsWeather from './thing-session-details/Weather';
 
@@ -38,9 +41,10 @@
     data: () => ({
       componentIdx: 0,
       componentList: [
-        {title: 'Relations', component: SessionDetailsRelations},
-        {title: 'Weather', component: SessionDetailsWeather},
-        {title: 'Context', component: SessionDetailsContext}
+        {component: SessionDetailsRelations, icon: 'ion-md-link', title: 'Relations'},
+        {component: SessionDetailsHighlights, icon: 'ion-md-pulse', title: 'Highlights'},
+        {component: SessionDetailsWeather, icon: 'ion-md-partly-sunny', title: 'Weather'},
+        {component: SessionDetailsContext, icon: 'ion-md-compass', title: 'Context'}
       ]
     }),
     components: {Feedback},
