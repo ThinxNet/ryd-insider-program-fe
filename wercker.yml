@@ -4,7 +4,8 @@ build:
   steps:
     - npm-install
 
-    - script: configuration file
+    - script:
+      name: configuration file
       code: |-
         printf "%s" "${APPLICATION_CONFIG_JSON}" > config.json
         cat config.json
