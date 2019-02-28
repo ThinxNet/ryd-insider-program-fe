@@ -16,20 +16,20 @@
 
 import {Vue} from '../instance';
 
-import Config from "../config";
-import InsiderProgramApi from "../lib/api/InsiderProgramApi";
-import RydApi from "../lib/api/RydApi";
+import config from 'config';
+import InsiderProgramApi from '../lib/api/InsiderProgramApi';
+import RydApi from '../lib/api/RydApi';
 
 export default {
   namespaced: true,
   state: {
-    apiInsiderProgram: new InsiderProgramApi(Vue.http, Config.api.insiderProgram.baseURL),
-    apiRyd: new RydApi(Vue.http, Config.api.ryd.baseURL),
+    apiInsiderProgram: new InsiderProgramApi(Vue.http, config.api.insiderProgram.baseURL),
+    apiRyd: new RydApi(Vue.http, config.api.ryd.baseURL),
     locale: null
   },
   getters: {
     apiInsiderProgram: state => state.apiInsiderProgram,
     apiRyd: state => state.apiRyd,
-    locale: state => state.locale || Config.ui.defaultLocale
+    locale: state => state.locale || config.ui.defaultLocale
   }
 };

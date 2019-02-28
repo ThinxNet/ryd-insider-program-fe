@@ -25,6 +25,9 @@ const config = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
+  externals: {
+    config: JSON.stringify(require('./config.json'))
+  },
   module: {
     rules: [
       {

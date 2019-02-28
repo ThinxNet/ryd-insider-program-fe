@@ -22,7 +22,7 @@ import {Vue} from './instance';
 
 import ComponentsApp from './App.vue';
 
-import config from './config.js';
+import config from 'config';
 import lodash from 'lodash';
 import moment from 'moment';
 import pluralize from 'pluralize';
