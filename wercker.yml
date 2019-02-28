@@ -4,11 +4,15 @@ build:
   steps:
     - npm-install
 
+    - script: configuration file
+      code: |-
+        printf "%s" "${APPLICATION_CONFIG_JSON}" > config.json
+        cat config.json
+
     - script:
       name: build
       code: |-
         NODE_ENV=`[ "${WERCKER_GIT_BRANCH}" = "master" ] && echo "staging" || echo "${WERCKER_GIT_BRANCH}"` \
-          printf "%s" "${APPLICATION_CONFIG_JSON}" > config.json
           npm run build production
 
     - script:
