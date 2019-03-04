@@ -51,6 +51,9 @@ export default {
     paginationEntry() {
       return this.paginationEntries[this.paginationIdx] || null;
     },
+    paginationHasEntries() {
+      return this.paginationSize > 0;
+    },
     paginationHasNext() {
       return (this.paginationIdx < this.paginationSize - 1);
     },

@@ -6,11 +6,11 @@
       </div>
       <div class="column has-text-right is-unselectable">
         <button class="button is-radiusless is-small"
-          @click="chartIndexModify(-1)" :disabled="!hasPreviousChart">
+          @click="chartIndexModify(-1)" :disabled="!chartHasPrevious">
             <i class="ion-ios-arrow-back"></i>
         </button>
         <button class="button is-radiusless is-small"
-          @click="chartIndexModify(1)" :disabled="!hasNextChart">
+          @click="chartIndexModify(1)" :disabled="!chartHasNext">
           <i class="ion-ios-arrow-forward"></i>
         </button>
       </div>
@@ -49,7 +49,7 @@
     mixins: [Widget],
     data: () => ({
       api: null, loading: true, entity: null, chartIndex: 0,
-      charts: [{title: 'Trip complexity'}, {title: 'Speed distribution'}]
+      charts: [{title: 'Trip risk zones'}, {title: 'Speed distribution'}]
     }),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
@@ -68,7 +68,7 @@
       chartIndex(currentIdx) {
         this.chartRepaint(currentIdx);
       },
-      sessionId(current, previous) {
+      sessionId(current) {
         this.fetchData(current);
       }
     },
@@ -88,9 +88,12 @@
       },
       chartRepaint(index) {
         switch (index) {
-          case 0: return _chartSafety(this.chartData, this.$refs.chart);
-          case 1: return _chartSpeed(this.chartData, this.$refs.chart);
-          default: throw new RangeError('Unknown chart');
+          case 0:
+            return _chartSafety(this.chartData, this.$refs.chart);
+          case 1:
+            return _chartSpeed(this.chartData, this.$refs.chart);
+          default:
+            throw new RangeError('Unknown chart');
         }
       },
       chartIndexModify(position) {
@@ -110,10 +113,10 @@
       chartTitle() {
         return this.charts[this.chartIndex].title;
       },
-      hasPreviousChart() {
+      chartHasPrevious() {
         return this.chartIndex - 1 >= 0;
       },
-      hasNextChart() {
+      chartHasNext() {
         return this.chartIndex + 1 < this.charts.length;
       }
     }
@@ -178,7 +181,7 @@
       options = {
         chartArea: {left: 0, top: 0, width: '100%', height: '80%'},
         colors: ['#14addd', '#00b89c'],
-        height: 165,
+        height: 160,
         isStacked: true,
         legend: 'none',
         vAxis: {gridlines: {count: 0}, baselineColor: '#FFF', textStyle: {color: '#FFFFFF'}}
