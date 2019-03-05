@@ -94,12 +94,13 @@
     _(payload).groupBy(entry => {
       const diff = entry.speedKmH - entry.maxSpeedKmH;
       switch (true) {
-        case diff >= 31: return 3;
-        case diff >= 21: return 2;
-        case diff >= 11: return 1;
-        default: return 0;
+        case diff >= 31: return 2;
+        case diff >= 21: return 1;
+        case diff >= 11: return 0;
+        default: return -1;
       }
     })
+    .omit('-1')
     .forEach((attrs, idx) => {
       const category = (+idx + 1) * 10,
         partitions = _.partition(attrs, 'cityArea');
