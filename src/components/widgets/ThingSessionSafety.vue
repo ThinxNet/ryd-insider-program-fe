@@ -184,7 +184,12 @@
         height: 160,
         isStacked: true,
         legend: 'none',
-        vAxis: {gridlines: {count: 0}, baselineColor: '#FFF', textStyle: {color: '#FFFFFF'}}
+        vAxis: {
+          baselineColor: '#FFF',
+          gridlines: {count: 0},
+          textStyle: {color: '#FFFFFF'},
+          viewWindowMode: 'maximized'
+        }
       };
 
     chart.draw(dataTable, options);

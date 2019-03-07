@@ -46,8 +46,11 @@
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
     watch: {
-      sessionId(currentId) {
-        this.fetchData(currentId);
+      sessionId(current) {
+        this.fetchData(current);
+      },
+      paginationIdx() {
+        this.chartRepaint(this.paginationEntry);
       }
     },
     methods: {
@@ -70,18 +73,44 @@
         switch (entry.type) {
           case 'OVERSPEED':
             return _chartOverSpeed(entry.attributes.segments, this.$refs.chart);
+          case 'ROAD_CLASSIFICATION':
+            return _chartRoadClassification(entry.attributes.segments, this.$refs.chart);
           default:
-            throw new RangeError('Unknown type');
+            throw new RangeError(`Unknown type "${entry.type}"`);
         }
       }
     },
     computed: {
       pageTitle() {
         return {
-          'OVERSPEED': 'Exceeding speed limit'
+          'OVERSPEED': 'Exceeding speed limit',
+          'ROAD_CLASSIFICATION': 'Road classification'
         }[this.paginationEntry.type] || 'Unknown';
       }
     }
+  }
+
+  /** @private */
+  function _chartRoadClassification(payload, element) {
+    const dataTable = new google.visualization.DataTable();
+    dataTable.addColumn({type: 'string', label: 'Class'});
+    dataTable.addColumn({type: 'number', label: 'Distance (meters)'});
+
+    _(payload).groupBy('class').forEach((entries, group) => {
+      dataTable.addRow([group, _.sumBy(entries, 'distanceM')]);
+    });
+
+    const chart = new google.visualization.PieChart(element),
+      options = {
+        chartArea: {top: 7, width: '100%', height: '87%'},
+        colors: ['#f46036', '#00b89c', '#f48e35'],
+        height: 145,
+        legend: {position: 'labeled', textStyle: {color: '#363636'}},
+        pieSliceText: 'none',
+        slices: {0: {offset: 0.1}}
+      };
+
+    chart.draw(dataTable, options);
   }
 
   /** @private */

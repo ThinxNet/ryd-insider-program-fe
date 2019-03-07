@@ -61,7 +61,7 @@
 
           const level = (diff < 21) ? 0 : (diff < 41) ? 1 : 2,
             lineSettings = {fillOpacity: 0.5, weight: 10},
-            colors = [{color: '#FF9F1C'}, {color: '#ED6A5A'}, {color: '#FF3860'}];
+            colors = [{color: '#f48e35'}, {color: '#ed6a5a'}, {color: '#ff3860'}];
           this.group.addLayer(
             L
               .polyline(
