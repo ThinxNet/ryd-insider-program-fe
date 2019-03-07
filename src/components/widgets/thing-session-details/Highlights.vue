@@ -40,7 +40,8 @@
       google.charts.load('current', {packages: ['corechart']});
     },
     mounted() {
-      this.fetchData(this.sessionId);
+      google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
+      this.$on('onPaginationChanged', () => this.chartRepaint(this.paginationEntry));
     },
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
@@ -48,9 +49,6 @@
     watch: {
       sessionId(current) {
         this.fetchData(current);
-      },
-      paginationIdx() {
-        this.chartRepaint(this.paginationEntry);
       }
     },
     methods: {
@@ -65,8 +63,6 @@
         } finally {
           this.loading = false;
         }
-
-        this.chartRepaint(this.paginationEntry)
       },
       chartRepaint: function (entry) {
         if (!this.paginationHasEntries) {
@@ -136,8 +132,8 @@
   function _chartOverSpeed(payload, element) {
     const dataTable = new google.visualization.DataTable();
     dataTable.addColumn({type: 'string', label: 'Category'});
-    dataTable.addColumn({type: 'number', label: 'Distance (city area)'});
-    dataTable.addColumn({type: 'number', label: 'Distance (country area)'});
+    dataTable.addColumn({type: 'number', label: 'City area (meters)'});
+    dataTable.addColumn({type: 'number', label: 'Country area (meters)'});
 
     _(payload.segments).groupBy(entry => {
       const diff = entry.speedKmH - entry.maxSpeedKmH;

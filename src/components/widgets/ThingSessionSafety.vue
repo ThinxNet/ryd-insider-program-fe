@@ -1,30 +1,32 @@
 <template>
   <article class="tile is-child is-radiusless box" style="position: relative;">
-    <div class="columns">
-      <div class="column is-three-fifths">
-        <h6 class="subtitle">{{ chartTitle }}</h6>
-      </div>
-      <div class="column has-text-right is-unselectable">
-        <button class="button is-radiusless is-small"
-          @click="chartIndexModify(-1)" :disabled="!chartHasPrevious">
-            <i class="ion-ios-arrow-back"></i>
-        </button>
-        <button class="button is-radiusless is-small"
-          @click="chartIndexModify(1)" :disabled="!chartHasNext">
-          <i class="ion-ios-arrow-forward"></i>
-        </button>
-      </div>
-    </div>
-
     <div v-if="loading" class="has-text-centered">
       <span class="icon is-large"><i class="ion-ios-time"></i></span>
     </div>
 
-    <div v-else-if="chartData.length" class="columns is-gapless">
-      <div class="column">
-        <div ref="chart"></div>
+    <template v-else-if="paginationHasEntries">
+      <div class="columns">
+        <div class="column is-three-fifths">
+          <h6 class="subtitle">{{ paginationEntry.title }}</h6>
+        </div>
+        <div class="column has-text-right is-unselectable">
+          <button class="button is-radiusless is-small"
+            @click="paginationGoBackwards" :disabled="!paginationHasPrevious">
+              <i class="ion-ios-arrow-back"></i>
+          </button>
+          <button class="button is-radiusless is-small"
+            @click="paginationGoForward" :disabled="!paginationHasNext">
+            <i class="ion-ios-arrow-forward"></i>
+          </button>
+        </div>
       </div>
-    </div>
+
+      <div class="columns is-gapless">
+        <div class="column">
+          <div ref="chart"></div>
+        </div>
+      </div>
+    </template>
 
     <p v-else class="notification has-text-centered">Not enough data to build the chart.</p>
 
@@ -39,18 +41,17 @@
   import _ from 'lodash';
   import moment from 'moment';
 
-  import Widget from '../../lib/mixins/widget';
+  import MixinPagination from '../../lib/mixins/pagination';
+  import MixinWidget from '../../lib/mixins/widget';
+
   import Feedback from './shared/Feedback';
 
   export default {
     name: 'widget-thing-session-safety',
     props: {sessionId: String},
     components: {Feedback},
-    mixins: [Widget],
-    data: () => ({
-      api: null, loading: true, entity: null, chartIndex: 0,
-      charts: [{title: 'Trip risk zones'}, {title: 'Speed distribution'}]
-    }),
+    mixins: [MixinPagination, MixinWidget],
+    data: () => ({api: null, entity: null, loading: true}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
@@ -59,17 +60,11 @@
     },
     mounted() {
       google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
+      this.$on('onPaginationChanged', this.chartRepaint);
     },
     watch: {
-      loading(current) {
-        if (current) { return; }
-        setTimeout(() => this.chartRepaint(this.chartIndex));
-      },
-      chartIndex(currentIdx) {
-        this.chartRepaint(currentIdx);
-      },
-      sessionId(current) {
-        this.fetchData(current);
+      sessionId(id) {
+        this.fetchData(id);
       }
     },
     methods: {
@@ -79,6 +74,7 @@
           this.entity = (
             await this.api.session(sessionId, {fields: {statistics: 'speedBucketsKmH'}})
           ).data;
+          this.paginationResetEntries([{title: 'Trip risk zones'}, {title: 'Speed distribution'}]);
         } catch (e) {
           console.error(e);
           return;
@@ -86,21 +82,12 @@
           this.loading = false;
         }
       },
-      chartRepaint(index) {
-        switch (index) {
-          case 0:
-            return _chartSafety(this.chartData, this.$refs.chart);
-          case 1:
-            return _chartSpeed(this.chartData, this.$refs.chart);
-          default:
-            throw new RangeError('Unknown chart');
+      chartRepaint(idx) {
+        const fnc = [_chartSafety, _chartSpeed][idx];
+        if (!fnc) {
+          throw new RangeError('Unknown chart');
         }
-      },
-      chartIndexModify(position) {
-        const idxNew = this.chartIndex + position;
-        if (idxNew > -1 && idxNew < this.charts.length) {
-          this.chartIndex = idxNew;
-        }
+        return setTimeout(() => fnc(this.chartData, this.$refs.chart), 100);
       }
     },
     computed: {
@@ -109,15 +96,6 @@
       },
       chartData() {
         return _.get(this.entity, 'statistics.speedBucketsKmH', []);
-      },
-      chartTitle() {
-        return this.charts[this.chartIndex].title;
-      },
-      chartHasPrevious() {
-        return this.chartIndex - 1 >= 0;
-      },
-      chartHasNext() {
-        return this.chartIndex + 1 < this.charts.length;
       }
     }
   }
