@@ -122,7 +122,7 @@
         height: 146,
         legend: {position: 'labeled', textStyle: {color: '#363636'}},
         pieSliceText: 'none',
-        pieStartAngle: 240
+        pieStartAngle: 220
       };
 
     if (_.has(groups, 'unknown')) {
