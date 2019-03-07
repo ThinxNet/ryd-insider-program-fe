@@ -81,7 +81,7 @@
           throw new RangeError(`Unknown type "${entry.type}"`);
         }
 
-        return setTimeout(() => fnc(entry.attributes.segments, this.$refs.chart), 100);
+        return setTimeout(() => fnc(entry.attributes, this.$refs.chart), 100);
       }
     },
     computed: {
@@ -100,12 +100,21 @@
     dataTable.addColumn({type: 'string', label: 'Class'});
     dataTable.addColumn({type: 'number', label: 'Distance (meters)'});
 
-    const colors = {country: '#f46036', federal: '#f48e35', other: '#00b89c'},
-      groups = _.groupBy(payload, 'class');
-    _.forEach(groups, (entries, group) => dataTable.addRow([group, _.sumBy(entries, 'distanceM')]));
+    const colors = {country: '#f46036', federal: '#f48e35', other: '#00b89c', unknown: '#e8e8e6'},
+      coveredDistanceM = _.sumBy(payload.segments, 'distanceM'),
+      groups = _.groupBy(payload.segments, 'class');
+
+    if (coveredDistanceM < payload.distanceM) {
+      groups.unknown = [{distanceM: payload.distanceM - coveredDistanceM}];
+    }
+
+    _.forEach(groups, (entries, group) => {
+      const distanceM = _.round(_.sumBy(entries, 'distanceM') / 1000, 1),
+        label = `${group} (${distanceM} km)`;
+      dataTable.addRow([label, distanceM]);
+    });
 
     const chart = new google.visualization.PieChart(element),
-      hasMultipleClasses = dataTable.getNumberOfRows() > 1,
       options = {
         chartArea: {top: 5, width: '100%', height: '92%'},
         colors: _.pullAt(colors, _.keys(groups)),
@@ -113,8 +122,12 @@
         height: 146,
         legend: {position: 'labeled', textStyle: {color: '#363636'}},
         pieSliceText: 'none',
-        slices: {0: {offset: hasMultipleClasses ? 0.1 : 0}}
+        pieStartAngle: 240
       };
+
+    if (_.has(groups, 'unknown')) {
+      options.slices = {[_.keys(groups).indexOf('unknown')]: {offset: 0.1}};
+    }
 
     chart.draw(dataTable, options);
   }
@@ -126,7 +139,7 @@
     dataTable.addColumn({type: 'number', label: 'Distance (city area)'});
     dataTable.addColumn({type: 'number', label: 'Distance (country area)'});
 
-    _(payload).groupBy(entry => {
+    _(payload.segments).groupBy(entry => {
       const diff = entry.speedKmH - entry.maxSpeedKmH;
       switch (true) {
         case diff >= 31: return 2;
