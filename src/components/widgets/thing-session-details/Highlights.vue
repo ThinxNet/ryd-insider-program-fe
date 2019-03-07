@@ -10,11 +10,11 @@
       </div>
       <div class="column has-text-right is-unselectable">
         <button class="button is-radiusless is-small"
-          @click="paginationGoForward" :disabled="!paginationHasNext">
+          @click="paginationGoBackwards" :disabled="!paginationHasPrevious">
             <i class="ion-ios-arrow-back"></i>
         </button>
         <button class="button is-radiusless is-small"
-          @click="paginationGoBackwards" :disabled="!paginationHasPrevious">
+          @click="paginationGoForward" :disabled="!paginationHasNext">
           <i class="ion-ios-arrow-forward"></i>
         </button>
       </div>
@@ -34,7 +34,7 @@
   export default {
     name: 'thing-session-details-highlights',
     props: {sessionId: String},
-    data: () => ({api: null, loading: true, selectedType: null}),
+    data: () => ({api: null, loading: true}),
     mixins: [MixinPagination],
     beforeMount() {
       google.charts.load('current', {packages: ['corechart']});
@@ -57,7 +57,8 @@
       async fetchData(id) {
         this.loading = true;
         try {
-          this.paginationResetEntries((await this.api.sessionHighlights(id)).data || []);
+          const response = (await this.api.sessionHighlights(id)).data || [];
+          this.paginationResetEntries(_.sortBy(response, 'type'));
         } catch (e) {
           console.error(e);
           return;
@@ -65,19 +66,22 @@
           this.loading = false;
         }
 
-        if (this.paginationHasEntries) {
-          setTimeout(() => this.chartRepaint(this.paginationEntry), 100);
-        }
+        this.chartRepaint(this.paginationEntry)
       },
       chartRepaint: function (entry) {
-        switch (entry.type) {
-          case 'OVERSPEED':
-            return _chartOverSpeed(entry.attributes.segments, this.$refs.chart);
-          case 'ROAD_CLASSIFICATION':
-            return _chartRoadClassification(entry.attributes.segments, this.$refs.chart);
-          default:
-            throw new RangeError(`Unknown type "${entry.type}"`);
+        if (!this.paginationHasEntries) {
+          return;
         }
+
+        const fnc = {
+          'OVERSPEED': _chartOverSpeed,
+          'ROAD_CLASSIFICATION': _chartRoadClassification
+        }[entry.type];
+        if (!fnc) {
+          throw new RangeError(`Unknown type "${entry.type}"`);
+        }
+
+        return setTimeout(() => fnc(entry.attributes.segments, this.$refs.chart), 100);
       }
     },
     computed: {
@@ -96,18 +100,20 @@
     dataTable.addColumn({type: 'string', label: 'Class'});
     dataTable.addColumn({type: 'number', label: 'Distance (meters)'});
 
-    _(payload).groupBy('class').forEach((entries, group) => {
-      dataTable.addRow([group, _.sumBy(entries, 'distanceM')]);
-    });
+    const colors = {country: '#f46036', federal: '#f48e35', other: '#00b89c'},
+      groups = _.groupBy(payload, 'class');
+    _.forEach(groups, (entries, group) => dataTable.addRow([group, _.sumBy(entries, 'distanceM')]));
 
     const chart = new google.visualization.PieChart(element),
+      hasMultipleClasses = dataTable.getNumberOfRows() > 1,
       options = {
-        chartArea: {top: 7, width: '100%', height: '87%'},
-        colors: ['#f46036', '#00b89c', '#f48e35'],
-        height: 145,
+        chartArea: {top: 5, width: '100%', height: '92%'},
+        colors: _.pullAt(colors, _.keys(groups)),
+        enableInteractivity: false,
+        height: 146,
         legend: {position: 'labeled', textStyle: {color: '#363636'}},
         pieSliceText: 'none',
-        slices: {0: {offset: 0.1}}
+        slices: {0: {offset: hasMultipleClasses ? 0.1 : 0}}
       };
 
     chart.draw(dataTable, options);
