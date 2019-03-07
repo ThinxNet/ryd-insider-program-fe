@@ -60,6 +60,7 @@ new Vue({
     if (sentry) {
       Sentry.init({
         dsn: sentry.dsn,
+        environment: process.env.NODE_ENV,
         release: 'ryd-insider-program-fe@' + (process.env.SCM_COMMIT_ID || process.env.NODE_ENV)
       });
     }
