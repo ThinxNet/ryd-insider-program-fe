@@ -58,7 +58,10 @@ new Vue({
     // sentry service
     const sentry = this.$_.get(config, 'services.sentry');
     if (sentry) {
-      Sentry.init({dsn: sentry.dsn});
+      Sentry.init({
+        dsn: sentry.dsn,
+        release: 'ryd-insider-program-fe@' + (process.env.SCM_COMMIT_ID || process.env.NODE_ENV)
+      });
     }
   }
 });

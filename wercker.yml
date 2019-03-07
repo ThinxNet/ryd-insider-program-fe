@@ -13,6 +13,7 @@ build:
     - script:
       name: build
       code: |-
+        SCM_COMMIT_ID="${WERCKER_GIT_COMMIT}" \
         NODE_ENV=`[ "${WERCKER_GIT_BRANCH}" = "master" ] && echo "staging" || echo "${WERCKER_GIT_BRANCH}"` \
           npm run build production
 
