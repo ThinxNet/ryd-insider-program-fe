@@ -43,10 +43,6 @@
       google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
     },
     watch: {
-      loading(current) {
-        if (current) { return; }
-        setTimeout(this.chartRepaint);
-      },
       sessionId(currentId) {
         this.fetchData(currentId);
       }
@@ -65,7 +61,7 @@
           this.loading = false;
         }
 
-        setTimeout(this.chartRepaint);
+        setTimeout(this.chartRepaint, 100);
       },
       chartRepaint() {
         if (!this.entries.length) { return; }
