@@ -201,11 +201,17 @@
     },
     mounted() {
       this.$on('onPaginationChanged', () => {
+        if (this.loading) {
+          return;
+        }
+
         this.currentConsumption = null;
         this.locations = [];
         this.segmentsHighlighted = [];
 
-        if (!this.paginationEntry) { return; }
+        if (!this.paginationEntry) {
+          return;
+        }
 
         this.$emit('onSessionChange', this.paginationEntry._id);
 
