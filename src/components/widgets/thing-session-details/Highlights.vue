@@ -28,6 +28,7 @@
 
 <script>
   import _ from 'lodash';
+  import moment from 'moment';
 
   import MixinPagination from '../../../lib/mixins/pagination';
 
@@ -37,7 +38,7 @@
     data: () => ({api: null, loading: true}),
     mixins: [MixinPagination],
     beforeMount() {
-      google.charts.load('current', {packages: ['corechart']});
+      google.charts.load('current', {packages: ['corechart', 'table']});
     },
     mounted() {
       google.charts.setOnLoadCallback(() => this.fetchData(this.sessionId));
@@ -71,7 +72,8 @@
 
         const fnc = {
           'OVERSPEED': _chartOverSpeed,
-          'ROAD_CLASSIFICATION': _chartRoadClassification
+          'ROAD_CLASSIFICATION': _chartRoadClassification,
+          'TIME_OF_DAY': _chartTimeOfDay
         }[entry.type];
         if (!fnc) {
           throw new RangeError(`Unknown type "${entry.type}"`);
@@ -84,7 +86,8 @@
       pageTitle() {
         return {
           'OVERSPEED': 'Exceeding speed limit',
-          'ROAD_CLASSIFICATION': 'Road classification'
+          'ROAD_CLASSIFICATION': 'Road classification',
+          'TIME_OF_DAY': 'Time of day'
         }[this.paginationEntry.type] || 'Unknown';
       }
     }
@@ -100,8 +103,8 @@
       coveredDistanceM = _.sumBy(payload.segments, 'distanceM'),
       groups = _.groupBy(payload.segments, 'class');
 
-    if (coveredDistanceM < payload.distanceM) {
-      groups.unknown = [{distanceM: payload.distanceM - coveredDistanceM}];
+    if (coveredDistanceM < payload.sessionDistanceM) {
+      groups.unknown = [{distanceM: payload.sessionDistanceM - coveredDistanceM}];
     }
 
     _.forEach(groups, (entries, group) => {
@@ -163,6 +166,31 @@
         legend: {alignment: 'end', position: 'top', textStyle: {color: '#363636'}},
         vAxis: {gridlines: {count: 10}}
       };
+
+    chart.draw(dataTable, options);
+  }
+
+  /** @private */
+  function _chartTimeOfDay(payload, element) {
+    const dataTable = new google.visualization.DataTable();
+    dataTable.addColumn({type: 'string', label: 'Day of week'});
+    dataTable.addColumn({type: 'string', label: 'Hour'});
+    dataTable.addColumn({type: 'string', label: 'Duration'});
+    dataTable.addColumn({type: 'string', label: 'Percent'});
+
+    const durationS = _.sumBy(payload.intervals, 'durationS');
+    payload.intervals.forEach(entry => {
+      const hour = moment().hour(entry.hourNumber + 1).format('HH');
+      dataTable.addRow([
+        moment().isoWeekday(entry.dayOfWeek).format('dddd'),
+        `${hour}-${hour}.59`,
+        moment.utc(moment.duration(entry.durationS, 's').asMilliseconds()).format('mm:ss'),
+        _.round(entry.durationS / (durationS * 0.01), 1) + '%'
+      ]);
+    });
+
+    const chart = new google.visualization.Table(element),
+      options = {alternatingRowStyle: true, width: '100%'};
 
     chart.draw(dataTable, options);
   }
