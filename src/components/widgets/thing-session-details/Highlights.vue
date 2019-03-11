@@ -184,7 +184,7 @@
       dataTable.addRow([
         moment().isoWeekday(entry.dayOfWeek).format('dddd'),
         `${hour}-${hour}.59`,
-        moment.utc(moment.duration(entry.durationS, 's').asMilliseconds()).format('mm:ss [m]'),
+        moment.utc(moment.duration(entry.durationS, 's').asMilliseconds()).format('HH:mm:ss'),
         _.round(entry.durationS / (durationS * 0.01), 1) + '%'
       ]);
     });
