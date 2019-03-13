@@ -17,7 +17,7 @@
             </a>
           </div>
 
-          <navbar-menu :is-active="uiIsMenuActive"/>
+          <navbar-menu :is-active="uiIsMenuActive" v-if="isAuthenticated"/>
         </div>
       </nav>
     </div>
