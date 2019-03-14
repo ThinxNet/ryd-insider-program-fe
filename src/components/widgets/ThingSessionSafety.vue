@@ -92,7 +92,7 @@
     },
     computed: {
       widgetDebugData() {
-        return _(this.$data).omit(['entity', 'api']).merge(this.$props).value();
+        return _(this.$data).merge(this.$props).omit(['entity', 'api']).value();
       },
       chartData() {
         return _.get(this.entity, 'statistics.speedBucketsKmH', []);

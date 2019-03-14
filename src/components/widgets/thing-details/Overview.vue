@@ -198,7 +198,7 @@
     },
     computed: {
       widgetDebugData() {
-        return _(this.$data).omit(['api']).merge(this.$props).value();
+        return _(this.$data).merge(this.$props).omit(['api']).value();
       },
       flagYmmeNeedsReview() {
         return _.get(this.thing, 'ymme.needsReview', null);

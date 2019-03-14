@@ -293,8 +293,8 @@
       },
       widgetDebugData() {
         return _(this.$data)
-          .omit(['entries', 'locations', 'paginationEntries', 'api'])
           .merge(this.$props)
+          .omit(['entries', 'locations', 'paginationEntries', 'api'])
           .extend({sessionId: _.get(this.paginationEntry, '_id')})
           .value();
       },

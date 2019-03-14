@@ -157,7 +157,7 @@
     },
     computed: {
       widgetDebugData() {
-        return _(this.$data).omit(['payload', 'api']).merge(this.$props).value();
+        return _(this.$data).merge(this.$props).omit(['payload', 'api']).value();
       },
       calendarEntries() {
         const start = moment().startOf('day').subtract(28, 'd'),
