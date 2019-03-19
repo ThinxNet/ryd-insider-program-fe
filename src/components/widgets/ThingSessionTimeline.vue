@@ -1,5 +1,5 @@
 <template>
-  <article class="tile is-child is-radiusless box" style="position: relative">
+  <article class="tile is-child is-radiusless box" style="position: relative; min-height: 255px;">
     <div v-if="loading" class="has-text-centered">
       <span class="icon is-large"><i class="ion-ios-time"></i></span>
     </div>
