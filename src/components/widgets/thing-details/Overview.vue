@@ -10,6 +10,10 @@
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
         <tr>
+          <td>Unique ID</td>
+          <td><span class="tag">{{ thing._id }}</span></td>
+        </tr>
+        <tr>
           <td>VIN</td>
           <td><span class="tag">{{ thing.ymme.VIN || 'N/A' }}</span></td>
         </tr>
@@ -57,6 +61,10 @@
 
     <table class="table is-fullwidth is-striped is-narrow">
       <tbody>
+        <tr>
+          <td>Unique ID</td>
+          <td><span class="tag">{{ device._id }}</span></td>
+        </tr>
         <tr>
           <td>ID</td>
           <td><span class="tag">{{ device.id }}</span></td>
@@ -129,6 +137,7 @@
       </tbody>
     </table>
 
+  <!--
     <h4 class="subtitle">compatibility list</h4>
     <hr>
 
@@ -145,6 +154,7 @@
         </tr>
       </tbody>
     </table>
+  -->
 
   </article>
 </template>
