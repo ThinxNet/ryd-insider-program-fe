@@ -70,9 +70,6 @@
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];
     },
-    beforeDestroy() {
-      localStorage.removeItem(LOCAL_STORAGE_IDX_KEY);
-    },
     async mounted() {
       try {
         const response = await this.api.things({page: {size: 1}});
