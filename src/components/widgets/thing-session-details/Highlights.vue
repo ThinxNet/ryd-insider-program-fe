@@ -180,7 +180,7 @@
 
     const durationS = _.sumBy(payload.intervals, 'durationS');
     payload.intervals.forEach(entry => {
-      const hour = moment().hour(entry.hourNumber + 1).format('HH');
+      const hour = moment.utc().hour(entry.hourNumber).local().format('HH');
       dataTable.addRow([
         moment().isoWeekday(entry.dayOfWeek).format('dddd'),
         `${hour}-${hour}.59`,
