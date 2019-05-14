@@ -25,7 +25,8 @@
                 <li v-for="(title, key) in {
                   UNKNOWN: 'Open entries',
                   PENDING: 'Pending',
-                  RESOLVED: 'Closed'
+                  RESOLVED: 'Closed',
+                  INVALID: 'Invalid'
                 }">
                   <a :class="{'is-active': state === key}"
                     @click.prevent="stateFilterChange(key)">{{ title }}</a>
