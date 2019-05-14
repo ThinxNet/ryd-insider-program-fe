@@ -18,6 +18,7 @@ import {Vuex} from '../instance';
 
 import ModuleAuthentication from './Authentication';
 import ModuleCommon from './Common';
+import Notifications from './Notifications';
 
 import ComponentWidgetMixin from './component/WidgetMixin';
 
@@ -27,6 +28,7 @@ export default new Vuex.Store({
     // domain independent
     common: ModuleCommon,
     authentication: ModuleAuthentication,
+    notifications: Notifications,
 
     // components
     componentWidgetMixin: ComponentWidgetMixin
