@@ -29,6 +29,7 @@
         </transition>
       </div>
 
+      <feedback-notifications v-once :timeout="60000"></feedback-notifications>
       <feedback-form style="z-index: 9999"
         v-if="$store.getters['componentWidgetMixin/isFeedbackFormActive']"/>
     </div>
@@ -49,13 +50,14 @@
 </template>
 
 <script>
-  import FeedbackForm from './feedback/Form';
   import NavbarMenu from './NavbarMenu';
+  import FeedbackNotifications from './feedback/Notifications';
+  import FeedbackForm from './feedback/Form';
 
   export default {
     name: 'layout',
     data: () => ({uiIsMenuActive: false}),
-    components: {NavbarMenu, FeedbackForm},
+    components: {NavbarMenu, FeedbackNotifications, FeedbackForm},
     computed: {
       isAuthenticated() {
         return this.$store.getters['authentication/isAuthenticated'];

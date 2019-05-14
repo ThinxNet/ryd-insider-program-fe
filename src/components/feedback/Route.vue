@@ -50,25 +50,32 @@
           v-else-if="entries.length"
           v-for="entry of currentEntries" style="margin-bottom: 10px">
           <div class="card-content">
-            <small>{{ $moment(entry.timestamp).format('L LT') }} / {{ entry.reference }}</small>
-            <hr>
-            <pre style="white-space: inherit">{{ $_.truncate(entry.message, {length: 100}) }}</pre>
+            <div>
+              <span class="tag is-primary is-radiusless" :title="entry.id">Message</span>
+              <span class="tag is-radiusless">{{ $moment(entry.timestamp).format('L LT') }}</span>
+              <pre style="white-space: inherit" class="has-background-white">
+                {{ entry.message }}
+              </pre>
+            </div>
+            <div v-if="entry.updatedAt && entry.response">
+              <span class="tag is-success is-radiusless">Response</span>
+              <span class="tag is-radiusless">{{ $moment(entry.updatedAt).format('L LT') }}</span>
+              <pre style="white-space: inherit" class="has-background-white">
+                {{ entry.response }}
+              </pre>
+            </div>
           </div>
-          <footer class="card-footer">
-            <p class="card-footer-item">
-              <span class="tag">{{ entry.category }}</span>
-            </p>
-            <p class="card-footer-item">
-              <span
-                :class="['tag', {
-                  'is-success': entry.state === 'RESOLVED',
-                  'is-warning': entry.state === 'PENDING',
-                  'is-danger': entry.state === 'INVALID'
-                }]">
-                {{ entry.state }}
-              </span>
-            </p>
-          </footer>
+          <span class="tag is-radiusless" title="Reference">{{ entry.reference }}</span>
+          <span title="State"
+            :class="['tag is-radiusless', {
+              'is-success': entry.state === 'RESOLVED',
+              'is-warning': entry.state === 'PENDING',
+              'is-danger': entry.state === 'INVALID'
+            }]">
+            {{ entry.state }}
+          </span>
+          <span class="tag is-radiusless" title="Category"
+            v-if="entry.category !== 'NONE'">{{ entry.category }}</span>
         </div>
 
         <div v-else-if="!entries.length" class="notification has-text-centered">
@@ -88,7 +95,6 @@
 <script>
   export default {
     name: 'feedback',
-    props: {},
     data: () => ({api: null, entries: [], loading: true, state: null}),
     created() {
       this.api = this.$store.getters['common/apiInsiderProgram'];

@@ -9,7 +9,6 @@
   import _ from 'lodash';
 
   export default {
-    name: 'leaflet',
     props: {tileConfig: Object},
     data: () => ({instance: null}),
     computed: {

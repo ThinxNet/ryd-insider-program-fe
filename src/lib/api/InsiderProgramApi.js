@@ -85,6 +85,10 @@ export default class InsiderProgramApi extends ApiAbstract {
     return this._request('feedback', {params});
   }
 
+  feedbackActivity() {
+    return this._request('feedback/activity');
+  }
+
   feedbackWidgetEntryNew(id, data) {
     return this._request(`feedback/widget/${id}`, data, 'POST');
   }
