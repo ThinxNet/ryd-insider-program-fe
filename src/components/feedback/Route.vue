@@ -36,7 +36,7 @@
         </aside>
       </div>
 
-      <div class="column">
+      <div class="column" ref="content-area">
         <div v-if="loading" class="has-text-centered">
           <span class="icon is-large"><i class="ion-ios-time"></i></span>
         </div>
@@ -53,14 +53,14 @@
             <div>
               <span class="tag is-primary is-radiusless" :title="entry.id">Message</span>
               <span class="tag is-radiusless">{{ $moment(entry.timestamp).format('L LT') }}</span>
-              <pre style="white-space: inherit" class="has-background-white">
+              <pre :style="stylesMessageArea" class="has-background-white">
                 {{ entry.message }}
               </pre>
             </div>
             <div v-if="entry.updatedAt && entry.response">
               <span class="tag is-success is-radiusless">Response</span>
               <span class="tag is-radiusless">{{ $moment(entry.updatedAt).format('L LT') }}</span>
-              <pre style="white-space: inherit" class="has-background-white">
+              <pre :style="stylesMessageArea" class="has-background-white">
                 {{ entry.response }}
               </pre>
             </div>
@@ -129,6 +129,12 @@
         return this.state
           ? this.entries.filter(entry => entry.state === this.state)
           : this.entries;
+      },
+      stylesMessageArea() {
+        return {
+          'max-width': (this.$refs['content-area'].clientWidth - 80) + 'px',
+          'white-space': 'inherit'
+        };
       }
     }
   };
