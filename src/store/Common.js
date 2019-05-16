@@ -20,13 +20,13 @@ import config from 'config';
 import InsiderProgramApi from '../lib/api/InsiderProgramApi';
 import RydApi from '../lib/api/RydApi';
 
+const scmId = (process.env.SCM_COMMIT_ID || 'unknown').substr(0, 8);
+
 export default {
   namespaced: true,
   state: {
-    apiInsiderProgram: new InsiderProgramApi(
-      Vue.http, config.api.insiderProgram.baseURL, process.env.SCM_COMMIT_ID
-    ),
-    apiRyd: new RydApi(Vue.http, config.api.ryd.baseURL, process.env.SCM_COMMIT_ID),
+    apiInsiderProgram: new InsiderProgramApi(Vue.http, config.api.insiderProgram.baseURL, scmId),
+    apiRyd: new RydApi(Vue.http, config.api.ryd.baseURL, scmId),
     locale: null
   },
   getters: {

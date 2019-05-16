@@ -18,7 +18,7 @@ export default class ApiAbstract {
   constructor(client, url, version) {
     this.client = client;
     this.url = url;
-    this.version = version || 'local';
+    this.version = version;
   }
 
   /** @access protected */
