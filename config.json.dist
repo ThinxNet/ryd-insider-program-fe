@@ -1,0 +1,22 @@
+{
+  "ui": {
+    "defaultLocale": "de"
+  },
+  "api": {
+    "ryd": {
+      "baseURL": "https://tt4.thinxcloud-staging.de"
+    },
+    "insiderProgram": {
+      "baseURL": "https://insider-api.thinxcloud-staging.de"
+    }
+  },
+  "services": {
+    "fcm": {
+      "name": "Ryd.one Insider Program",
+      "gcm_sender_id": "01234567890"
+    },
+    "sentry": {
+      "dsn": "https://token@sentry.io/project_id"
+    }
+  }
+}
