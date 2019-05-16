@@ -15,14 +15,18 @@
  */
 
 export default class ApiAbstract {
-  constructor(client, url) {
+  constructor(client, url, version) {
     this.client = client;
     this.url = url;
+    this.version = version || 'local';
   }
 
   /** @access protected */
-  _request(path, payload, method = 'GET', config = {}) {
-    return this.client[method.toLowerCase()]([this.url, path].join('/'), payload, config)
-      .then(r => r.body);
+  _request(path, config = {}, httpMethod = 'GET') {
+    const method = httpMethod.toLowerCase();
+    if (method === 'get') {
+      config.params = Object.assign({}, config.params, {_v: this.version});
+    }
+    return this.client[method]([this.url, path].join('/'), config).then(r => r.body);
   }
 }

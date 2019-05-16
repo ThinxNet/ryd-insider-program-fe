@@ -23,8 +23,10 @@ import RydApi from '../lib/api/RydApi';
 export default {
   namespaced: true,
   state: {
-    apiInsiderProgram: new InsiderProgramApi(Vue.http, config.api.insiderProgram.baseURL),
-    apiRyd: new RydApi(Vue.http, config.api.ryd.baseURL),
+    apiInsiderProgram: new InsiderProgramApi(
+      Vue.http, config.api.insiderProgram.baseURL, process.env.SCM_COMMIT_ID
+    ),
+    apiRyd: new RydApi(Vue.http, config.api.ryd.baseURL, process.env.SCM_COMMIT_ID),
     locale: null
   },
   getters: {
