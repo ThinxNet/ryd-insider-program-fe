@@ -20,7 +20,8 @@ import config from 'config';
 import InsiderProgramApi from '../lib/api/InsiderProgramApi';
 import RydApi from '../lib/api/RydApi';
 
-const scmId = (process.env.SCM_COMMIT_ID || 'unknown').substr(0, 8);
+const scmId = process.env.SCM_COMMIT_ID
+  ? process.env.SCM_COMMIT_ID.substr(0, 8) : '' + Date.now();
 
 export default {
   namespaced: true,

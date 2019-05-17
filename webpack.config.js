@@ -79,7 +79,7 @@ const config = {
     new webpack.EnvironmentPlugin({
       DEBUG: false,
       NODE_ENV: 'development',
-      SCM_COMMIT_ID: 'development'
+      SCM_COMMIT_ID: null
     })
   ]
 };
