@@ -104,8 +104,8 @@
       colors = {
         country: '#f46036',
         federal: '#f48e35',
-        highway: '#9bc53d',
-        other: '#00b89c',
+        highway: '#00b89c',
+        other: '#9bc53d',
         unknown: '#e8e8e6'
       };
 
