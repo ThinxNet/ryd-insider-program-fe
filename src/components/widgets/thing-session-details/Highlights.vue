@@ -99,9 +99,15 @@
     dataTable.addColumn({type: 'string', label: 'Class'});
     dataTable.addColumn({type: 'number', label: 'Distance (meters)'});
 
-    const colors = {country: '#f46036', federal: '#f48e35', other: '#00b89c', unknown: '#e8e8e6'},
-      coveredDistanceM = _.sumBy(payload.segments, 'distanceM'),
-      groups = _.groupBy(payload.segments, 'class');
+    const coveredDistanceM = _.sumBy(payload.segments, 'distanceM'),
+      groups = _.groupBy(payload.segments, 'class'),
+      colors = {
+        country: '#f46036',
+        federal: '#f48e35',
+        highway: '#14addd',
+        other: '#00b89c',
+        unknown: '#e8e8e6'
+      };
 
     if (coveredDistanceM < payload.sessionDistanceM) {
       groups.unknown = [{distanceM: payload.sessionDistanceM - coveredDistanceM}];
