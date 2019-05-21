@@ -13,7 +13,8 @@
         }
         this.$store.getters['notifications/entriesNamespaced'](this.namespace).forEach(
           notification => {
-            pushJs.create(notification.caption, notification.payload);
+            pushJs.create(notification.caption, notification.payload)
+              .catch(console.debug);
             this.$store.dispatch('notifications/entryRemove', notification);
           }
         );
