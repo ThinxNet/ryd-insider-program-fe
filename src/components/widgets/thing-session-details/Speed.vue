@@ -93,7 +93,8 @@
           ]);
         });
 
-        const chart = new google.visualization.SteppedAreaChart(this.$refs.chart),
+        const dataView = new google.visualization.DataView(dataTable),
+          chart = new google.visualization.SteppedAreaChart(this.$refs.chart),
           options = {
             chartArea: {width: '85%'},
             colors: ['#3273dc', '#ff3860', '#209cee'],
@@ -105,16 +106,29 @@
           };
 
         google.visualization.events
-          .addListener(chart, 'onmouseover', sel => this.chartHover(sel, chart, dataTable));
+          .addListener(chart, 'onmouseover', sel => this.chartHover(sel, chart, dataView));
         google.visualization.events
-          .addListener(chart, 'select', () => chart.setSelection([]));
+          .addListener(chart, 'select', () => {
+            const selection = chart.getSelection();
+            if (selection.length !== 1 || !_.isNull(selection[0].row)) {
+              return chart.setSelection([]);
+            }
 
-        chart.draw(dataTable, options);
+            dataView.setColumns(
+              dataView.getViewColumns().length > 4
+                ? [0, 1, selection[0].column, selection[0].column + 1]
+                : _.range(dataTable.getNumberOfColumns())
+            );
+
+            chart.draw(dataView, options);
+          });
+
+        chart.draw(dataView, options);
       },
-      chartHover(selection, instance, dataTable) {
+      chartHover(selection, instance, data) {
         if (!selection.row) { return; }
         if (selection.column !== 6) {
-          this.$emit('onSegmentHighlighted', dataTable.getValue(selection.row, 1));
+          this.$emit('onSegmentHighlighted', data.getValue(selection.row, 1));
         }
       }
     }
