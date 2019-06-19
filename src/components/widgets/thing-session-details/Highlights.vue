@@ -114,9 +114,10 @@
     }
 
     _.forEach(groups, (entries, group) => {
-      const distanceM = _.round(_.sumBy(entries, 'distanceM') / 1000, 1),
-        label = `${group} (${distanceM} km)`;
-      dataTable.addRow([label, distanceM]);
+      const distanceM = _.sumBy(entries, 'distanceM'),
+        distanceKm = _.round(distanceM / 1000, distanceM > 100 ? 1 : 2),
+        label = `${group} (${distanceKm} km)`;
+      dataTable.addRow([label, distanceKm]);
     });
 
     const chart = new google.visualization.PieChart(element),
