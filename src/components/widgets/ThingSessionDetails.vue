@@ -33,15 +33,17 @@
   import SessionDetailsContext from './thing-session-details/Context';
   import SessionDetailsHighlights from './thing-session-details/Highlights';
   import SessionDetailsRelations from './thing-session-details/Relations';
+  import SessionDetailsTags from './thing-session-details/Tags';
   import SessionDetailsWeather from './thing-session-details/Weather';
 
   export default {
     name: 'widget-thing-session-details',
     props: {sessionId: String},
     data: () => ({
-      componentIdx: 0,
+      componentIdx: 1,
       componentList: [
-        {component: SessionDetailsRelations, icon: 'ion-md-link', title: 'Relations'},
+        {component: SessionDetailsTags, icon: 'ion-md-pricetags', title: 'Tags'},
+        {component: SessionDetailsRelations, icon: 'ion-md-git-compare', title: 'Relations'},
         {component: SessionDetailsHighlights, icon: 'ion-md-pulse', title: 'Highlights'},
         {component: SessionDetailsWeather, icon: 'ion-md-partly-sunny', title: 'Weather'},
         {component: SessionDetailsContext, icon: 'ion-md-compass', title: 'Context'}
