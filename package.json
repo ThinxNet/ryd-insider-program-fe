@@ -9,7 +9,7 @@
     "build": "./node_modules/.bin/webpack --progress --hide-modules --mode"
   },
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "pluralize": "^8.0.0",
     "push.js": "^1.0.9",
